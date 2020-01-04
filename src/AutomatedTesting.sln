@@ -31,7 +31,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C1E03AD6
 		.Build\Versioning.props = .Build\Versioning.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomatedTesting.Mocks", "AutomatedTesting.Mocks\AutomatedTesting.Mocks.csproj", "{14FC3554-7C37-4B3A-8011-1641907F062C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutomatedTesting.Mocks", "AutomatedTesting.Mocks\AutomatedTesting.Mocks.csproj", "{14FC3554-7C37-4B3A-8011-1641907F062C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.AutomatedTesting.Mocks", "Test.AutomatedTesting.Mocks\Test.AutomatedTesting.Mocks.csproj", "{56FA5895-163B-4ABC-89F4-C062D29E89A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +48,12 @@ Global
 		{14FC3554-7C37-4B3A-8011-1641907F062C}.GitHub|Any CPU.Build.0 = GitHub|Any CPU
 		{14FC3554-7C37-4B3A-8011-1641907F062C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14FC3554-7C37-4B3A-8011-1641907F062C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56FA5895-163B-4ABC-89F4-C062D29E89A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56FA5895-163B-4ABC-89F4-C062D29E89A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56FA5895-163B-4ABC-89F4-C062D29E89A0}.GitHub|Any CPU.ActiveCfg = GitHub|Any CPU
+		{56FA5895-163B-4ABC-89F4-C062D29E89A0}.GitHub|Any CPU.Build.0 = GitHub|Any CPU
+		{56FA5895-163B-4ABC-89F4-C062D29E89A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56FA5895-163B-4ABC-89F4-C062D29E89A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
