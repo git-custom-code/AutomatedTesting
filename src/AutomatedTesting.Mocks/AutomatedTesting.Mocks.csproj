@@ -5,6 +5,7 @@
     <Title>Best practices for mocking in C#.</Title>
     <Description>Yet another framework using reflection emit to create mocks from interfaces that can be used in automated testing.</Description>
     <RootNamespace>CustomCode.AutomatedTesting.Mocks</RootNamespace>
+    <Configurations>Debug;Release;GitHub</Configurations>
   </PropertyGroup>
 
 </Project>

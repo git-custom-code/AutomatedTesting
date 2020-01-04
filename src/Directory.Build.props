@@ -4,10 +4,14 @@
   <Import Project="$(SolutionDir).Build/Copyright.props" />
   <Import Project="$(SolutionDir).Build/NonNullableReferenceTypes.props" />
   <Import Project="$(SolutionDir).Build/Documentation.props"
-          Condition="!$(MSBuildProjectName.StartsWith('Test.')) And !$(MSBuildProjectName.StartsWith('Benchmark.'))"/>
+          Condition="!$(MSBuildProjectName.StartsWith('Test.')) And
+                     !$(MSBuildProjectName.StartsWith('Benchmark.'))"/>
   <Import Project="$(SolutionDir).Build/Signing.props"
-          Condition="!$(MSBuildProjectName.StartsWith('Test.')) And !$(MSBuildProjectName.StartsWith('Benchmark.'))"/>
+          Condition="!$(MSBuildProjectName.StartsWith('Test.')) And
+                     !$(MSBuildProjectName.StartsWith('Benchmark.'))"/>
   <Import Project="$(SolutionDir).Build/Nuget.props"
-          Condition="!$(MSBuildProjectName.StartsWith('Test.')) And !$(MSBuildProjectName.StartsWith('Benchmark.'))"/>
+          Condition="!$(MSBuildProjectName.StartsWith('Test.')) And
+                     !$(MSBuildProjectName.StartsWith('Benchmark.')) And
+                     '$(Configuration)|$(Platform)'!='GitHub|AnyCPU'"/>
 
 </Project>
