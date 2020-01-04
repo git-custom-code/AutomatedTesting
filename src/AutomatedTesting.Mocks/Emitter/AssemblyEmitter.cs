@@ -15,17 +15,26 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <summary>
         /// Creates a new instance of the <see cref="AssemblyEmitter"/> type.
         /// </summary>
-        public AssemblyEmitter()
+        /// <param name="typeEmitterFactory">
+        /// A factory that can be used to create a new <see cref="ITypeEmitter"/> from an existing <see cref="TypeBuilder"/>.
+        /// </param>
+        public AssemblyEmitter(Func<TypeBuilder, ITypeEmitter> typeEmitterFactory)
         {
             Module = new Lazy<ModuleBuilder>(
                 CreateDynamicAssembly,
                 LazyThreadSafetyMode.ExecutionAndPublication);
+            CreateTypeEmitter = typeEmitterFactory;
         }
 
         /// <summary>
         /// Gets a singleton <see cref="ModuleBuilder"/> that can be used to dynamically create types.
         /// </summary>
         private Lazy<ModuleBuilder> Module { get; }
+
+        /// <summary>
+        /// Gets a factory that can be used to create a new <see cref="ITypeEmitter"/> from an existing <see cref="TypeBuilder"/>.
+        /// </summary>
+        private Func<TypeBuilder, ITypeEmitter> CreateTypeEmitter { get; }
 
         #endregion
 
@@ -44,12 +53,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         }
 
         /// <inheritdoc />
-        public Type EmitType(string typeFullName)
+        public ITypeEmitter EmitType(string typeFullName)
         {
             var builder = Module.Value.DefineType(
                 typeFullName,
                 TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class);
-            return builder.CreateType();
+            var emitter = CreateTypeEmitter(builder);
+            return emitter;
         }
 
         #endregion

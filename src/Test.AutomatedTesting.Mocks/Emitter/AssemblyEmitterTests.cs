@@ -1,5 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
+    using System;
+    using System.Reflection.Emit;
     using Xunit;
 
     /// <summary>
@@ -7,19 +9,38 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     /// </summary>
     public sealed class AssemblyEmitterTests
     {
-        [Fact(DisplayName = "Create a new dynamic type at runtime.")]
-        public void EmitDynamicTypeAtRuntime()
+        [Fact(DisplayName = "Create a new dynamic in-memory assembly at runtime")]
+        public void EmitDynamicAssemlyAtRuntime()
         {
             // Given
-            var emitter = new AssemblyEmitter();
+            var emitter = new AssemblyEmitter(builder => new MockEmitter(builder));
 
             // When
-            var type = emitter.EmitType("My.Namespace.MyType");
+            var typeEmitter = emitter.EmitType("My.Namespace.MyType");
 
             // Then
-            Assert.NotNull(type);
-            Assert.Equal("My.Namespace", type.Namespace);
-            Assert.Equal("MyType", type.Name);
+            Assert.NotNull(typeEmitter);
+            Assert.IsType<MockEmitter>(typeEmitter);
         }
+
+        #region Mocks
+
+        public sealed class MockEmitter : ITypeEmitter
+        {
+            public MockEmitter(TypeBuilder builder)
+            { }
+
+            public void ImplementInterface(Type interfaceType)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Type ToType()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
     }
 }
