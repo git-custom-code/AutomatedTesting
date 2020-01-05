@@ -11,7 +11,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void EmitDynamicTypeAsInterfaceProxy()
         {
             // Given
-            var asmEmitter = new AssemblyEmitter(b => new TypeEmitter(b));
+            var asmEmitter = new AssemblyEmitter(b => new TypeEmitter(b, new DependencyEmitter()));
 
             // When
             var emitter = asmEmitter.EmitType("My.Namespace.MyType");
@@ -30,7 +30,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void EmitDynamicTypeAtRuntime()
         {
             // Given
-            var asmEmitter = new AssemblyEmitter(b => new TypeEmitter(b));
+            var asmEmitter = new AssemblyEmitter(b => new TypeEmitter(b, new DependencyEmitter()));
 
             // When
             var emitter = asmEmitter.EmitType("My.Namespace.MyType");

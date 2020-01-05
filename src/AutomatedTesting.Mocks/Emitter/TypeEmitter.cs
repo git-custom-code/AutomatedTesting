@@ -14,10 +14,19 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// Creates a new instance of the <see cref="TypeEmitter"/> type.
         /// </summary>
         /// <param name="typeBuilder"> The internal <see cref="TypeBuilder"/> that is used to dynamically emit logic. </param>
-        public TypeEmitter(TypeBuilder typeBuilder)
+        /// <param name="dependencyEmitter"> The emitter instance used for creating the type's dependencies. </param>
+        public TypeEmitter(
+            TypeBuilder typeBuilder,
+            IDependencyEmitter dependencyEmitter)
         {
             Type = typeBuilder;
+            Dependencies = dependencyEmitter;
         }
+
+        /// <summary>
+        /// Gets the emitter instance used for creating the type's dependencies.
+        /// </summary>
+        private IDependencyEmitter Dependencies { get; }
 
         /// <summary>
         /// Gets the internal <see cref="TypeBuilder"/> that is used to dynamically emit logic.
@@ -36,6 +45,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                 throw new ArgumentException($"Invalid non-interface type '{@interface.FullName}'");
             }
 
+            var interceptorField = Dependencies.CreateInterceptorDependency(Type);
+            Dependencies.CreateConstructor(Type, interceptorField);
             Type.AddInterfaceImplementation(@interface);
         }
 
