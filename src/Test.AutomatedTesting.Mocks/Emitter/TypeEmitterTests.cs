@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
+    using LightInject;
     using Xunit;
 
     /// <summary>
@@ -11,7 +12,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void EmitDynamicTypeAsInterfaceProxy()
         {
             // Given
-            var asmEmitter = new AssemblyEmitter(b => new TypeEmitter(b, new DependencyEmitter()));
+            var iocContainer = new ServiceContainer();
+            iocContainer.RegisterAssembly(typeof(ITypeEmitter).Assembly);
+            var asmEmitter = iocContainer.GetInstance<IAssemblyEmitter>();
 
             // When
             var emitter = asmEmitter.EmitType("My.Namespace.MyType");
@@ -30,7 +33,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void EmitDynamicTypeAtRuntime()
         {
             // Given
-            var asmEmitter = new AssemblyEmitter(b => new TypeEmitter(b, new DependencyEmitter()));
+            var iocContainer = new ServiceContainer();
+            iocContainer.RegisterAssembly(typeof(ITypeEmitter).Assembly);
+            var asmEmitter = iocContainer.GetInstance<IAssemblyEmitter>();
 
             // When
             var emitter = asmEmitter.EmitType("My.Namespace.MyType");

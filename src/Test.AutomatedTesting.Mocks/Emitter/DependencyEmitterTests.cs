@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
     using Interception;
+    using LightInject;
     using System;
     using System.Reflection;
     using Xunit;
@@ -14,7 +15,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void EmitDynamicTypeWithInterceptorDependency()
         {
             // Given
-            var asmEmitter = new AssemblyEmitter(b => new TypeEmitter(b, new DependencyEmitter()));
+            var iocContainer = new ServiceContainer();
+            iocContainer.RegisterAssembly(typeof(IDependencyEmitter).Assembly);
+            var asmEmitter = iocContainer.GetInstance<IAssemblyEmitter>();
             var expectedInterceptor = new LooseMockInterceptor();
 
             // When

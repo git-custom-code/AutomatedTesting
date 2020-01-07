@@ -8,4 +8,8 @@
     <Configurations>Debug;Release;GitHub</Configurations>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="LightInject" Version="6.2.0" />
+  </ItemGroup>
+
 </Project>
