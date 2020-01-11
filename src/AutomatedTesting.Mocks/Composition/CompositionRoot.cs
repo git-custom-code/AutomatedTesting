@@ -16,12 +16,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Composition
         public void Compose(IServiceRegistry serviceRegistry)
         {
             serviceRegistry.Register<IAssemblyEmitter, AssemblyEmitter>();
+            serviceRegistry.Register<IDependencyEmitter, DependencyEmitter>();
+            serviceRegistry.Register<IMethodEmitterFactory, MethodEmitterFactory>();
             serviceRegistry.Register<TypeBuilder, ITypeEmitter>((factory, typeBuilder) =>
                 {
                     var dependencyEmitter = factory.GetInstance<IDependencyEmitter>();
-                    return new TypeEmitter(typeBuilder, dependencyEmitter);
+                    var methodEmitterFactory = factory.GetInstance<IMethodEmitterFactory>();
+                    return new TypeEmitter(typeBuilder, dependencyEmitter, methodEmitterFactory);
                 });
-            serviceRegistry.Register<IDependencyEmitter, DependencyEmitter>();
         }
 
         #endregion
