@@ -22,7 +22,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             // When
             var emitter = asmEmitter.EmitType("My.Namespace.MyType");
-            emitter.ImplementInterface(typeof(IFoo));
+            emitter.ImplementInterface<IFoo>();
             var type = emitter.ToType();
             var instance = Activator.CreateInstance(type, new[] { expectedInterceptor });
 

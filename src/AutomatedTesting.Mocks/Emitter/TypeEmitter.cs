@@ -49,8 +49,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         #region Logic
 
         /// <inheritdoc />
-        public void ImplementInterface(Type @interface)
+        public void ImplementInterface<T>() where T : class
         {
+            var @interface = typeof(T);
             if (!@interface.IsInterface)
             {
                 throw new ArgumentException($"Invalid non-interface type '{@interface.FullName}'");
@@ -63,6 +64,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             foreach (var signature in @interface.GetMethods().Where(m => !m.IsSpecialName))
             {
                 var emitter = MethodEmitterFactory.CreateMethodEmitterFor(signature, Type, interceptorField);
+                emitter.ImplemenMethod();
             }
         }
 

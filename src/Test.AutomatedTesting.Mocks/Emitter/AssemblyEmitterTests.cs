@@ -30,7 +30,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             public MockEmitter(TypeBuilder builder)
             { }
 
-            public void ImplementInterface(Type interfaceType)
+            public void ImplementInterface<T>() where T : class
             {
                 throw new NotImplementedException();
             }
