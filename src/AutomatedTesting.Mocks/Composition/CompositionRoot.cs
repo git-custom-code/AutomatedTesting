@@ -15,6 +15,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Composition
         /// <inheritdoc />
         public void Compose(IServiceRegistry serviceRegistry)
         {
+            serviceRegistry.Register<IDynamicProxyFactory, DynamicProxyFactory>();
             serviceRegistry.Register<IAssemblyEmitter, AssemblyEmitter>();
             serviceRegistry.Register<IDependencyEmitter, DependencyEmitter>();
             serviceRegistry.Register<IMethodEmitterFactory, MethodEmitterFactory>();
