@@ -16,19 +16,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         {
             // Given
             var iocContainer = new ServiceContainer();
-            iocContainer.RegisterAssembly(typeof(IDependencyEmitter).Assembly);
-            var asmEmitter = iocContainer.GetInstance<IAssemblyEmitter>();
+            iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
+            var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
             var expectedInterceptor = new LooseMockInterceptor();
 
             // When
-            var emitter = asmEmitter.EmitType("My.Namespace.MyType");
-            emitter.ImplementInterface<IFoo>();
-            var type = emitter.ToType();
-            var instance = Activator.CreateInstance(type, new[] { expectedInterceptor });
+            var instance = proxyFactory.CreateForInterface<IFoo>(expectedInterceptor);
 
             // Then
             Assert.NotNull(instance);
-            Assert.IsAssignableFrom<IFoo>(instance);
             var interceptorField = instance?.GetType().GetField("_interceptor", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.NotNull(interceptorField);
             var actualInterceptor = interceptorField?.GetValue(instance);
