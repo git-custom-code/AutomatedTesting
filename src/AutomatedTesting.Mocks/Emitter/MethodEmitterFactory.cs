@@ -18,7 +18,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             {
                 if (signature.GetParameters().Any(p => p.IsOut || p.ParameterType.IsByRef) == false)
                 {
-                    return default;
+                    return new InterceptActionEmitter(type, signature, interceptor);
                 }
             }
 

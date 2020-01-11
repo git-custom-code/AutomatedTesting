@@ -64,7 +64,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             foreach (var signature in @interface.GetMethods().Where(m => !m.IsSpecialName))
             {
                 var emitter = MethodEmitterFactory.CreateMethodEmitterFor(signature, Type, interceptorField);
-                emitter.ImplemenMethod();
+                emitter.EmitMethodImplementation();
             }
         }
 

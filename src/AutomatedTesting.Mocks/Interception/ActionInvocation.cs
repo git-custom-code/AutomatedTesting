@@ -14,11 +14,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// <summary>
         /// Creates a new instance of the <see cref="ActionInvocation"/> type.
         /// </summary>
-        /// <param name="parameter"> The parameter names and passed values of the invoked method. </param>
+        /// <param name="parameter"> The parameter signatures and passed values of the invoked method. </param>
         /// <param name="signature"> The signature of the invoked method (as <see cref="MethodInfo"/>). </param>
-        public ActionInvocation(IDictionary<string, object> parameter, MethodInfo signature)
+        public ActionInvocation(IDictionary<ParameterInfo, object> parameter, MethodInfo signature)
         {
-            Parameter = (IReadOnlyDictionary<string, object>)parameter;
+            Parameter = (IReadOnlyDictionary<ParameterInfo, object>)parameter;
             Signature = signature;
         }
 
@@ -27,9 +27,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         #region Data
 
         /// <summary>
-        /// Gets the parameter names and passed values of the invoked method.
+        /// Gets the parameter signatures and passed values of the invoked method.
         /// </summary>
-        public IReadOnlyDictionary<string, object> Parameter { get; }
+        public IReadOnlyDictionary<ParameterInfo, object> Parameter { get; }
 
         /// <summary>
         /// Gets the signature of the invoked method (as <see cref="MethodInfo"/>).
