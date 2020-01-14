@@ -68,7 +68,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         }
 
         /// <summary>
-        /// Creates a new instnance of the <see cref="InterceptActionEmitter"/> type.
+        /// Creates a new instance of the <see cref="InterceptActionEmitter"/> type.
         /// </summary>
         /// <param name="type"> The dynamic proxy type. </param>
         /// <param name="signature"> The signature of the method to be created. </param>
