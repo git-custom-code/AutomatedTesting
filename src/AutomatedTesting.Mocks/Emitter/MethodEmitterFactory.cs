@@ -21,6 +21,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                     return new InterceptActionEmitter(type, signature, interceptor);
                 }
             }
+            else
+            {
+                if (signature.GetParameters().Any(p => p.IsOut || p.ParameterType.IsByRef) == false)
+                {
+                    return new InterceptFuncEmitter(type, signature, interceptor);
+                }
+            }
 
             throw new System.NotImplementedException();
         }
