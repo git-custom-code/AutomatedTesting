@@ -30,42 +30,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     ///     return;
     /// ]]>
     /// </remarks>
-    public sealed class InterceptActionEmitter : IMethodEmitter
+    public sealed class InterceptActionEmitter : MethodEmitterBase
     {
         #region Dependencies
-
-        /// <summary>
-        /// Static <see cref="InterceptActionEmitter"/> constructor.
-        /// </summary>
-        static InterceptActionEmitter()
-        {
-            var getTypeFromHandle = typeof(Type).GetMethod(
-                nameof(System.Type.GetTypeFromHandle),
-                BindingFlags.Static | BindingFlags.Public);
-            GetTypeFromHandle = getTypeFromHandle ?? throw new ArgumentNullException(nameof(GetTypeFromHandle));
-
-            var getMethod = typeof(Type).GetMethod(
-                nameof(System.Type.GetMethod),
-                new[] { typeof(string), typeof(Type[]) });
-            GetMethod = getMethod ?? throw new ArgumentNullException(nameof(GetMethod));
-
-            var getParameters = typeof(MethodInfo).GetMethod(nameof(MethodInfo.GetParameters), new Type[0]);
-            GetParameters = getParameters ?? throw new ArgumentNullException(nameof(GetParameters));
-
-            var add = typeof(Dictionary<string, object>).GetMethod(nameof(Dictionary<ParameterInfo, object>.Add));
-            Add = add ?? throw new ArgumentNullException(nameof(Add));
-
-            var constructor = typeof(Dictionary<ParameterInfo, object>).GetConstructor(new Type[0]);
-            DictionaryConstructor = constructor ?? throw new ArgumentNullException(nameof(DictionaryConstructor));
-
-            constructor = typeof(ActionInvocation).GetConstructor(new[] { typeof(IDictionary<ParameterInfo, object>), typeof(MethodInfo) });
-            ActionInvocationConstructor = constructor ?? throw new ArgumentNullException(nameof(ActionInvocationConstructor));
-
-            var intercept = typeof(IInterceptor).GetMethod(
-                nameof(IInterceptor.Intercept),
-                BindingFlags.Public | BindingFlags.Instance);
-            Intercept = intercept ?? throw new ArgumentNullException(nameof(Intercept));
-        }
 
         /// <summary>
         /// Creates a new instance of the <see cref="InterceptActionEmitter"/> type.
@@ -74,26 +41,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <param name="signature"> The signature of the method to be created. </param>
         /// <param name="interceptorField"> The <paramref name="type"/>'s <see cref="IInterceptor"/> backing field. </param>
         public InterceptActionEmitter(TypeBuilder type, MethodInfo signature, FieldBuilder interceptorField)
-        {
-            Type = type;
-            Signature = signature;
-            InterceptorField = interceptorField;
-        }
-
-        /// <summary>
-        /// Gets The <see cref="Type"/>'s <see cref="IInterceptor"/> backing field.
-        /// </summary>
-        private FieldBuilder InterceptorField { get; }
-
-        /// <summary>
-        /// Gets the signature of the method to be created.
-        /// </summary>
-        private MethodInfo Signature { get; }
-
-        /// <summary>
-        /// Gets the dynamic proxy type.
-        /// </summary>
-        private TypeBuilder Type { get; }
+            : base(type, signature, interceptorField)
+        { }
 
         #endregion
 
@@ -102,44 +51,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <summary>
         /// Gets the cached signature of the <see cref="ActionInvocation"/> constructor.
         /// </summary>
-        private static ConstructorInfo ActionInvocationConstructor { get; }
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="Dictionary{TKey, TValue}.Add(TKey, TValue)"/> method.
-        /// </summary>
-        private static MethodInfo Add { get; }
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="Dictionary{TKey, TValue}"/> constructor.
-        /// </summary>
-        private static ConstructorInfo DictionaryConstructor { get; }
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="Type.GetMethod(string, System.Type[])"/> method.
-        /// </summary>
-        private static MethodInfo GetMethod { get; }
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="MethodBase.GetParameters()"/> method.
-        /// </summary>
-        private static MethodInfo GetParameters { get; }
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="System.Type.GetTypeFromHandle(RuntimeTypeHandle)"/> method (^= typeof()).
-        /// </summary>
-        private static MethodInfo GetTypeFromHandle { get; }
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="IInterceptor.Intercept(IInvocation)"/> method.
-        /// </summary>
-        private static MethodInfo Intercept { get; }
+        private static Lazy<ConstructorInfo> ActionInvocationConstructor { get; } = new Lazy<ConstructorInfo>(InitializeActionInvocationConstructor, true);
 
         #endregion
 
         #region Logic
 
         /// <inheritdoc />
-        public void EmitMethodImplementation()
+        public override void EmitMethodImplementation()
         {
             var method = Type.DefineMethod(
                 Signature.Name,
@@ -166,60 +85,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             EmitReturnStatement(body);
         }
 
-        #region Local Variables
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     Type[] parameterTypes;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterTypesVariable"> The emitted local <see cref="System.Type"/> array variable. </param>
-        private void EmitLocalParameterTypesVariable(ILGenerator body, out LocalBuilder parameterTypesVariable)
-        {
-            parameterTypesVariable = body.DeclareLocal(typeof(Type[]));
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     MethodInfo methodSignature;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="methodSignatureVariable"> The emitted local <see cref="MethodInfo"/> variable. </param>
-        private void EmitLocalMethodSignatureVariable(ILGenerator body, out LocalBuilder methodSignatureVariable)
-        {
-            methodSignatureVariable = body.DeclareLocal(typeof(MethodInfo));
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     ParameterInfo[] parameterSignatures;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterSignaturesVariable"> The emitted local <see cref="ParameterInfo"/> array variable. </param>
-        private void EmitLocalParameterSignaturesVariable(ILGenerator body, out LocalBuilder parameterSignaturesVariable)
-        {
-            parameterSignaturesVariable = body.DeclareLocal(typeof(ParameterInfo[]));
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     Dictionary<ParameterInfo, object> parameter;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterVariable"> The emitted local <see cref="Dictionary{TKey, TValue}"/> variable. </param>
-        private void EmitLocalParameterVariable(ILGenerator body, out LocalBuilder parameterVariable)
-        {
-            parameterVariable = body.DeclareLocal(typeof(Dictionary<ParameterInfo, object>));
-        }
-
         /// <summary>
         /// Emits the following source code:
         /// <![CDATA[
@@ -231,117 +96,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         private void EmitLocalInvocationVariable(ILGenerator body, out LocalBuilder invocationVariable)
         {
             invocationVariable = body.DeclareLocal(typeof(ActionInvocation));
-        }
-
-        #endregion
-
-        #region Body
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     parameterTypes = new Type[N];
-        ///     parameterTypes[0] = typeof(ParameterType1);
-        ///     parameterTypes[1] = typeof(ParameterType2);
-        ///     ...
-        ///     parameterTypes[N-1] = typeof(ParameterTypeN);
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterTypesVariable"> The emitted local <see cref="System.Type"/> array variable. </param>
-        private void EmitCreateParameterTypesArray(ILGenerator body, LocalBuilder parameterTypesVariable)
-        {
-            body.Emit(OpCodes.Nop);
-
-            var parameters = Signature.GetParameters();
-            body.Emit(OpCodes.Ldc_I4, parameters.Length);
-            body.Emit(OpCodes.Newarr, typeof(Type));
-            body.Emit(OpCodes.Stloc, parameterTypesVariable.LocalIndex);
-            for (var i = 0u; i < parameters.Length; ++i)
-            {
-                body.Emit(OpCodes.Ldloc, parameterTypesVariable.LocalIndex);
-                body.Emit(OpCodes.Ldc_I4, i);
-                body.Emit(OpCodes.Ldtoken, parameters[i].ParameterType);
-                body.Emit(OpCodes.Call, GetTypeFromHandle);
-                body.Emit(OpCodes.Stelem_Ref);
-            }
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     methodSignature = typeof(Interface).GetMethod(nameof(Method), parameterTypes);
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterTypesVariable"> The emitted local <see cref="System.Type"/> array variable. </param>
-        /// <param name="methodSignatureVariable"> The emitted local <see cref="MethodInfo"/> variable. </param>
-        private void EmitGetMethodSignature(ILGenerator body, LocalBuilder parameterTypesVariable, LocalBuilder methodSignatureVariable)
-        {
-#pragma warning disable CS8604 // Possible null reference argument.
-            body.Emit(OpCodes.Ldtoken, Signature.DeclaringType);
-#pragma warning restore CS8604 // Possible null reference argument.
-            body.Emit(OpCodes.Call, GetTypeFromHandle);
-            body.Emit(OpCodes.Ldstr, Signature.Name);
-            body.Emit(OpCodes.Ldloc, parameterTypesVariable.LocalIndex);
-            body.Emit(OpCodes.Call, GetMethod);
-            body.Emit(OpCodes.Stloc, methodSignatureVariable.LocalIndex);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     parameterSignatures = methodSignature.GetParameters();
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="methodSignatureVariable"> The emitted local <see cref="MethodInfo"/> variable. </param>
-        /// <param name="parameterSignaturesVariable"> The emitted local <see cref="ParameterInfo"/> array variable. </param>
-        private void EmitGetParameterSignatures(ILGenerator body, LocalBuilder methodSignatureVariable, LocalBuilder parameterSignaturesVariable)
-        {
-            body.Emit(OpCodes.Ldloc, methodSignatureVariable.LocalIndex);
-            body.Emit(OpCodes.Callvirt, GetParameters);
-            body.Emit(OpCodes.Stloc, parameterSignaturesVariable.LocalIndex);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     parameter = new Dictionary<ParameterInfo, object>();
-        ///     parameter.Add(parameterSignatures[0], parameterValue1);
-        ///     parameter.Add(parameterSignatures[1], parameterValue2);
-        ///     ...
-        ///     parameter.Add(parameterSignatures[N-1], parameterValueN);
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterVariable"> The local <see cref="Dictionary{TKey, TValue}"/> variable. </param>
-        /// <param name="parameterSignaturesVariable"> The emitted local <see cref="ParameterInfo"/> array variable. </param>
-        private void EmitCreateParameterDictionary(
-            ILGenerator body,
-            LocalBuilder parameterVariable,
-            LocalBuilder parameterSignaturesVariable)
-        {
-            body.Emit(OpCodes.Newobj, DictionaryConstructor);
-            body.Emit(OpCodes.Stloc, parameterVariable.LocalIndex);
-
-            var methodParameters = Signature.GetParameters();
-            for (var i = 0u; i < methodParameters.Length; ++i)
-            {
-                var parameter = methodParameters[i];
-
-                body.Emit(OpCodes.Ldloc, parameterVariable.LocalIndex);
-                body.Emit(OpCodes.Ldloc, parameterSignaturesVariable.LocalIndex);
-                body.Emit(OpCodes.Ldc_I4, i);
-                body.Emit(OpCodes.Ldelem_Ref);
-
-                body.Emit(OpCodes.Ldarg, i + 1);
-                if (parameter.ParameterType.IsValueType)
-                {
-                    body.Emit(OpCodes.Box, parameter.ParameterType);
-                }
-                body.Emit(OpCodes.Callvirt, Add);
-            }
         }
 
         /// <summary>
@@ -362,24 +116,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         {
             body.Emit(OpCodes.Ldloc, parameterVariable.LocalIndex);
             body.Emit(OpCodes.Ldloc, methodSignatureVariable.LocalIndex);
-            body.Emit(OpCodes.Newobj, ActionInvocationConstructor);
+            body.Emit(OpCodes.Newobj, ActionInvocationConstructor.Value);
             body.Emit(OpCodes.Stloc, invocationVariable.LocalIndex);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     _interceptor.Intercept(invocation);
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="invocationVariable"> The local <see cref="ActionInvocation"/> variable. </param>
-        private void EmitCallInterceptor(ILGenerator body, LocalBuilder invocationVariable)
-        {
-            body.Emit(OpCodes.Ldarg_0);
-            body.Emit(OpCodes.Ldfld, InterceptorField);
-            body.Emit(OpCodes.Ldloc, invocationVariable.LocalIndex);
-            body.Emit(OpCodes.Callvirt, Intercept);
         }
 
         /// <summary>
@@ -395,7 +133,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.Emit(OpCodes.Ret);
         }
 
-        #endregion
+        /// <summary>
+        /// Initialization logic for the <see cref="ActionInvocationConstructor"/> property.
+        /// </summary>
+        /// <returns> The signature of the <see cref="ActionInvocation"/> constructor. </returns>
+        private static ConstructorInfo InitializeActionInvocationConstructor()
+        {
+            var constructor = typeof(ActionInvocation).GetConstructor(new[] { typeof(IDictionary<ParameterInfo, object>), typeof(MethodInfo) });
+            return constructor ?? throw new ArgumentNullException(nameof(ActionInvocationConstructor));
+        }
 
         #endregion
     }
