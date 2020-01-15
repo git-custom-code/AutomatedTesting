@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading.Tasks;
 
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
@@ -25,7 +26,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             {
                 if (signature.GetParameters().Any(p => p.IsOut || p.ParameterType.IsByRef) == false)
                 {
-                    return new InterceptFuncEmitter(type, signature, interceptor);
+                    if (signature.ReturnType == typeof(Task))
+                    {
+                        return new InterceptAsyncActionEmitter(type, signature, interceptor);
+                    }
+                    else
+                    {
+                        return new InterceptFuncEmitter(type, signature, interceptor);
+                    }
                 }
             }
 
