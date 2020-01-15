@@ -5,7 +5,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Implementation of the <see cref="IInvocation"/> interface for invoked asynchroous methods with
+    /// Implementation of the <see cref="IInvocation"/> interface for invoked asynchronous methods with
     /// return type <see cref="Task"/>.
     /// </summary>
     public sealed class AsyncActionInvocation : IInvocation
