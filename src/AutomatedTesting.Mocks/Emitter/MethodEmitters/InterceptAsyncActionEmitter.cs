@@ -166,7 +166,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <summary>
         /// Initialization logic for the <see cref="AsyncActionInvocationConstructor"/> property.
         /// </summary>
-        /// <returns> The signature of the <see cref="FuncInvocation"/> constructor. </returns>
+        /// <returns> The signature of the <see cref="AsyncActionInvocation"/> constructor. </returns>
         private static ConstructorInfo InitializeAsyncActionInvocationConstructor()
         {
             var constructor = typeof(AsyncActionInvocation).GetConstructor(new[] { typeof(IDictionary<ParameterInfo, object>), typeof(MethodInfo) });
@@ -176,7 +176,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <summary>
         /// Initialization logic for the <see cref="GetReturnValue"/> property.
         /// </summary>
-        /// <returns> Thethe signature of the <see cref="AsyncActionInvocation.ReturnValue"/> getter. </returns>
+        /// <returns> The signature of the <see cref="AsyncActionInvocation.ReturnValue"/> getter. </returns>
         private static MethodInfo InitializeGetReturnValue()
         {
             var getReturnValue = typeof(AsyncActionInvocation).GetProperty(nameof(AsyncActionInvocation.ReturnValue))?.GetGetMethod();
