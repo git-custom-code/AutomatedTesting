@@ -1,10 +1,11 @@
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Threading.Tasks;
-
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using System;
+    using System.Linq;
+    using System.Reflection;
+    using System.Reflection.Emit;
+    using System.Threading.Tasks;
+
     /// <summary>
     /// Default implementation of the <see cref="IMethodEmitterFactory"/> interface.
     /// </summary>
@@ -30,6 +31,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                     {
                         return new InterceptAsyncActionEmitter(type, signature, interceptor);
                     }
+                    else if (signature.ReturnType.IsGenericType && signature.ReturnType.GetGenericTypeDefinition() == typeof(Task<>))
+                    {
+                        return new InterceptAsyncFuncEmitter(type, signature, interceptor);
+                    }
                     else
                     {
                         return new InterceptFuncEmitter(type, signature, interceptor);
@@ -37,7 +42,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                 }
             }
 
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         #endregion
