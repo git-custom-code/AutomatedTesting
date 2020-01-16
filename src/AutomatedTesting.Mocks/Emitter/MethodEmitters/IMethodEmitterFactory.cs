@@ -1,6 +1,5 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
-    using CustomCode.AutomatedTesting.Mocks.Interception;
     using System.Reflection;
     using System.Reflection.Emit;
 
@@ -18,7 +17,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// </param>
         /// <param name="type"> The dynamic type that will contain the dynamic method to be created. </param>
         /// <param name="interceptor">
-        /// The dynamic <paramref name="type"/>'s <see cref="IInterceptor"/> that should be called by the dynamic method.
+        /// The dynamic <paramref name="type"/>'s <see cref="Interception.IInterceptor"/> that should be called by the dynamic method.
         /// </param>
         /// <returns>
         /// A new <see cref="IMethodEmitter"/> instance that can dynamically create a dynamic method with the given
