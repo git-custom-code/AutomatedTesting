@@ -19,14 +19,19 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <param name="methodEmitterFactory">
         /// A factory that can create <see cref="IMethodEmitter"/> instance based on a method's signature.
         /// </param>
+        /// <param name="propertyEmitterFactory">
+        /// A factory that can create <see cref="IPropertyEmitter"/> instance based on a property's signature.
+        /// </param>
         public TypeEmitter(
             TypeBuilder typeBuilder,
             IDependencyEmitter dependencyEmitter,
-            IMethodEmitterFactory methodEmitterFactory)
+            IMethodEmitterFactory methodEmitterFactory,
+            IPropertyEmitterFactory propertyEmitterFactory)
         {
             Type = typeBuilder;
             Dependencies = dependencyEmitter;
             MethodEmitterFactory = methodEmitterFactory;
+            PropertyEmitterFactory = propertyEmitterFactory;
         }
 
         /// <summary>
@@ -38,6 +43,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// Get a factory that can create <see cref="IMethodEmitter"/> instance based on a method's signature.
         /// </summary>
         private IMethodEmitterFactory MethodEmitterFactory { get; }
+
+        /// <summary>
+        /// Get a factory that can create <see cref="IPropertyEmitter"/> instance based on a property's signature.
+        /// </summary>
+        private IPropertyEmitterFactory PropertyEmitterFactory { get; }
 
         /// <summary>
         /// Gets the internal <see cref="TypeBuilder"/> that is used to dynamically emit logic.
@@ -60,6 +70,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             var interceptorField = Dependencies.CreateInterceptorDependency(Type);
             Dependencies.CreateConstructor(Type, interceptorField);
             Type.AddInterfaceImplementation(@interface);
+
+            foreach (var signature in @interface.GetProperties())
+            {
+                var emitter = PropertyEmitterFactory.CreatePropertyEmitterFor(signature, Type, interceptorField);
+                emitter.EmitPropertyImplementation();
+            }
 
             foreach (var signature in @interface.GetMethods().Where(m => !m.IsSpecialName))
             {
