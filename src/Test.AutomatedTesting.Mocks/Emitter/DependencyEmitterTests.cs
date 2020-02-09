@@ -1,8 +1,8 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
+    using Arrangements;
     using Interception;
     using LightInject;
-    using System;
     using System.Reflection;
     using Xunit;
 
@@ -18,7 +18,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
             var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
-            var expectedInterceptor = new LooseMockInterceptor();
+            var expectedInterceptor = new LooseMockInterceptor(new ArrangementCollection());
 
             // When
             var instance = proxyFactory.CreateForInterface<IFoo>(expectedInterceptor);
