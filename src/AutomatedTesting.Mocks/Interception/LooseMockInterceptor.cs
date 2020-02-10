@@ -5,7 +5,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Implementation of the <see cref="IInterceptor"/> interface for mock instances that will return
+    /// Implementation of the <see cref="IInterceptor"/> interface for mocked dependency instances that will return
     /// default values for each intercepted method and property.
     /// </summary>
     public sealed class LooseMockInterceptor : IInterceptor
