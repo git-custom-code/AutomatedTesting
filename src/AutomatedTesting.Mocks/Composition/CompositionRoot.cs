@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Composition
 {
     using Emitter;
+    using Interception;
     using LightInject;
     using System.Reflection.Emit;
 
@@ -31,6 +32,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Composition
                         methodEmitterFactory,
                         propertyEmitterFactory);
                 });
+            serviceRegistry.Register<IInterceptorFactory, InterceptorFactory>();
         }
 
         #endregion
