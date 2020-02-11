@@ -62,6 +62,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         public void ImplementInterface<T>() where T : class
         {
             var @interface = typeof(T);
+            ImplementInterface(@interface);
+        }
+
+        /// <inheritdoc />
+        public void ImplementInterface(Type @interface)
+        {
             if (!@interface.IsInterface)
             {
                 throw new ArgumentException($"Invalid non-interface type '{@interface.FullName}'");

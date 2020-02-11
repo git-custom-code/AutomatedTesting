@@ -35,6 +35,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
                 throw new NotImplementedException();
             }
 
+            public void ImplementInterface(Type @interface)
+            {
+                throw new NotImplementedException();
+            }
+
             public Type ToType()
             {
                 throw new NotImplementedException();
