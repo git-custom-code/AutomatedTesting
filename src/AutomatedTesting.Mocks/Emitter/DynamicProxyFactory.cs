@@ -33,27 +33,41 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         #region Logic
 
         /// <inheritdoc />
-        public T CreateForInterface<T>(IInterceptor interceptor) where T : class
+        public T CreateForInterface<T>(IInterceptor interceptor) where T : notnull
         {
-            try
+            var @interface = typeof(T);
+            var proxy = CreateForInterface(@interface, interceptor);
+            if (proxy is T typedProxy)
             {
-                var proxyName = $"{typeof(T).FullName}Mock";
-                var dynamicType = AssemblyEmitter.EmitType(proxyName);
-                dynamicType.ImplementInterface<T>();
-                var proxyType = dynamicType.ToType();
-                if (Activator.CreateInstance(proxyType, new[] { interceptor }) is T proxy)
-                {
-                    return proxy;
-                }
-            }
-            catch(Exception e)
-            {
-                throw new Exception($"Unable to create a proxy for interface {typeof(T).Name}", e);
+                return typedProxy;
             }
 
             throw new Exception($"Unable to create a proxy for interface {typeof(T).Name}");
         }
- 
+
+        /// <inheritdoc />
+        public object CreateForInterface(Type @interface, IInterceptor interceptor)
+        {
+            try
+            {
+                var proxyName = $"{@interface.FullName}Mock";
+                var dynamicType = AssemblyEmitter.EmitType(proxyName);
+                dynamicType.ImplementInterface(@interface);
+                var proxyType = dynamicType.ToType();
+                var proxy = Activator.CreateInstance(proxyType, new[] { interceptor });
+                if (proxy != null)
+                {
+                    return proxy;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Unable to create a proxy for interface {@interface.Name}", e);
+            }
+
+            throw new Exception($"Unable to create a proxy for interface {@interface.Name}");
+        }
+
         #endregion
     }
 }
