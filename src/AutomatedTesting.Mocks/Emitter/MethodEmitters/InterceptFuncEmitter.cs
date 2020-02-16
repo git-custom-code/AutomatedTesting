@@ -147,6 +147,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// </summary>
         /// <param name="body"> The body of the dynamic method. </param>
         /// <param name="invocationVariable"> The local <see cref="FuncInvocation"/> variable. </param>
+        /// <param name="returnValue"> The emitted local return value. </param>
         private void EmitReturnStatement(ILGenerator body, LocalBuilder invocationVariable, LocalBuilder returnValue)
         {
             var label = body.DefineLabel();
