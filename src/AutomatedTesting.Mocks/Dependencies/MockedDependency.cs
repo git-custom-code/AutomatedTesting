@@ -2,6 +2,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
 {
     using Arrangements;
     using Interception;
+    using System;
 
     /// <summary>
     /// Default implementation of the <see cref="IMockedDependency{T}"/> and <see cref="IMockedDependency"/>
@@ -30,6 +31,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
             Arrangements = arrangements;
             Interceptor = interceptor;
             Instance = instance;
+            Signature = typeof(T);
         }
 
         #endregion
@@ -50,6 +52,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         {
             get { return Instance; }
         }
+
+        /// <inheritdoc />
+        public Type Signature { get; }
 
         #endregion
 

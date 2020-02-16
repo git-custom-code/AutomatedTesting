@@ -2,6 +2,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
 {
     using Arrangements;
     using Interception;
+    using System;
 
     /// <summary>
     /// Interface that represents a dependency that is replaced by a dynamically created mock with
@@ -23,5 +24,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         /// Gets a dynamic proxy instance that has the exact same signature as the mocked dependency.
         /// </summary>
         object Instance { get; }
+
+        /// <summary>
+        /// Gets the signature of the mocked dependency.
+        /// </summary>
+        Type Signature { get; }
     }
 }
