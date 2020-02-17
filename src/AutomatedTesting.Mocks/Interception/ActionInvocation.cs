@@ -36,6 +36,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// </summary>
         public MethodInfo Signature { get; }
 
+        /// <inheritdoc />
+        MemberInfo IInvocation.Signature
+        {
+            get { return Signature; }
+        }
+
         #endregion
     }
 }

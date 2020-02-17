@@ -28,19 +28,25 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         #region Data
 
         /// <summary>
-        /// Gets or sets the return value of the intercepted method.
-        /// </summary>
-        public object? ReturnValue { get; set; }
-
-        /// <summary>
         /// Gets the parameter signatures and passed values of the invoked method.
         /// </summary>
         public IReadOnlyDictionary<ParameterInfo, object> Parameter { get; }
 
         /// <summary>
+        /// Gets or sets the return value of the intercepted method.
+        /// </summary>
+        public object? ReturnValue { get; set; }
+
+        /// <summary>
         /// Gets the signature of the invoked method (as <see cref="MethodInfo"/>).
         /// </summary>
         public MethodInfo Signature { get; }
+
+        /// <inheritdoc />
+        MemberInfo IInvocation.Signature
+        {
+            get { return Signature; }
+        }
 
         #endregion
     }
