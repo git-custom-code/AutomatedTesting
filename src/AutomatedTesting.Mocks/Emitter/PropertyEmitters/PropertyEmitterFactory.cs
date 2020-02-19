@@ -1,5 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using System;
+    using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
 
@@ -13,7 +15,17 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc />
         public IPropertyEmitter CreatePropertyEmitterFor(PropertyInfo signature, TypeBuilder type, FieldBuilder interceptor)
         {
-            throw new System.NotImplementedException();
+            if (signature.GetIndexParameters().Any())
+            {
+                throw new NotSupportedException();
+            }
+
+            if (signature.CanRead)
+            {
+                return new InterceptGetterEmitter(type, signature, interceptor);
+            }
+
+            throw new NotSupportedException();
         }
 
         #endregion
