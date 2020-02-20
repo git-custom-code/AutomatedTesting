@@ -24,6 +24,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             {
                 return new InterceptGetterEmitter(type, signature, interceptor);
             }
+            else if (signature.CanWrite)
+            {
+                return new InterceptSetterEmitter(type, signature, interceptor);
+            }
 
             throw new NotSupportedException();
         }
