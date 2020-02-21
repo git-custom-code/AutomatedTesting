@@ -22,6 +22,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
             if (signature.CanRead)
             {
+                if (signature.CanWrite)
+                {
+                    return new InterceptGetterSetterEmitter(type, signature, interceptor);
+                }
+
                 return new InterceptGetterEmitter(type, signature, interceptor);
             }
             else if (signature.CanWrite)
