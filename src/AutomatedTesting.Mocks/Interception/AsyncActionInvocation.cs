@@ -38,16 +38,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// </summary>
         public Task ReturnValue { get; set; }
 
-        /// <summary>
-        /// Gets the signature of the invoked asynchronous method (as <see cref="MethodInfo"/>).
-        /// </summary>
-        public MethodInfo Signature { get; }
-
         /// <inheritdoc />
-        MemberInfo IInvocation.Signature
-        {
-            get { return Signature; }
-        }
+        public MethodInfo Signature { get; }
 
         #endregion
     }

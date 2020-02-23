@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
+    using System;
     using System.Reflection;
 
     /// <summary>
@@ -16,7 +17,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// <param name="value"> The property's value. </param>
         public SetterInvocation(PropertyInfo signature, object? value)
         {
-            Signature = signature;
+            PropertySignature = signature;
+            Signature = signature.GetSetMethod() ?? throw new ArgumentException($"Property {signature.Name} has no setter", nameof(signature));
             Value = value;
         }
 
@@ -25,15 +27,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         #region Data
 
         /// <summary>
-        /// Gets the signature of the invoked property setter (as <see cref="PropertyInfo"/>).
+        /// Gets the signature of the invoked property (as <see cref="PropertyInfo"/>).
         /// </summary>
-        public PropertyInfo Signature { get; }
+        public PropertyInfo PropertySignature { get; }
 
         /// <inheritdoc />
-        MemberInfo IInvocation.Signature
-        {
-            get { return Signature; }
-        }
+        public MethodInfo Signature { get; }
 
         /// <summary>
         /// Gets the property's value.

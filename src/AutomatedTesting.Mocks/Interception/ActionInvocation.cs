@@ -31,16 +31,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// </summary>
         public IReadOnlyDictionary<ParameterInfo, object> Parameter { get; }
 
-        /// <summary>
-        /// Gets the signature of the invoked method (as <see cref="MethodInfo"/>).
-        /// </summary>
-        public MethodInfo Signature { get; }
-
         /// <inheritdoc />
-        MemberInfo IInvocation.Signature
-        {
-            get { return Signature; }
-        }
+        public MethodInfo Signature { get; }
 
         #endregion
     }

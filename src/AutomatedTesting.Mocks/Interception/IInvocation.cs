@@ -11,6 +11,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// <summary>
         /// Gets the signature of the invoked method or property.
         /// </summary>
-        MemberInfo Signature { get; }
+        MethodInfo Signature { get; }
     }
 }
