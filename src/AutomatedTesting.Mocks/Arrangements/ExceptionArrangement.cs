@@ -52,27 +52,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc />
         public bool CanApplyTo(IInvocation invocation)
         {
-            if (invocation is ActionInvocation actionInvocation)
-            {
-                return actionInvocation.Signature == Signature;
-            }
-
-            if (invocation is FuncInvocation funcInvocation)
-            {
-                return funcInvocation.Signature == Signature;
-            }
-
-            if (invocation is AsyncActionInvocation asyncActionInvocation)
-            {
-                return asyncActionInvocation.Signature == Signature;
-            }
-
-            if (invocation is AsyncFuncInvocation asyncFuncInvocation)
-            {
-                return asyncFuncInvocation.Signature == Signature;
-            }
-
-            return false;
+           return invocation.Signature == Signature;
         }
 
         /// <inheritdoc />
@@ -85,36 +65,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc />
         public bool TryApplyTo(IInvocation invocation)
         {
-            if (invocation is ActionInvocation actionInvocation)
+            if (invocation.Signature == Signature)
             {
-                if (actionInvocation.Signature == Signature)
-                {
-                    throw ExceptionFactory();
-                }
-            }
-
-            if (invocation is FuncInvocation funcInvocation)
-            {
-                if (funcInvocation.Signature == Signature)
-                {
-                    throw ExceptionFactory();
-                }
-            }
-
-            if (invocation is AsyncActionInvocation asyncActionInvocation)
-            {
-                if (asyncActionInvocation.Signature == Signature)
-                {
-                    throw ExceptionFactory();
-                }
-            }
-
-            if (invocation is AsyncFuncInvocation asyncFuncInvocation)
-            {
-                if (asyncFuncInvocation.Signature == Signature)
-                {
-                    throw ExceptionFactory();
-                }
+                throw ExceptionFactory();
             }
 
             return false;
