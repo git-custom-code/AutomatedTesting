@@ -7,7 +7,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
     /// Implementation of the <see cref="IInvocation"/> interface for invoked methods with
     /// non-void return type signature.
     /// </summary>
-    public sealed class FuncInvocation : IInvocation
+    public sealed class FuncInvocation : IInvocation, IHasReturnValue
     {
         #region Dependencies
 
@@ -32,9 +32,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// </summary>
         public IReadOnlyDictionary<ParameterInfo, object> Parameter { get; }
 
-        /// <summary>
-        /// Gets or sets the return value of the intercepted method.
-        /// </summary>
+        /// <inheritdoc />
         public object? ReturnValue { get; set; }
 
         /// <inheritdoc />

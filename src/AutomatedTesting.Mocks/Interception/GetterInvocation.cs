@@ -6,7 +6,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
     /// <summary>
     /// Implementation of the <see cref="IInvocation"/> interface for invoked property getters.
     /// </summary>
-    public sealed class GetterInvocation : IInvocation
+    public sealed class GetterInvocation : IInvocation, IHasReturnValue
     {
         #region Dependencies
 
@@ -30,9 +30,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// </summary>
         public PropertyInfo PropertySignature { get; }
 
-        /// <summary>
-        /// Gets or sets the return value of the intercepted property getter.
-        /// </summary>
+        /// <inheritdoc />
         public object? ReturnValue { get; set; }
 
         /// <inheritdoc />

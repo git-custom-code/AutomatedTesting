@@ -52,13 +52,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc />
         public bool CanApplyTo(IInvocation invocation)
         {
-            if (invocation is FuncInvocation funcInvocation)
+            if (invocation is IHasReturnValue || invocation is IHasAsyncReturnValue)
             {
-                return funcInvocation.Signature == Signature;
-            }
-            else if (invocation is AsyncFuncInvocation asyncFuncInvocation)
-            {
-                return asyncFuncInvocation.Signature == Signature;
+                return invocation.Signature == Signature;
             }
 
             return false;
@@ -73,25 +69,25 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc />
         public bool TryApplyTo(IInvocation invocation)
         {
-            if (invocation is FuncInvocation funcInvocation)
+            if (invocation is IHasReturnValue returnValueInvocation)
             {
-                if (funcInvocation.Signature == Signature)
+                if (invocation.Signature == Signature)
                 {
-                    funcInvocation.ReturnValue = ReturnValue;
+                    returnValueInvocation.ReturnValue = ReturnValue;
                     return true;
                 }
             }
-            else if (invocation is AsyncFuncInvocation asyncFuncInvocation)
+            else if (invocation is IHasAsyncReturnValue asyncReturnValueInvocation)
             {
-                if (asyncFuncInvocation.Signature == Signature)
+                if (invocation.Signature == Signature)
                 {
                     if (ReturnValue is Task asyncReturnValue)
                     {
-                        asyncFuncInvocation.ReturnValue = asyncReturnValue;
+                        asyncReturnValueInvocation.ReturnValue = asyncReturnValue;
                     }
                     else
                     {
-                        asyncFuncInvocation.ReturnValue = Task.FromResult(ReturnValue);
+                        asyncReturnValueInvocation.ReturnValue = Task.FromResult(ReturnValue);
                     }
                     return true;
                 }

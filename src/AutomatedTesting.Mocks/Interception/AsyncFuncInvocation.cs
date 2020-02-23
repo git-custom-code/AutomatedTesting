@@ -8,7 +8,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
     /// Implementation of the <see cref="IInvocation"/> interface for invoked asynchronous methods with
     /// return type <see cref="Task{T}"/>.
     /// </summary>
-    public sealed class AsyncFuncInvocation : IInvocation
+    public sealed class AsyncFuncInvocation : IInvocation, IHasAsyncReturnValue
     {
         #region Dependencies
 
@@ -33,9 +33,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// </summary>
         public IReadOnlyDictionary<ParameterInfo, object> Parameter { get; }
 
-        /// <summary>
-        /// Gets or sets the return value (task) of the intercepted asynchronous method.
-        /// </summary>
+        /// <inheritdoc />
         public Task ReturnValue { get; set; }
 
         /// <inheritdoc />
