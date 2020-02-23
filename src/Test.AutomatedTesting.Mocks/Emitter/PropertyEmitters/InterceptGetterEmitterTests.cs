@@ -30,7 +30,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Single(interceptor.ForwardedInvocations);
             var invocation = interceptor.ForwardedInvocations.Single() as GetterInvocation;
             Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithValueTypeGetter.Bar), invocation?.Signature.Name);
+            Assert.Equal(nameof(IFooWithValueTypeGetter.Bar), invocation?.PropertySignature.Name);
             Assert.Equal(42, result);
         }
 
@@ -52,7 +52,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Single(interceptor.ForwardedInvocations);
             var invocation = interceptor.ForwardedInvocations.Single() as GetterInvocation;
             Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithReferenceTypeGetter.Bar), invocation?.Signature.Name);
+            Assert.Equal(nameof(IFooWithReferenceTypeGetter.Bar), invocation?.PropertySignature.Name);
             Assert.NotNull(result);
             Assert.Equal("Foo", result.ToString());
         }

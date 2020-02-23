@@ -29,7 +29,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Single(interceptor.ForwardedInvocations);
             var invocation = interceptor.ForwardedInvocations.Single() as SetterInvocation;
             Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithSetter.Bar), invocation?.Signature.Name);
+            Assert.Equal(nameof(IFooWithSetter.Bar), invocation?.PropertySignature.Name);
             Assert.Equal(42.0, invocation?.Value);
         }
 

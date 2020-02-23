@@ -31,11 +31,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Equal(2, interceptor.ForwardedInvocations.Count);
             var getterInvocation = interceptor.ForwardedInvocations.First() as GetterInvocation;
             Assert.NotNull(getterInvocation);
-            Assert.Equal(nameof(IFooWithValueType.Bar), getterInvocation?.Signature.Name);
+            Assert.Equal(nameof(IFooWithValueType.Bar), getterInvocation?.PropertySignature.Name);
             Assert.Equal(42, result);
             var setterInvocation = interceptor.ForwardedInvocations.Last() as SetterInvocation;
             Assert.NotNull(setterInvocation);
-            Assert.Equal(nameof(IFooWithValueType.Bar), setterInvocation?.Signature.Name);
+            Assert.Equal(nameof(IFooWithValueType.Bar), setterInvocation?.PropertySignature.Name);
             Assert.Equal(13.0, setterInvocation?.Value);
         }
 
@@ -58,12 +58,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Equal(2, interceptor.ForwardedInvocations.Count);
             var getterInvocation = interceptor.ForwardedInvocations.First() as GetterInvocation;
             Assert.NotNull(getterInvocation);
-            Assert.Equal(nameof(IFooWithReferenceType.Bar), getterInvocation?.Signature.Name);
+            Assert.Equal(nameof(IFooWithReferenceType.Bar), getterInvocation?.PropertySignature.Name);
             Assert.NotNull(result);
             Assert.Equal(typeof(double), result);
             var setterInvocation = interceptor.ForwardedInvocations.Last() as SetterInvocation;
             Assert.NotNull(setterInvocation);
-            Assert.Equal(nameof(IFooWithReferenceType.Bar), setterInvocation?.Signature.Name);
+            Assert.Equal(nameof(IFooWithReferenceType.Bar), setterInvocation?.PropertySignature.Name);
             Assert.Equal(typeof(string), setterInvocation?.Value);
         }
 
