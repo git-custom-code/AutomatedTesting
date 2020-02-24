@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
     using Interception;
+    using System;
     using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
@@ -31,7 +32,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                 dependencies.Select(d => d.FieldType).ToArray());
 
             var body = constructor.GetILGenerator();
-            var baseCtor = typeof(object).GetConstructor(new System.Type[0]);
+            var baseCtor = typeof(object).GetConstructor(Array.Empty<Type>());
             if (baseCtor != null)
             {
                 body.Emit(OpCodes.Ldarg_0);
