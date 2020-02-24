@@ -63,7 +63,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <returns> The signature of the <see cref="Dictionary{TKey, TValue}"/> constructor. </returns>
         private static ConstructorInfo InitializeDictionaryConstructor()
         {
-            var constructor = typeof(Dictionary<ParameterInfo, object>).GetConstructor(new Type[0]);
+            var constructor = typeof(Dictionary<ParameterInfo, object>).GetConstructor(Array.Empty<Type>());
             return constructor ?? throw new ArgumentNullException(nameof(DictionaryConstructor));
         }
 
@@ -85,7 +85,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <returns> The signature of the <see cref="MethodBase.GetParameters()"/> method. </returns>
         private static MethodInfo InitializeGetParameters()
         {
-            var getParameters = typeof(MethodInfo).GetMethod(nameof(MethodInfo.GetParameters), new Type[0]);
+            var getParameters = typeof(MethodInfo).GetMethod(nameof(MethodInfo.GetParameters), Array.Empty<Type>());
             return getParameters ?? throw new ArgumentNullException(nameof(GetParameters));
         }
 
