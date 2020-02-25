@@ -2,6 +2,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
     using Interception;
     using System;
+    using System.Collections.Concurrent;
 
     /// <summary>
     /// Default implementation of the <see cref="IDynamicProxyFactory"/> interface.
@@ -30,6 +31,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #endregion
 
+        #region Data
+
+        /// <summary>
+        /// Gets a thread-safe cache to prevent that the same dynamic proxy type is being created multiple times.
+        /// </summary>
+        private ConcurrentDictionary<Type, Type> ProxyTypeCache { get; } = new ConcurrentDictionary<Type, Type>();
+
+        #endregion
+
         #region Logic
 
         /// <inheritdoc />
@@ -50,10 +60,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         {
             try
             {
-                var proxyName = $"{@interface.FullName}Mock";
-                var dynamicType = AssemblyEmitter.EmitType(proxyName);
-                dynamicType.ImplementInterface(@interface);
-                var proxyType = dynamicType.ToType();
+                var proxyType = ProxyTypeCache.GetOrAdd(@interface, EmitProxyTypeFor);
                 var proxy = Activator.CreateInstance(proxyType, new[] { interceptor });
                 if (proxy != null)
                 {
@@ -66,6 +73,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             }
 
             throw new Exception($"Unable to create a proxy for interface {@interface.Name}");
+        }
+
+        /// <summary>
+        /// Emits a new dynamic proxy type for the given<paramref name="interface"/>.
+        /// </summary>
+        /// <param name="interface"> The interface that should be implemented by the proxy. </param>
+        /// <returns> The dynamic proxy type that implements the given <paramref name="interface"/>. </returns>
+        private Type EmitProxyTypeFor(Type @interface)
+        {
+            var proxyName = $"{@interface.FullName}Mock";
+            var dynamicType = AssemblyEmitter.EmitType(proxyName);
+            dynamicType.ImplementInterface(@interface);
+            var proxyType = dynamicType.ToType();
+            return proxyType;
         }
 
         #endregion
