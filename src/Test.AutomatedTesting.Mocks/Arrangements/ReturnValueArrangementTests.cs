@@ -5,6 +5,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
     using System.Collections.Generic;
     using System.Reflection;
     using System.Threading.Tasks;
+    using TestDomain;
     using Xunit;
 
     /// <summary>
@@ -16,7 +17,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplyValueTypeReturnValueArrangement()
         {
             // Given
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ValueType)) ?? throw new InvalidOperationException();
+            var signature = typeof(IBarWithValueTypeFunc)
+                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueArrangement<int>(signature, 42);
 
@@ -31,23 +33,25 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplyReferenceTypeReturnValueArrangement()
         {
             // Given
-            var type = typeof(object);
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ReferenceType)) ?? throw new InvalidOperationException();
+            var value = new object();
+            var signature = typeof(IBarWithReferenceTypeFunc)
+                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
-            var arrangment = new ReturnValueArrangement<Type>(signature, type);
+            var arrangment = new ReturnValueArrangement<object?>(signature, value);
 
             // When
             arrangment.ApplyTo(invocation);
 
             // Then
-            Assert.Equal(type, invocation.ReturnValue);
+            Assert.Equal(value, invocation.ReturnValue);
         }
 
         [Fact(DisplayName = "Apply an arranged return value (value type) to an invocation of an async method")]
         public void ApplyAsyncValueTypeReturnValueArrangement()
         {
             // Given
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ValueTypeAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IBarWithAsyncValueTypeFunc)
+                .GetMethod(nameof(IBarWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueArrangement<int>(signature, 42);
 
@@ -64,7 +68,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplyAsyncValueTypeTaskReturnValueArrangement()
         {
             // Given
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ValueTypeAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IBarWithAsyncValueTypeFunc)
+                .GetMethod(nameof(IBarWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueArrangement<Task<int>>(signature, Task.FromResult(42));
 
@@ -81,44 +86,83 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplyAsyncReferenceTypeReturnValueArrangement()
         {
             // Given
-            var type = typeof(object);
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ReferenceTypeAsync)) ?? throw new InvalidOperationException();
+            var value = new object();
+            var signature = typeof(IBarWithAsyncReferenceTypeFunc)
+                .GetMethod(nameof(IBarWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
-            var arrangment = new ReturnValueArrangement<Type>(signature, type);
+            var arrangment = new ReturnValueArrangement<object?>(signature, value);
 
             // When
             arrangment.ApplyTo(invocation);
 
             // Then
             Assert.NotNull(invocation.ReturnValue);
-            Assert.IsAssignableFrom<Task<Type>>(invocation.ReturnValue);
-            Assert.Equal(type, ((Task<Type>)invocation.ReturnValue).Result);
+            Assert.IsAssignableFrom<Task<object?>>(invocation.ReturnValue);
+            Assert.Equal(value, ((Task<object?>)invocation.ReturnValue).Result);
         }
 
         [Fact(DisplayName = "Apply an arranged return value (task of reference type) to an invocation of an async method")]
         public void ApplyAsyncReferenceTypeTaskReturnValueArrangement()
         {
             // Given
-            var type = typeof(object);
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ValueTypeAsync)) ?? throw new InvalidOperationException();
+            var value = new object();
+            var signature = typeof(IBarWithAsyncReferenceTypeFunc)
+                .GetMethod(nameof(IBarWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
-            var arrangment = new ReturnValueArrangement<Task<Type>>(signature, Task.FromResult(type));
+            var arrangment = new ReturnValueArrangement<Task<object?>>(signature, Task.FromResult<object?>(value));
 
             // When
             arrangment.ApplyTo(invocation);
 
             // Then
             Assert.NotNull(invocation.ReturnValue);
-            Assert.IsAssignableFrom<Task<Type>>(invocation.ReturnValue);
-            Assert.Equal(type, ((Task<Type>)invocation.ReturnValue).Result);
+            Assert.IsAssignableFrom<Task<object?>>(invocation.ReturnValue);
+            Assert.Equal(value, ((Task<object?>)invocation.ReturnValue).Result);
+        }
+
+        [Fact(DisplayName = "Apply an arranged return value (value type) to an invocation of a property getter")]
+        public void ApplyValueTypeGetterReturnValueArrangement()
+        {
+            // Given
+            var signature = typeof(IBarWithValueTypeProperties)
+                .GetProperty(nameof(IBarWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var invocation = new GetterInvocation(signature);
+            var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
+            var arrangment = new ReturnValueArrangement<int>(getter, 42);
+
+            // When
+            arrangment.ApplyTo(invocation);
+
+            // Then
+            Assert.Equal(42, invocation.ReturnValue);
+        }
+
+        [Fact(DisplayName = "Apply an arranged return value (reference type) to an invocation of a property getter")]
+        public void ApplyReferenceTypeGetterReturnValueArrangement()
+        {
+            // Given
+            var value = new object();
+            var signature = typeof(IBarWithReferenceTypeProperties)
+                .GetProperty(nameof(IBarWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var invocation = new GetterInvocation(signature);
+            var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
+            var arrangment = new ReturnValueArrangement<object?>(getter, value);
+
+            // When
+            arrangment.ApplyTo(invocation);
+
+            // Then
+            Assert.Equal(value, invocation.ReturnValue);
         }
 
         [Fact(DisplayName = "Ensure that a return value arrangement is only applied if the invoked method signature matches")]
         public void EnsureNoArrangentIsAppliedToNonMatchingInvocation()
         {
             // Given
-            var valueTypeSignature = typeof(IFoo).GetMethod(nameof(IFoo.ValueType)) ?? throw new InvalidOperationException();
-            var referenceTypeSignature = typeof(IFoo).GetMethod(nameof(IFoo.ReferenceType)) ?? throw new InvalidOperationException();
+            var valueTypeSignature = typeof(IBarWithValueTypeFunc)
+                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var referenceTypeSignature = typeof(IBarWithReferenceTypeFunc)
+                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), referenceTypeSignature);
             var arrangment = new ReturnValueArrangement<int>(valueTypeSignature, 42);
 
@@ -133,7 +177,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void CanApplyWithMatchingSignatureReturnsTrue()
         {
             // Given
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ValueType)) ?? throw new InvalidOperationException();
+            var signature = typeof(IBarWithValueTypeFunc)
+                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueArrangement<int>(signature, 42);
 
@@ -149,8 +194,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void CanApplyWithNonMatchingSignatureReturnsFalse()
         {
             // Given
-            var valueTypeSignature = typeof(IFoo).GetMethod(nameof(IFoo.ValueType)) ?? throw new InvalidOperationException();
-            var referenceTypeSignature = typeof(IFoo).GetMethod(nameof(IFoo.ReferenceType)) ?? throw new InvalidOperationException();
+            var valueTypeSignature = typeof(IBarWithValueTypeFunc)
+                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var referenceTypeSignature = typeof(IBarWithReferenceTypeFunc)
+                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), referenceTypeSignature);
             var arrangment = new ReturnValueArrangement<int>(valueTypeSignature, 42);
 
@@ -166,7 +213,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplyValueTypeReturnValueArrangement()
         {
             // Given
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ValueType)) ?? throw new InvalidOperationException();
+            var signature = typeof(IBarWithValueTypeFunc)
+                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueArrangement<int>(signature, 42);
 
@@ -182,24 +230,26 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplyReferenceTypeReturnValueArrangement()
         {
             // Given
-            var type = typeof(object);
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ReferenceType)) ?? throw new InvalidOperationException();
+            var value = new object();
+            var signature = typeof(IBarWithReferenceTypeFunc)
+                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
-            var arrangment = new ReturnValueArrangement<Type>(signature, type);
+            var arrangment = new ReturnValueArrangement<object?>(signature, value);
 
             // When
             var wasApplied = arrangment.TryApplyTo(invocation);
 
             // Then
             Assert.True(wasApplied);
-            Assert.Equal(type, invocation.ReturnValue);
+            Assert.Equal(value, invocation.ReturnValue);
         }
 
         [Fact(DisplayName = "Try to apply an arranged return value (value type) to an invocation of an async method")]
         public void TryApplyAsyncValueTypeReturnValueArrangement()
         {
             // Given
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ValueTypeAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IBarWithAsyncValueTypeFunc)
+                .GetMethod(nameof(IBarWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueArrangement<int>(signature, 42);
 
@@ -217,7 +267,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplyAsyncValueTypeTaskReturnValueArrangement()
         {
             // Given
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ValueTypeAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IBarWithAsyncValueTypeFunc)
+                .GetMethod(nameof(IBarWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueArrangement<Task<int>>(signature, Task.FromResult(42));
 
@@ -235,10 +286,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplyAsyncReferenceTypeReturnValueArrangement()
         {
             // Given
-            var type = typeof(object);
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ReferenceTypeAsync)) ?? throw new InvalidOperationException();
+            var value = new object();
+            var signature = typeof(IBarWithAsyncReferenceTypeFunc)
+                .GetMethod(nameof(IBarWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
-            var arrangment = new ReturnValueArrangement<Type>(signature, type);
+            var arrangment = new ReturnValueArrangement<object?>(signature, value);
 
             // When
             var wasApplied = arrangment.TryApplyTo(invocation);
@@ -246,18 +298,19 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Then
             Assert.True(wasApplied);
             Assert.NotNull(invocation.ReturnValue);
-            Assert.IsAssignableFrom<Task<Type>>(invocation.ReturnValue);
-            Assert.Equal(type, ((Task<Type>)invocation.ReturnValue).Result);
+            Assert.IsAssignableFrom<Task<object?>>(invocation.ReturnValue);
+            Assert.Equal(value, ((Task<object?>)invocation.ReturnValue).Result);
         }
 
         [Fact(DisplayName = "Try to apply an arranged return value (task of reference type) to an invocation of an async method")]
         public void TryApplyAsyncReferenceTypeTaskReturnValueArrangement()
         {
             // Given
-            var type = typeof(object);
-            var signature = typeof(IFoo).GetMethod(nameof(IFoo.ValueTypeAsync)) ?? throw new InvalidOperationException();
+            var value = new object();
+            var signature = typeof(IBarWithAsyncReferenceTypeFunc)
+                .GetMethod(nameof(IBarWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
-            var arrangment = new ReturnValueArrangement<Task<Type>>(signature, Task.FromResult(type));
+            var arrangment = new ReturnValueArrangement<Task<object?>>(signature, Task.FromResult<object?>(value));
 
             // When
             var wasApplied = arrangment.TryApplyTo(invocation);
@@ -265,16 +318,56 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Then
             Assert.True(wasApplied);
             Assert.NotNull(invocation.ReturnValue);
-            Assert.IsAssignableFrom<Task<Type>>(invocation.ReturnValue);
-            Assert.Equal(type, ((Task<Type>)invocation.ReturnValue).Result);
+            Assert.IsAssignableFrom<Task<object?>>(invocation.ReturnValue);
+            Assert.Equal(value, ((Task<object?>)invocation.ReturnValue).Result);
+        }
+
+        [Fact(DisplayName = "Try to apply an arranged return value (value type) to an invocation of a property getter")]
+        public void TryApplyValueTypeGetterReturnValueArrangement()
+        {
+            // Given
+            var signature = typeof(IBarWithValueTypeProperties)
+                .GetProperty(nameof(IBarWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var invocation = new GetterInvocation(signature);
+            var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
+            var arrangment = new ReturnValueArrangement<int>(getter, 42);
+
+            // When
+            var wasApplied = arrangment.TryApplyTo(invocation);
+
+            // Then
+            Assert.True(wasApplied);
+            Assert.Equal(42, invocation.ReturnValue);
+        }
+
+        [Fact(DisplayName = "Try to apply an arranged return value (reference type) to an invocation of a property getter")]
+        public void TryApplyReferenceTypeGetterReturnValueArrangement()
+        {
+            // Given
+            var value = new object();
+            var signature = typeof(IBarWithReferenceTypeProperties)
+                .GetProperty(nameof(IBarWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var invocation = new GetterInvocation(signature);
+            var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
+            var arrangment = new ReturnValueArrangement<object?>(getter, value);
+
+            // When
+            var wasApplied = arrangment.TryApplyTo(invocation);
+
+            // Then
+            Assert.True(wasApplied);
+            Assert.NotNull(invocation.ReturnValue);
+            Assert.Equal(value, invocation.ReturnValue);
         }
 
         [Fact(DisplayName = "Ensure that TryApplyTo will return false if the invoked method signature does not match")]
-        public void EnsureTryAppliyIsFalseForNonMatchingInvocation()
+        public void EnsureTryApplyIsFalseForNonMatchingInvocation()
         {
             // Given
-            var valueTypeSignature = typeof(IFoo).GetMethod(nameof(IFoo.ValueType)) ?? throw new InvalidOperationException();
-            var referenceTypeSignature = typeof(IFoo).GetMethod(nameof(IFoo.ReferenceType)) ?? throw new InvalidOperationException();
+            var valueTypeSignature = typeof(IBarWithValueTypeFunc)
+                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var referenceTypeSignature = typeof(IBarWithReferenceTypeFunc)
+                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), referenceTypeSignature);
             var arrangment = new ReturnValueArrangement<int>(valueTypeSignature, 42);
 
@@ -285,20 +378,5 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             Assert.False(wasApplied);
             Assert.Null(invocation.ReturnValue);
         }
-
-        #region Domain
-
-        public interface IFoo
-        {
-            int ValueType();
-
-            Type ReferenceType();
-
-            Task<int> ValueTypeAsync();
-
-            Task<Type> ReferenceTypeAsync();
-        }
-
-        #endregion
     }
 }
