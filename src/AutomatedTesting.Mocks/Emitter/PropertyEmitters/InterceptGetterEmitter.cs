@@ -39,11 +39,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         #region Data
 
         /// <summary>
-        /// Gets the cached signature of the <see cref="GetterInvocation"/> constructor.
-        /// </summary>
-        private static Lazy<ConstructorInfo> GetterInvocationConstructor { get; } = new Lazy<ConstructorInfo>(InitializeGetterInvocationConstructor, true);
-
-        /// <summary>
         /// Gets the cached signature of the <see cref="GetterInvocation.ReturnValue"/> getter.
         /// </summary>
         private static Lazy<MethodInfo> GetReturnValue { get; } = new Lazy<MethodInfo>(InitializeGetReturnValue, true);
@@ -69,30 +64,17 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             var body = getter.GetILGenerator();
 
             // local variables
-            EmitLocalPropertySignatureVariable(body, out var propertySignatureVariable);
-            EmitLocalInvocationVariable(body, out var invocationVariable);
+            body.EmitLocalPropertySignatureVariable(out var propertySignatureVariable);
+            body.EmitLocalGetterInvocationVariable(out var invocationVariable);
             EmitLocalReturnValue(body, out var returnValue);
 
             // body
-            EmitGetPropertySignature(body, propertySignatureVariable);
-            EmitNewGetterInvocation(body, propertySignatureVariable, invocationVariable);
+            body.EmitGetPropertySignature(Signature, propertySignatureVariable);
+            body.EmitNewGetterInvocation(propertySignatureVariable, invocationVariable);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
             EmitReturnStatement(body, invocationVariable, returnValue);
 
             property.SetGetMethod(getter);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     GetterInvocation invocation;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic property's get method. </param>
-        /// <param name="invocationVariable"> The emitted local <see cref="GetterInvocation"/> variable. </param>
-        private void EmitLocalInvocationVariable(ILGenerator body, out LocalBuilder invocationVariable)
-        {
-            invocationVariable = body.DeclareLocal(typeof(GetterInvocation));
         }
 
         /// <summary>
@@ -106,25 +88,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         private void EmitLocalReturnValue(ILGenerator body, out LocalBuilder returnValue)
         {
             returnValue = body.DeclareLocal(Signature.PropertyType);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     invocation = new GetterInvocation(propertySignature);
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic property's get method. </param>
-        /// <param name="propertySignatureVariable"> The emitted local <see cref="PropertyInfo"/> variable. </param>
-        /// <param name="invocationVariable"> The local <see cref="GetterInvocation"/> variable. </param>
-        private void EmitNewGetterInvocation(
-            ILGenerator body,
-            LocalBuilder propertySignatureVariable,
-            LocalBuilder invocationVariable)
-        {
-            body.Emit(OpCodes.Ldloc, propertySignatureVariable.LocalIndex);
-            body.Emit(OpCodes.Newobj, GetterInvocationConstructor.Value);
-            body.Emit(OpCodes.Stloc, invocationVariable.LocalIndex);
         }
 
         /// <summary>
@@ -156,16 +119,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.MarkLabel(label);
             body.Emit(OpCodes.Ldloc, returnValue.LocalIndex);
             body.Emit(OpCodes.Ret);
-        }
-
-        /// <summary>
-        /// Initialization logic for the <see cref="GetterInvocationConstructor"/> property.
-        /// </summary>
-        /// <returns> The signature of the <see cref="GetterInvocation"/> constructor. </returns>
-        private static ConstructorInfo InitializeGetterInvocationConstructor()
-        {
-            var constructor = typeof(GetterInvocation).GetConstructor(new[] { typeof(PropertyInfo) });
-            return constructor ?? throw new ArgumentNullException(nameof(GetterInvocationConstructor));
         }
 
         /// <summary>

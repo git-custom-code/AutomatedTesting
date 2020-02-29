@@ -36,15 +36,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #endregion
 
-        #region Data
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="SetterInvocation"/> constructor.
-        /// </summary>
-        private static Lazy<ConstructorInfo> SetterInvocationConstructor { get; } = new Lazy<ConstructorInfo>(InitializeSetterInvocationConstructor, true);
-
-        #endregion
-
         #region Logic
 
         /// <inheritdoc />
@@ -64,53 +55,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             var body = setter.GetILGenerator();
 
             // local variables
-            EmitLocalPropertySignatureVariable(body, out var propertySignatureVariable);
-            EmitLocalInvocationVariable(body, out var invocationVariable);
+            body.EmitLocalPropertySignatureVariable(out var propertySignatureVariable);
+            body.EmitLocalSetterInvocationVariable(out var invocationVariable);
 
             // body
-            EmitGetPropertySignature(body, propertySignatureVariable);
-            EmitNewSetterInvocation(body, propertySignatureVariable, invocationVariable);
+            body.EmitGetPropertySignature(Signature, propertySignatureVariable);
+            body.EmitNewSetterInvocation(Signature.PropertyType, propertySignatureVariable, invocationVariable);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
             EmitReturnStatement(body);
 
             property.SetSetMethod(setter);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     SetterInvocation invocation;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic property's set method. </param>
-        /// <param name="invocationVariable"> The emitted local <see cref="SetterInvocation"/> variable. </param>
-        private void EmitLocalInvocationVariable(ILGenerator body, out LocalBuilder invocationVariable)
-        {
-            invocationVariable = body.DeclareLocal(typeof(SetterInvocation));
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     invocation = new SetterInvocation(propertySignature, value);
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic property's set method. </param>
-        /// <param name="propertySignatureVariable"> The emitted local <see cref="PropertyInfo"/> variable. </param>
-        /// <param name="invocationVariable"> The local <see cref="SetterInvocation"/> variable. </param>
-        private void EmitNewSetterInvocation(
-            ILGenerator body,
-            LocalBuilder propertySignatureVariable,
-            LocalBuilder invocationVariable)
-        {
-            body.Emit(OpCodes.Ldloc, propertySignatureVariable.LocalIndex);
-            body.Emit(OpCodes.Ldarg_1);
-            if (Signature.PropertyType.IsValueType)
-            {
-                body.Emit(OpCodes.Box, Signature.PropertyType);
-            }
-            body.Emit(OpCodes.Newobj, SetterInvocationConstructor.Value);
-            body.Emit(OpCodes.Stloc, invocationVariable.LocalIndex);
         }
 
         /// <summary>
@@ -128,16 +82,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.Emit(OpCodes.Br_S, label);
             body.MarkLabel(label);
             body.Emit(OpCodes.Ret);
-        }
-
-        /// <summary>
-        /// Initialization logic for the <see cref="SetterInvocationConstructor"/> property.
-        /// </summary>
-        /// <returns> The signature of the <see cref="SetterInvocation"/> constructor. </returns>
-        private static ConstructorInfo InitializeSetterInvocationConstructor()
-        {
-            var constructor = typeof(SetterInvocation).GetConstructor(new[] { typeof(PropertyInfo), typeof(object) });
-            return constructor ?? throw new ArgumentNullException(nameof(SetterInvocationConstructor));
         }
 
         #endregion
