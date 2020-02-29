@@ -4,6 +4,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     using Interception;
     using LightInject;
     using System.Reflection;
+    using TestDomain;
     using Xunit;
 
     /// <summary>
@@ -15,7 +16,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void EmitDynamicTypeWithInterceptorDependency()
         {
             // Given
-            var iocContainer = new ServiceContainer();
+            using var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
             var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
             var expectedInterceptor = new LooseMockInterceptor(new ArrangementCollection());
@@ -31,12 +32,5 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.NotNull(actualInterceptor);
             Assert.Equal(expectedInterceptor, actualInterceptor);
         }
-
-        #region Domain
-
-        public interface IFoo
-        { }
-
-        #endregion
     }
 }

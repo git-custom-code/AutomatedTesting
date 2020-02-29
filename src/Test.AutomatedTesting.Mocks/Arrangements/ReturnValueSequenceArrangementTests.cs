@@ -17,8 +17,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplySequenceOfValueTypeReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithValueTypeFunc)
+                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42, 65 }));
 
@@ -46,8 +46,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value1 = new object();
             var value2 = new object();
             var value3 = new object();
-            var signature = typeof(IBarWithReferenceTypeFunc)
-                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithReferenceTypeFunc)
+                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2, value3 }));
 
@@ -72,8 +72,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplyAsyncSequenceOfValueTypeReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IBarWithAsyncValueTypeFunc)
-                .GetMethod(nameof(IBarWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithAsyncValueTypeFunc)
+                .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42, 65 }));
 
@@ -106,8 +106,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplyAsyncSequenceOfValueTypeTaskReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IBarWithAsyncValueTypeFunc)
-                .GetMethod(nameof(IBarWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithAsyncValueTypeFunc)
+                .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<Task<int>>(signature, new List<Task<int>>(new[]
                 {
@@ -148,8 +148,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value1 = new object();
             var value2 = new object();
             var value3 = new object();
-            var signature = typeof(IBarWithAsyncReferenceTypeFunc)
-                .GetMethod(nameof(IBarWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithAsyncReferenceTypeFunc)
+                .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2, value3 }));
 
@@ -185,8 +185,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value1 = new object();
             var value2 = new object();
             var value3 = new object();
-            var signature = typeof(IBarWithAsyncReferenceTypeFunc)
-                .GetMethod(nameof(IBarWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithAsyncReferenceTypeFunc)
+                .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<Task<object?>>(signature, new List<Task<object?>>(new[]
                 {
@@ -224,8 +224,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplySequenceOfValueTypeReturnValuesGetterArrangement()
         {
             // Given
-            var signature = typeof(IBarWithValueTypeProperties)
-                .GetProperty(nameof(IBarWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithValueTypeProperties)
+                .GetProperty(nameof(IFooWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
             var invocation = new GetterInvocation(signature);
             var arrangment = new ReturnValueSequenceArrangement<int>(getter, new List<int>(new[] { 13, 42, 65 }));
@@ -251,8 +251,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplySequenceOfValueTypeReturnValuesGetterSetterArrangement()
         {
             // Given
-            var signature = typeof(IBarWithValueTypeProperties)
-                .GetProperty(nameof(IBarWithValueTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithValueTypeProperties)
+                .GetProperty(nameof(IFooWithValueTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
             var invocation = new GetterInvocation(signature);
             var arrangment = new ReturnValueSequenceArrangement<int>(getter, new List<int>(new[] { 13, 42, 65 }));
@@ -281,8 +281,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value1 = new object();
             var value2 = new object();
             var value3 = new object();
-            var signature = typeof(IBarWithReferenceTypeProperties)
-                .GetProperty(nameof(IBarWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithReferenceTypeProperties)
+                .GetProperty(nameof(IFooWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
             var invocation = new GetterInvocation(signature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(getter, new List<object?>(new[] { value1, value2, value3 }));
@@ -311,8 +311,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value1 = new object();
             var value2 = new object();
             var value3 = new object();
-            var signature = typeof(IBarWithReferenceTypeProperties)
-                .GetProperty(nameof(IBarWithReferenceTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithReferenceTypeProperties)
+                .GetProperty(nameof(IFooWithReferenceTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
             var invocation = new GetterInvocation(signature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(getter, new List<object?>(new[] { value1, value2, value3 }));
@@ -338,10 +338,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void EnsureNoArrangentIsAppliedToNonMatchingInvocation()
         {
             // Given
-            var valueTypeSignature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var referenceTypeSignature = typeof(IBarWithReferenceTypeFunc)
-                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var valueTypeSignature = typeof(IFooWithValueTypeFunc)
+                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var referenceTypeSignature = typeof(IFooWithReferenceTypeFunc)
+                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), referenceTypeSignature);
             var arrangment = new ReturnValueSequenceArrangement<int>(valueTypeSignature, new List<int>(new[] { 42 }));
 
@@ -356,8 +356,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void CanApplyWithMatchingSignatureReturnsTrue()
         {
             // Given
-            var signature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithValueTypeFunc)
+                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 42 }));
 
@@ -373,10 +373,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void CanApplyWithNonMatchingSignatureReturnsFalse()
         {
             // Given
-            var valueTypeSignature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var referenceTypeSignature = typeof(IBarWithReferenceTypeFunc)
-                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var valueTypeSignature = typeof(IFooWithValueTypeFunc)
+                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var referenceTypeSignature = typeof(IFooWithReferenceTypeFunc)
+                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), referenceTypeSignature);
             var arrangment = new ReturnValueSequenceArrangement<int>(valueTypeSignature, new List<int>(new[] { 42 }));
 
@@ -392,8 +392,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplySequenceOfValueTypeReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithValueTypeFunc)
+                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42 }));
 
@@ -420,8 +420,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var value1 = new object();
             var value2 = new object();
-            var signature = typeof(IBarWithReferenceTypeFunc)
-                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithReferenceTypeFunc)
+                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2 }));
 
@@ -446,8 +446,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplyAsyncSequenceOfValueTypeReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IBarWithAsyncValueTypeFunc)
-                .GetMethod(nameof(IBarWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithAsyncValueTypeFunc)
+                .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42 }));
 
@@ -478,8 +478,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplyAsyncSequenceOfValueTypeTaskReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IBarWithAsyncValueTypeFunc)
-                .GetMethod(nameof(IBarWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithAsyncValueTypeFunc)
+                .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<Task<int>>(signature, new List<Task<int>>(new[]
                 {
@@ -516,8 +516,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var value1 = new object();
             var value2 = new object();
-            var signature = typeof(IBarWithAsyncReferenceTypeFunc)
-                .GetMethod(nameof(IBarWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithAsyncReferenceTypeFunc)
+                .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2 }));
 
@@ -550,8 +550,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var value1 = new object();
             var value2 = new object();
-            var signature = typeof(IBarWithAsyncReferenceTypeFunc)
-                .GetMethod(nameof(IBarWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithAsyncReferenceTypeFunc)
+                .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
             var arrangment = new ReturnValueSequenceArrangement<Task<object?>>(signature, new List<Task<object?>>(new[]
                 {
@@ -586,8 +586,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplySequenceOfValueTypeReturnValuesGetterArrangement()
         {
             // Given
-            var signature = typeof(IBarWithValueTypeProperties)
-                .GetProperty(nameof(IBarWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithValueTypeProperties)
+                .GetProperty(nameof(IFooWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
             var invocation = new GetterInvocation(signature);
             var arrangment = new ReturnValueSequenceArrangement<int>(getter, new List<int>(new[] { 13, 42 }));
@@ -613,8 +613,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplySequenceOfValueTypeReturnValuesGetterSetterArrangement()
         {
             // Given
-            var signature = typeof(IBarWithValueTypeProperties)
-                .GetProperty(nameof(IBarWithValueTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithValueTypeProperties)
+                .GetProperty(nameof(IFooWithValueTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
             var invocation = new GetterInvocation(signature);
             var arrangment = new ReturnValueSequenceArrangement<int>(getter, new List<int>(new[] { 13, 42 }));
@@ -642,8 +642,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var value1 = new object();
             var value2 = new object();
-            var signature = typeof(IBarWithReferenceTypeProperties)
-                .GetProperty(nameof(IBarWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithReferenceTypeProperties)
+                .GetProperty(nameof(IFooWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
             var invocation = new GetterInvocation(signature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(getter, new List<object?>(new[] { value1, value2 }));
@@ -671,8 +671,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var value1 = new object();
             var value2 = new object();
-            var signature = typeof(IBarWithReferenceTypeProperties)
-                .GetProperty(nameof(IBarWithReferenceTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooWithReferenceTypeProperties)
+                .GetProperty(nameof(IFooWithReferenceTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
             var invocation = new GetterInvocation(signature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(getter, new List<object?>(new[] { value1, value2 }));
@@ -698,10 +698,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void EnsureTryApplyIsFalseForNonMatchingInvocation()
         {
             // Given
-            var valueTypeSignature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var referenceTypeSignature = typeof(IBarWithReferenceTypeFunc)
-                .GetMethod(nameof(IBarWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var valueTypeSignature = typeof(IFooWithValueTypeFunc)
+                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var referenceTypeSignature = typeof(IFooWithReferenceTypeFunc)
+                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), referenceTypeSignature);
             var arrangment = new ReturnValueSequenceArrangement<int>(valueTypeSignature, new List<int>(new[] { 42 }));
 

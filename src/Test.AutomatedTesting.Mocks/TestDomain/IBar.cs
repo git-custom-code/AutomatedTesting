@@ -1,8 +1,10 @@
 namespace CustomCode.AutomatedTesting.Mocks.TestDomain
 {
     /// <summary>
-    /// Marker interface that simulates a dependency.
+    /// Interface that simulates a type with a single dependency.
     /// </summary>
-    public interface IBar
-    { }
+    public interface IBar<T> where T : IFoo
+    {
+        T Dependency { get; }
+    }
 }

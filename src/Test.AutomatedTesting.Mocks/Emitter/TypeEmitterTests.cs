@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
+    using TestDomain;
     using LightInject;
     using Xunit;
 
@@ -33,7 +34,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void EmitDynamicTypeAtRuntime()
         {
             // Given
-            var iocContainer = new ServiceContainer();
+            using var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(ITypeEmitter).Assembly);
             var asmEmitter = iocContainer.GetInstance<IAssemblyEmitter>();
 
@@ -47,12 +48,5 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Equal("My.Namespace", type.Namespace);
             Assert.Equal("MyType", type.Name);
         }
-
-        #region Domain
-
-        public interface IFoo
-        { }
-
-        #endregion
     }
 }

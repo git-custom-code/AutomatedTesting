@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 {
     using Arrangements;
+    using ExceptionHandling;
     using System;
     using System.Linq;
     using TestDomain;
@@ -15,10 +16,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         public void SetupReturnSingleValueArrangement()
         {
             // Given
+            var type = typeof(IFooWithValueTypeAction);
+            var methodName = nameof(IFooWithValueTypeAction.MethodWithOneParameter);
+            var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var signature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithOneParameter))
-                ?? throw new Exception("Unable to get requested signature via reflection");
             var callBehavior = new CallBehavior<int>(arrangements, signature);
 
             // When
@@ -34,10 +35,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         public void SetupReturnSequenceArrangement()
         {
             // Given
+            var type = typeof(IFooWithValueTypeAction);
+            var methodName = nameof(IFooWithValueTypeAction.MethodWithOneParameter);
+            var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var signature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithOneParameter))
-                ?? throw new Exception("Unable to get requested signature via reflection");
             var callBehavior = new CallBehavior<int>(arrangements, signature);
 
             // When
@@ -53,10 +54,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         public void SetupThrowExceptionArrangement()
         {
             // Given
+            var type = typeof(IFooWithValueTypeAction);
+            var methodName = nameof(IFooWithValueTypeAction.MethodWithoutParameter);
+            var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var signature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter))
-                ?? throw new Exception("Unable to get requested signature via reflection");
             var callBehavior = new CallBehavior<int>(arrangements, signature);
 
             // When
@@ -72,14 +73,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         public void SetupRethrowExceptionInstanceArrangement()
         {
             // Given
+            var type = typeof(IFooWithValueTypeAction);
+            var methodName = nameof(IFooWithValueTypeAction.MethodWithoutParameter);
+            var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var signature = typeof(IBarWithValueTypeFunc)
-                .GetMethod(nameof(IBarWithValueTypeFunc.MethodWithoutParameter))
-                ?? throw new Exception("Unable to get requested signature via reflection");
             var callBehavior = new CallBehavior<int>(arrangements, signature);
 
             // When
-            callBehavior.Throws(new ArgumentNullException());
+            callBehavior.Throws(new Exception());
 
             // Then
             Assert.Single(arrangements);

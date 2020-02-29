@@ -5,7 +5,7 @@ namespace CustomCode.AutomatedTesting.Mocks.TestDomain
     /// <summary>
     /// Interface that simulates a dependency that contains asynchronous methods that return value type values.
     /// </summary>
-    public interface IBarWithAsyncValueTypeFunc : IBar
+    public interface IFooWithAsyncValueTypeFunc : IFoo
     {
         Task<int> MethodWithoutParameterAsync();
 

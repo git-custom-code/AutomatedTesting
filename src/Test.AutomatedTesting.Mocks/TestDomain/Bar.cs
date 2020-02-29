@@ -1,11 +1,11 @@
 namespace CustomCode.AutomatedTesting.Mocks.TestDomain
 {
     /// <summary>
-    /// Implementation of the <see cref="IFoo{T}"/> interface that simulates a type with a single dependency.
+    /// Implementation of the <see cref="IBar{T}"/> interface that simulates a type with a single dependency.
     /// </summary>
-    public sealed class Foo<T> where T : IBar
+    public sealed class Bar<T> where T : IFoo
     {
-        public Foo(T dependency)
+        public Bar(T dependency)
         {
             Dependency = dependency;
         }

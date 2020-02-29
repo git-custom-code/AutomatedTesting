@@ -16,7 +16,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithValueTypeAction>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithValueTypeAction>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(b => b.MethodWithoutParameter());
@@ -31,7 +31,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithValueTypeAction>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithValueTypeAction>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.MethodWithOneParameter(0));
@@ -50,7 +50,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithReferenceTypeAction>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithReferenceTypeAction>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(b => b.MethodWithoutParameter());
@@ -65,7 +65,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithValueTypeAction>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithValueTypeAction>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.MethodWithOneParameter(0));
@@ -84,7 +84,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithValueTypeFunc>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithValueTypeFunc>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(b => b.MethodWithoutParameter());
@@ -99,7 +99,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithValueTypeFunc>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithValueTypeFunc>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.MethodWithOneParameter(0));
@@ -118,7 +118,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithReferenceTypeFunc>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithReferenceTypeFunc>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(b => b.MethodWithoutParameter());
@@ -133,7 +133,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithReferenceTypeFunc>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithReferenceTypeFunc>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.MethodWithOneParameter(0));
@@ -152,7 +152,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithValueTypeProperties>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithValueTypeProperties>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.Getter);
@@ -167,7 +167,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithValueTypeProperties>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithValueTypeProperties>(arrangements);
 
             // When
             var callArrangements = mockArrangements.ThatAssigning(b => b.Setter = 0);
@@ -182,7 +182,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithValueTypeProperties>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithValueTypeProperties>(arrangements);
 
             // When
             var getterArrangements = mockArrangements.That(b => b.GetterSetter);
@@ -204,7 +204,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithReferenceTypeProperties>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithReferenceTypeProperties>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.Getter);
@@ -219,7 +219,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithReferenceTypeProperties>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithReferenceTypeProperties>(arrangements);
 
             // When
             var callArrangements = mockArrangements.ThatAssigning(b => b.Setter = 0);
@@ -234,7 +234,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IBarWithReferenceTypeProperties>(arrangements);
+            var mockArrangements = new MockBehavior<IFooWithReferenceTypeProperties>(arrangements);
 
             // When
             var getterArrangements = mockArrangements.That(b => b.GetterSetter);

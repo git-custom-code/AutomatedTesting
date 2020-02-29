@@ -3,7 +3,7 @@ namespace CustomCode.AutomatedTesting.Mocks.TestDomain
     /// <summary>
     /// Interface that simulates a dependency that contains value type properties.
     /// </summary>
-    public interface IBarWithReferenceTypeProperties : IBar
+    public interface IFooWithReferenceTypeProperties : IFoo
     {
         object? Getter { get; }
 

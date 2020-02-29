@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Dependencies.Tests
 {
     using LightInject;
+    using TestDomain;
     using Xunit;
 
     /// <summary>
@@ -12,7 +13,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies.Tests
         public void CreateMockedDependencyFromInterface()
         {
             // Given
-            var iocContainer = new ServiceContainer();
+            using var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IMockedDependencyFactory).Assembly);
             var factory = iocContainer.GetInstance<IMockedDependencyFactory>();
 
@@ -31,7 +32,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies.Tests
         public void CreateMockedDependencyFromInterfaceType()
         {
             // Given
-            var iocContainer = new ServiceContainer();
+            using var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IMockedDependencyFactory).Assembly);
             var factory = iocContainer.GetInstance<IMockedDependencyFactory>();
 
@@ -45,12 +46,5 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies.Tests
             Assert.NotNull(mock.Interceptor);
             Assert.IsAssignableFrom<IFoo>(mock.Instance);
         }
-
-        #region Domain
-
-        public interface IFoo
-        { }
-
-        #endregion
     }
 }

@@ -3,6 +3,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     using Arrangements;
     using Interception;
     using LightInject;
+    using TestDomain;
     using Xunit;
 
     /// <summary>
@@ -14,7 +15,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateDynamicProxyForInterface()
         {
             // Given
-            var iocContainer = new ServiceContainer();
+            using var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
             var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
 
@@ -24,12 +25,5 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(proxy);
         }
-
-        #region Domain
-
-        public interface IFoo
-        { }
-
-        #endregion
     }
 }
