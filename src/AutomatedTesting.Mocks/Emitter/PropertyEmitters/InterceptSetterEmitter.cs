@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using Extensions;
     using Interception;
     using System;
     using System.Reflection;
@@ -69,7 +70,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             // body
             EmitGetPropertySignature(body, propertySignatureVariable);
             EmitNewSetterInvocation(body, propertySignatureVariable, invocationVariable);
-            EmitCallInterceptor(body, invocationVariable);
+            body.EmitInterceptCall(InterceptorField, invocationVariable);
             EmitReturnStatement(body);
 
             property.SetSetMethod(setter);

@@ -173,22 +173,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             }
         }
 
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     _interceptor.Intercept(invocation);
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="invocationVariable"> The local <see cref="ActionInvocation"/> variable. </param>
-        protected void EmitCallInterceptor(ILGenerator body, LocalBuilder invocationVariable)
-        {
-            body.Emit(OpCodes.Ldarg_0);
-            body.Emit(OpCodes.Ldfld, InterceptorField);
-            body.Emit(OpCodes.Ldloc, invocationVariable.LocalIndex);
-            body.Emit(OpCodes.Callvirt, Intercept.Value);
-        }
-
         #endregion
     }
 }

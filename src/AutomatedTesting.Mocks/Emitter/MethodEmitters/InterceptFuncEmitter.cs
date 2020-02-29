@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using Extensions;
     using Interception;
     using System;
     using System.Collections.Generic;
@@ -86,7 +87,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             EmitGetParameterSignatures(body, methodSignatureVariable, parameterSignaturesVariable);
             EmitCreateParameterDictionary(body, parameterVariable, parameterSignaturesVariable);
             EmitNewFuncInvocation(body, parameterVariable, methodSignatureVariable, invocationVariable);
-            EmitCallInterceptor(body, invocationVariable);
+            body.EmitInterceptCall(InterceptorField, invocationVariable);
 
             EmitReturnStatement(body, invocationVariable, returnValue);
         }

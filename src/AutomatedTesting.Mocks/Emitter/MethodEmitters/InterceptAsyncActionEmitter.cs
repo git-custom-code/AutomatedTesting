@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using Extensions;
     using Interception;
     using System;
     using System.Collections.Generic;
@@ -87,7 +88,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             EmitGetParameterSignatures(body, methodSignatureVariable, parameterSignaturesVariable);
             EmitCreateParameterDictionary(body, parameterVariable, parameterSignaturesVariable);
             EmitNewFuncInvocation(body, parameterVariable, methodSignatureVariable, invocationVariable);
-            EmitCallInterceptor(body, invocationVariable);
+            body.EmitInterceptCall(InterceptorField, invocationVariable);
 
             EmitReturnStatement(body, invocationVariable, returnValue);
         }
@@ -169,7 +170,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <returns> The signature of the <see cref="AsyncActionInvocation"/> constructor. </returns>
         private static ConstructorInfo InitializeAsyncActionInvocationConstructor()
         {
-            var constructor = typeof(AsyncActionInvocation).GetConstructor(new[] { typeof(IDictionary<ParameterInfo, object>), typeof(MethodInfo) });
+            var constructor = typeof(AsyncActionInvocation).GetConstructor(new[]
+                {
+                    typeof(IDictionary<ParameterInfo, object?>),
+                    typeof(MethodInfo)
+                });
             return constructor ?? throw new ArgumentNullException(nameof(AsyncActionInvocationConstructor));
         }
 
