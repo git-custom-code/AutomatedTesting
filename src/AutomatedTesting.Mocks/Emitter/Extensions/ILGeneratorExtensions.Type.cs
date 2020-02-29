@@ -27,7 +27,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <returns> The signature of the <see cref="Type.GetTypeFromHandle(RuntimeTypeHandle)"/> method (^= typeof()).</returns>
         private static MethodInfo InitializeGetTypeFromHandle()
         {
-            var @type = typeof(Type);
+            var type = typeof(Type);
             var methodName = nameof(Type.GetTypeFromHandle);
             var getTypeFromHandle = @type.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public);
             return getTypeFromHandle ?? throw new MethodInfoException(type, methodName);

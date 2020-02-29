@@ -64,10 +64,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <returns> The signature of the <see cref="Type.GetProperty(string)"/> method. </returns>
         private static MethodInfo InitializeGetProperty()
         {
-            var @type = typeof(Type);
+            var type = typeof(Type);
             var propertyName = nameof(Type.GetProperty);
             var getProperty = @type.GetMethod(propertyName, new[] { typeof(string) });
-            return getProperty ?? throw new PropertyInfoException(@type, propertyName);
+            return getProperty ?? throw new PropertyInfoException(type, propertyName);
         }
 
         #endregion

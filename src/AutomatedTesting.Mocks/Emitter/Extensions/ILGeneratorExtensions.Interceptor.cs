@@ -46,10 +46,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <returns> The signature of the <see cref="IInterceptor.Intercept(IInvocation)"/> method. </returns>
         private static MethodInfo InitializeIntercept()
         {
-            var @type = typeof(IInterceptor);
+            var type = typeof(IInterceptor);
             var methodName = nameof(IInterceptor.Intercept);
             var intercept = @type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
-            return intercept ?? throw new MethodInfoException(@type, methodName);
+            return intercept ?? throw new MethodInfoException(type, methodName);
         }
 
         #endregion

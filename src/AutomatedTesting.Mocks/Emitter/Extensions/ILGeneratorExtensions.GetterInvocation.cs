@@ -60,9 +60,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <returns> The signature of the <see cref="GetterInvocation"/> constructor. </returns>
         private static ConstructorInfo InitializeCreateGetterInvocation()
         {
-            var @type = typeof(GetterInvocation);
+            var type = typeof(GetterInvocation);
             var constructor = @type.GetConstructor(new[] { typeof(PropertyInfo) });
-            return constructor ?? throw new ConstructorInfoException(@type);
+            return constructor ?? throw new ConstructorInfoException(type);
         }
 
         #endregion

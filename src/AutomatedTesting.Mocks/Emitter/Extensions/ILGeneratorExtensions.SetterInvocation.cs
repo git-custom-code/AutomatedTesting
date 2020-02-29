@@ -68,9 +68,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <returns> The signature of the <see cref="SetterInvocation"/> constructor. </returns>
         private static ConstructorInfo InitializeCreateSetterInvocation()
         {
-            var @type = typeof(SetterInvocation);
+            var type = typeof(SetterInvocation);
             var constructor = @type.GetConstructor(new[] { typeof(PropertyInfo), typeof(object) });
-            return constructor ?? throw new ConstructorInfoException(@type);
+            return constructor ?? throw new ConstructorInfoException(type);
         }
 
         #endregion

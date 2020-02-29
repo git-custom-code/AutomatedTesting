@@ -74,18 +74,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             var body = method.GetILGenerator();
 
             // local variables
-            EmitLocalParameterTypesVariable(body, out var parameterTypesVariable);
-            EmitLocalMethodSignatureVariable(body, out var methodSignatureVariable);
-            EmitLocalParameterSignaturesVariable(body, out var parameterSignaturesVariable);
-            EmitLocalParameterVariable(body, out var parameterVariable);
+            body.EmitLocalParameterTypesVariable(out var parameterTypesVariable);
+            body.EmitLocalMethodSignatureVariable(out var methodSignatureVariable);
+            body.EmitLocalParameterSignaturesVariable(out var parameterSignaturesVariable);
+            body.EmitLocalParameterVariable(out var parameterVariable);
             EmitLocalInvocationVariable(body, out var invocationVariable);
             EmitLocalReturnValue(body, out var returnValue);
 
             // body
-            EmitCreateParameterTypesArray(body, parameterTypesVariable);
-            EmitGetMethodSignature(body, parameterTypesVariable, methodSignatureVariable);
-            EmitGetParameterSignatures(body, methodSignatureVariable, parameterSignaturesVariable);
-            EmitCreateParameterDictionary(body, parameterVariable, parameterSignaturesVariable);
+            body.EmitCreateParameterTypesArray(Signature, parameterTypesVariable);
+            body.EmitGetMethodSignature(Signature, parameterTypesVariable, methodSignatureVariable);
+            body.EmitGetParameterSignatures(methodSignatureVariable, parameterSignaturesVariable);
+            body.EmitCreateParameterDictionary(Signature, parameterVariable, parameterSignaturesVariable);
             EmitNewFuncInvocation(body, parameterVariable, methodSignatureVariable, invocationVariable);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
 
