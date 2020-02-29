@@ -4,7 +4,7 @@ namespace CustomCode.AutomatedTesting.Mocks.ExceptionHandling
     using System.Reflection;
 
     /// <summary>
-    /// Exception that is throw whenever a <see cref="MethodInfo"/> could not be found via reflection.
+    /// Exception that is thrown whenever a <see cref="MethodInfo"/> could not be found via reflection.
     /// </summary>
     public sealed class MethodInfoException : ReflectionException
     {
