@@ -25,10 +25,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
         #region Mocks
 
-        public sealed class MockEmitter : ITypeEmitter
+        private sealed class MockEmitter : ITypeEmitter
         {
             public MockEmitter(TypeBuilder builder)
-            { }
+            {
+                Builder = builder;
+            }
+
+            public TypeBuilder Builder { get; }
 
             public void ImplementInterface<T>() where T : class
             {

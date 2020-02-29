@@ -4,6 +4,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     using LightInject;
     using System.Collections.Generic;
     using System.Linq;
+    using TestDomain;
     using Xunit;
 
     /// <summary>
@@ -21,30 +22,21 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var interceptor = new SetterInterceptor();
 
             // When
-            var foo = proxyFactory.CreateForInterface<IFooWithSetter>(interceptor);
-            foo.Bar = 42.0;
+            var foo = proxyFactory.CreateForInterface<IFooWithValueTypeProperties>(interceptor);
+            foo.Setter = 42;
 
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
             var invocation = interceptor.ForwardedInvocations.Single() as SetterInvocation;
             Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithSetter.Bar), invocation?.PropertySignature.Name);
-            Assert.Equal(42.0, invocation?.Value);
+            Assert.Equal(nameof(IFooWithValueTypeProperties.Setter), invocation?.PropertySignature.Name);
+            Assert.Equal(42, invocation?.Value);
         }
-
-        #region Domain
-
-        public interface IFooWithSetter
-        {
-            double Bar { set; }
-        }
-
-        #endregion
 
         #region Mocks
 
-        public sealed class SetterInterceptor : IInterceptor
+        private sealed class SetterInterceptor : IInterceptor
         {
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 

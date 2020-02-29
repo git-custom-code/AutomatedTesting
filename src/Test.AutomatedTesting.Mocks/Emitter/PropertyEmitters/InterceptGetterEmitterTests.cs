@@ -5,6 +5,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using TestDomain;
     using Xunit;
 
     /// <summary>
@@ -22,15 +23,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var interceptor = new GetterWithValueTypeInterceptor();
 
             // When
-            var foo = proxyFactory.CreateForInterface<IFooWithValueTypeGetter>(interceptor);
-            var result = foo.Bar;
+            var foo = proxyFactory.CreateForInterface<IFooWithValueTypeProperties>(interceptor);
+            var result = foo.Getter;
 
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
             var invocation = interceptor.ForwardedInvocations.Single() as GetterInvocation;
             Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithValueTypeGetter.Bar), invocation?.PropertySignature.Name);
+            Assert.Equal(nameof(IFooWithValueTypeProperties.Getter), invocation?.PropertySignature.Name);
             Assert.Equal(42, result);
         }
 
@@ -44,36 +45,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var interceptor = new GetterWithReferenceTypeInterceptor();
 
             // When
-            var foo = proxyFactory.CreateForInterface<IFooWithReferenceTypeGetter>(interceptor);
-            var result = foo.Bar;
+            var foo = proxyFactory.CreateForInterface<IFooWithReferenceTypeProperties>(interceptor);
+            var result = foo.Getter;
 
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
             var invocation = interceptor.ForwardedInvocations.Single() as GetterInvocation;
             Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithReferenceTypeGetter.Bar), invocation?.PropertySignature.Name);
+            Assert.Equal(nameof(IFooWithReferenceTypeProperties.Getter), invocation?.PropertySignature.Name);
             Assert.NotNull(result);
-            Assert.Equal("Foo", result.ToString());
+            Assert.Equal("Foo", result?.ToString());
         }
-
-        #region Domain
-
-        public interface IFooWithValueTypeGetter
-        {
-            double Bar { get; }
-        }
-
-        public interface IFooWithReferenceTypeGetter
-        {
-            StringBuilder Bar { get; }
-        }
-
-        #endregion
 
         #region Mocks
 
-        public sealed class GetterWithValueTypeInterceptor : IInterceptor
+        private sealed class GetterWithValueTypeInterceptor : IInterceptor
         {
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
@@ -82,12 +69,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
                 ForwardedInvocations.Add(invocation);
                 if (invocation is GetterInvocation getterInvocation)
                 {
-                    getterInvocation.ReturnValue = 42.0;
+                    getterInvocation.ReturnValue = 42;
                 }
             }
         }
 
-        public sealed class GetterWithReferenceTypeInterceptor : IInterceptor
+        private sealed class GetterWithReferenceTypeInterceptor : IInterceptor
         {
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 

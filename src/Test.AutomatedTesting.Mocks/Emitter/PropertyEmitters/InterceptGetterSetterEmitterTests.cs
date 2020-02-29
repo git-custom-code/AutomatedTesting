@@ -2,9 +2,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
     using Interception;
     using LightInject;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using TestDomain;
     using Xunit;
 
     /// <summary>
@@ -22,21 +22,21 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var interceptor = new ValueTypeInterceptor();
 
             // When
-            var foo = proxyFactory.CreateForInterface<IFooWithValueType>(interceptor);
-            var result = foo.Bar;
-            foo.Bar = 13.0;
+            var foo = proxyFactory.CreateForInterface<IFooWithValueTypeProperties>(interceptor);
+            var result = foo.GetterSetter;
+            foo.GetterSetter = 13;
 
             // Then
             Assert.NotNull(foo);
             Assert.Equal(2, interceptor.ForwardedInvocations.Count);
             var getterInvocation = interceptor.ForwardedInvocations.First() as GetterInvocation;
             Assert.NotNull(getterInvocation);
-            Assert.Equal(nameof(IFooWithValueType.Bar), getterInvocation?.PropertySignature.Name);
+            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), getterInvocation?.PropertySignature.Name);
             Assert.Equal(42, result);
             var setterInvocation = interceptor.ForwardedInvocations.Last() as SetterInvocation;
             Assert.NotNull(setterInvocation);
-            Assert.Equal(nameof(IFooWithValueType.Bar), setterInvocation?.PropertySignature.Name);
-            Assert.Equal(13.0, setterInvocation?.Value);
+            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), setterInvocation?.PropertySignature.Name);
+            Assert.Equal(13, setterInvocation?.Value);
         }
 
         [Fact(DisplayName = "Emit a dynamic reference type property implementation for an interface")]
@@ -49,41 +49,27 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var interceptor = new ReferenceTypeInterceptor();
 
             // When
-            var foo = proxyFactory.CreateForInterface<IFooWithReferenceType>(interceptor);
-            var result = foo.Bar;
-            foo.Bar = typeof(string);
+            var foo = proxyFactory.CreateForInterface<IFooWithReferenceTypeProperties>(interceptor);
+            var result = foo.GetterSetter;
+            foo.GetterSetter = typeof(string);
 
             // Then
             Assert.NotNull(foo);
             Assert.Equal(2, interceptor.ForwardedInvocations.Count);
             var getterInvocation = interceptor.ForwardedInvocations.First() as GetterInvocation;
             Assert.NotNull(getterInvocation);
-            Assert.Equal(nameof(IFooWithReferenceType.Bar), getterInvocation?.PropertySignature.Name);
+            Assert.Equal(nameof(IFooWithReferenceTypeProperties.GetterSetter), getterInvocation?.PropertySignature.Name);
             Assert.NotNull(result);
             Assert.Equal(typeof(double), result);
             var setterInvocation = interceptor.ForwardedInvocations.Last() as SetterInvocation;
             Assert.NotNull(setterInvocation);
-            Assert.Equal(nameof(IFooWithReferenceType.Bar), setterInvocation?.PropertySignature.Name);
+            Assert.Equal(nameof(IFooWithReferenceTypeProperties.GetterSetter), setterInvocation?.PropertySignature.Name);
             Assert.Equal(typeof(string), setterInvocation?.Value);
         }
 
-        #region Domain
-
-        public interface IFooWithValueType
-        {
-            double Bar { get; set; }
-        }
-
-        public interface IFooWithReferenceType
-        {
-            Type Bar { get; set; }
-        }
-
-        #endregion
-
         #region Mocks
 
-        public sealed class ValueTypeInterceptor : IInterceptor
+        private sealed class ValueTypeInterceptor : IInterceptor
         {
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
@@ -92,12 +78,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
                 ForwardedInvocations.Add(invocation);
                 if (invocation is GetterInvocation getterInvocation)
                 {
-                    getterInvocation.ReturnValue = 42.0;
+                    getterInvocation.ReturnValue = 42;
                 }
             }
         }
 
-        public sealed class ReferenceTypeInterceptor : IInterceptor
+        private sealed class ReferenceTypeInterceptor : IInterceptor
         {
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 

@@ -5,6 +5,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using TestDomain;
     using Xunit;
 
     /// <summary>
@@ -12,41 +13,59 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     /// </summary>
     public sealed class InterceptAsyncActionEmitterTests
     {
-        [Fact(DisplayName = "Emit a dynamic method implementation for an asynchronous interface action")]
-        public async Task EmitMethodImplementationForAsynchronousInterfaceActionAsync()
+        [Fact(DisplayName = "Emit a dynamic method implementation for an asynchronous value type interface action")]
+        public async Task EmitMethodImplementationForAsynchronousValueTypeInterfaceActionAsync()
         {
             // Given
             var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
             var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
             var interceptor = new AsyncActionInterceptor();
-            var expectedValueType = 0;
-            var expectedReferenceType = new object();
+            var expectedValueType = 13;
 
             // When
-            var foo = proxyFactory.CreateForInterface<IFooWithAsyncAction>(interceptor);
-            await foo.BarAsync(expectedValueType, expectedReferenceType);
+            var foo = proxyFactory.CreateForInterface<IFooWithAsyncValueTypeAction>(interceptor);
+            await foo.MethodWithOneParameterAsync(expectedValueType).ConfigureAwait(false);
 
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
             var invocation = interceptor.ForwardedInvocations.Single() as AsyncActionInvocation;
             Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithAsyncAction.BarAsync), invocation?.Signature.Name);
+            Assert.Equal(nameof(IFooWithAsyncValueTypeAction.MethodWithOneParameterAsync), invocation?.Signature.Name);
+            Assert.Single(invocation?.InputParameter);
+            Assert.Equal(typeof(int), invocation?.InputParameter?.First().type);
+            Assert.Equal(expectedValueType, invocation?.InputParameter?.First().value);
         }
 
-        #region Domain
-
-        public interface IFooWithAsyncAction
+        [Fact(DisplayName = "Emit a dynamic method implementation for an asynchronous reference type interface action")]
+        public async Task EmitMethodImplementationForAsynchronousReferenceTypeInterfaceActionAsync()
         {
-            Task BarAsync(int @valueType, object @referenceType);
-        }
+            // Given
+            var iocContainer = new ServiceContainer();
+            iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
+            var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
+            var interceptor = new AsyncActionInterceptor();
+            var expectedReferenceType = new object();
 
-        #endregion
+            // When
+            var foo = proxyFactory.CreateForInterface<IFooWithAsyncReferenceTypeAction>(interceptor);
+            await foo.MethodWithOneParameterAsync(expectedReferenceType).ConfigureAwait(false);
+
+            // Then
+            Assert.NotNull(foo);
+            Assert.Single(interceptor.ForwardedInvocations);
+            var invocation = interceptor.ForwardedInvocations.Single() as AsyncActionInvocation;
+            Assert.NotNull(invocation);
+            Assert.Equal(nameof(IFooWithAsyncReferenceTypeAction.MethodWithOneParameterAsync), invocation?.Signature.Name);
+            Assert.Single(invocation?.InputParameter);
+            Assert.Equal(typeof(object), invocation?.InputParameter?.First().type);
+            Assert.Equal(expectedReferenceType, invocation?.InputParameter?.First().value);
+        }
 
         #region Mocks
 
-        public sealed class AsyncActionInterceptor : IInterceptor
+        private sealed class AsyncActionInterceptor : IInterceptor
         {
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
