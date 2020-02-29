@@ -16,11 +16,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         void ImplementInterface<T>() where T : class;
 
         /// <summary>
-        /// Implement the public contract of the specified interface with signature of type <paramref name="interface"/>,
+        /// Implement the public contract of the specified interface with the given <paramref name="signature"/>,
         /// i.e. the dynamic proxy type will implement each property and/or method of the interface.
         /// </summary>
-        /// <param name="interface"> The signature of the interface that should be implemented. </param>
-        void ImplementInterface(Type @interface);
+        /// <param name="signature"> The signature of the interface that should be implemented. </param>
+        void ImplementInterface(Type signature);
 
         /// <summary>
         /// Convert the emitter instance to a standard .Net type by emitting it to an in-memory assembly.

@@ -66,26 +66,26 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         }
 
         /// <inheritdoc />
-        public void ImplementInterface(Type @interface)
+        public void ImplementInterface(Type signature)
         {
-            if (!@interface.IsInterface)
+            if (!signature.IsInterface)
             {
-                throw new ArgumentException($"Invalid non-interface type '{@interface.FullName}'");
+                throw new ArgumentException($"Invalid non-interface type '{signature.FullName}'");
             }
 
             var interceptorField = Dependencies.CreateInterceptorDependency(Type);
             Dependencies.CreateConstructor(Type, interceptorField);
-            Type.AddInterfaceImplementation(@interface);
+            Type.AddInterfaceImplementation(signature);
 
-            foreach (var signature in @interface.GetProperties())
+            foreach (var property in signature.GetProperties())
             {
-                var emitter = PropertyEmitterFactory.CreatePropertyEmitterFor(signature, Type, interceptorField);
+                var emitter = PropertyEmitterFactory.CreatePropertyEmitterFor(property, Type, interceptorField);
                 emitter.EmitPropertyImplementation();
             }
 
-            foreach (var signature in @interface.GetMethods().Where(m => !m.IsSpecialName))
+            foreach (var method in signature.GetMethods().Where(m => !m.IsSpecialName))
             {
-                var emitter = MethodEmitterFactory.CreateMethodEmitterFor(signature, Type, interceptorField);
+                var emitter = MethodEmitterFactory.CreateMethodEmitterFor(method, Type, interceptorField);
                 emitter.EmitMethodImplementation();
             }
         }

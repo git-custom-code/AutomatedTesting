@@ -21,14 +21,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         T CreateForInterface<T>(IInterceptor interceptor) where T : notnull;
 
         /// <summary>
-        /// Create a new dynamic proxy that implements the specified interface (of type <paramref name="interface"/>)
+        /// Create a new dynamic proxy that implements the specified interface (with the given <paramref name="signature"/>)
         /// and forwards all method and/or property calls to the given <paramref name="interceptor"/>.
         /// </summary>
-        /// <param name="interface"> The interface that should be implemented by the proxy. </param>
+        /// <param name="signature"> The signature of the interface that should be implemented by the proxy. </param>
         /// <param name="interceptor">
         /// The interceptor instance that will be injected and receive all proxy method and/or property calls.
         /// </param>
         /// <returns> The newly created dynamic proxy instance. </returns>
-        object CreateForInterface(Type @interface, IInterceptor interceptor);
+        object CreateForInterface(Type signature, IInterceptor interceptor);
     }
 }

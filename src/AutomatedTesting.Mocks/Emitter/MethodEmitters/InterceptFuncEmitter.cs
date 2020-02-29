@@ -3,7 +3,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     using Extensions;
     using Interception;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
@@ -50,11 +49,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         #region Data
 
         /// <summary>
-        /// Gets the cached signature of the <see cref="FuncInvocation"/> constructor.
-        /// </summary>
-        private static Lazy<ConstructorInfo> FuncInvocationConstructor { get; } = new Lazy<ConstructorInfo>(InitializeFuncInvocationConstructor, true);
-
-        /// <summary>
         /// Gets the cached signature of the <see cref="FuncInvocation.ReturnValue"/> getter.
         /// </summary>
         private static Lazy<MethodInfo> GetReturnValue { get; } = new Lazy<MethodInfo>(InitializeGetReturnValue, true);
@@ -78,7 +72,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.EmitLocalMethodSignatureVariable(out var methodSignatureVariable);
             body.EmitLocalParameterSignaturesVariable(out var parameterSignaturesVariable);
             body.EmitLocalParameterVariable(out var parameterVariable);
-            EmitLocalInvocationVariable(body, out var invocationVariable);
+            body.EmitLocalFuncInvocationVariable(out var invocationVariable);
             EmitLocalReturnValue(body, out var returnValue);
 
             // body
@@ -86,23 +80,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.EmitGetMethodSignature(Signature, parameterTypesVariable, methodSignatureVariable);
             body.EmitGetParameterSignatures(methodSignatureVariable, parameterSignaturesVariable);
             body.EmitCreateParameterDictionary(Signature, parameterVariable, parameterSignaturesVariable);
-            EmitNewFuncInvocation(body, parameterVariable, methodSignatureVariable, invocationVariable);
+            body.EmitNewFuncInvocation(parameterVariable, methodSignatureVariable, invocationVariable);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
 
             EmitReturnStatement(body, invocationVariable, returnValue);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     FuncInvocation invocation;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="invocationVariable"> The emitted local <see cref="FuncInvocation"/> variable. </param>
-        private void EmitLocalInvocationVariable(ILGenerator body, out LocalBuilder invocationVariable)
-        {
-            invocationVariable = body.DeclareLocal(typeof(FuncInvocation));
         }
 
         /// <summary>
@@ -116,28 +97,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         private void EmitLocalReturnValue(ILGenerator body, out LocalBuilder returnValue)
         {
             returnValue = body.DeclareLocal(Signature.ReturnType);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     invocation = new FuncInvocation(parameter, methodSignature);
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterVariable"> The local <see cref="Dictionary{TKey, TValue}"/> variable. </param>
-        /// <param name="methodSignatureVariable"> The emitted local <see cref="MethodInfo"/> variable. </param>
-        /// <param name="invocationVariable"> The local <see cref="FuncInvocation"/> variable. </param>
-        private void EmitNewFuncInvocation(
-            ILGenerator body,
-            LocalBuilder parameterVariable,
-            LocalBuilder methodSignatureVariable,
-            LocalBuilder invocationVariable)
-        {
-            body.Emit(OpCodes.Ldloc, parameterVariable.LocalIndex);
-            body.Emit(OpCodes.Ldloc, methodSignatureVariable.LocalIndex);
-            body.Emit(OpCodes.Newobj, FuncInvocationConstructor.Value);
-            body.Emit(OpCodes.Stloc, invocationVariable.LocalIndex);
         }
 
         /// <summary>
@@ -169,16 +128,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.MarkLabel(label);
             body.Emit(OpCodes.Ldloc, returnValue.LocalIndex);
             body.Emit(OpCodes.Ret);
-        }
-
-        /// <summary>
-        /// Initialization logic for the <see cref="FuncInvocationConstructor"/> property.
-        /// </summary>
-        /// <returns> The signature of the <see cref="FuncInvocation"/> constructor. </returns>
-        private static ConstructorInfo InitializeFuncInvocationConstructor()
-        {
-            var constructor = typeof(FuncInvocation).GetConstructor(new[] { typeof(IDictionary<ParameterInfo, object>), typeof(MethodInfo) });
-            return constructor ?? throw new ArgumentNullException(nameof(FuncInvocationConstructor));
         }
 
         /// <summary>

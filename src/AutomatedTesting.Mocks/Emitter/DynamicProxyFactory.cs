@@ -45,22 +45,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc />
         public T CreateForInterface<T>(IInterceptor interceptor) where T : notnull
         {
-            var @interface = typeof(T);
-            var proxy = CreateForInterface(@interface, interceptor);
+            var signature = typeof(T);
+            var proxy = CreateForInterface(signature, interceptor);
             if (proxy is T typedProxy)
             {
                 return typedProxy;
             }
 
-            throw new Exception($"Unable to create a proxy for interface {typeof(T).Name}");
+            throw new Exception($"Unable to create a proxy for interface {signature.Name}");
         }
 
         /// <inheritdoc />
-        public object CreateForInterface(Type @interface, IInterceptor interceptor)
+        public object CreateForInterface(Type signature, IInterceptor interceptor)
         {
             try
             {
-                var proxyType = ProxyTypeCache.GetOrAdd(@interface, EmitProxyTypeFor);
+                var proxyType = ProxyTypeCache.GetOrAdd(signature, EmitProxyTypeFor);
                 var proxy = Activator.CreateInstance(proxyType, new[] { interceptor });
                 if (proxy != null)
                 {
@@ -69,22 +69,24 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             }
             catch (Exception e)
             {
-                throw new Exception($"Unable to create a proxy for interface {@interface.Name}", e);
+                throw new Exception($"Unable to create a proxy for interface {signature.Name}", e);
             }
 
-            throw new Exception($"Unable to create a proxy for interface {@interface.Name}");
+            throw new Exception($"Unable to create a proxy for interface {signature.Name}");
         }
 
         /// <summary>
-        /// Emits a new dynamic proxy type for the given<paramref name="interface"/>.
+        /// Emits a new dynamic proxy type for an interface with the the given <paramref name="signature"/>.
         /// </summary>
-        /// <param name="interface"> The interface that should be implemented by the proxy. </param>
-        /// <returns> The dynamic proxy type that implements the given <paramref name="interface"/>. </returns>
-        private Type EmitProxyTypeFor(Type @interface)
+        /// <param name="signature"> The signature of the interface that should be implemented by the proxy. </param>
+        /// <returns>
+        /// The dynamic proxy type that implements an interface with the given <paramref name="signature"/>.
+        /// </returns>
+        private Type EmitProxyTypeFor(Type signature)
         {
-            var proxyName = $"{@interface.FullName}Mock";
+            var proxyName = $"{signature.FullName}Mock";
             var dynamicType = AssemblyEmitter.EmitType(proxyName);
-            dynamicType.ImplementInterface(@interface);
+            dynamicType.ImplementInterface(signature);
             var proxyType = dynamicType.ToType();
             return proxyType;
         }

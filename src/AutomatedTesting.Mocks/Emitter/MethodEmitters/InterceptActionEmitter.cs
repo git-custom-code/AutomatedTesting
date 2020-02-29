@@ -2,8 +2,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
     using Extensions;
     using Interception;
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
@@ -47,15 +45,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #endregion
 
-        #region Data
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="ActionInvocation"/> constructor.
-        /// </summary>
-        private static Lazy<ConstructorInfo> ActionInvocationConstructor { get; } = new Lazy<ConstructorInfo>(InitializeActionInvocationConstructor, true);
-
-        #endregion
-
         #region Logic
 
         /// <inheritdoc />
@@ -73,52 +62,17 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.EmitLocalMethodSignatureVariable(out var methodSignatureVariable);
             body.EmitLocalParameterSignaturesVariable(out var parameterSignaturesVariable);
             body.EmitLocalParameterVariable(out var parameterVariable);
-            EmitLocalInvocationVariable(body, out var invocationVariable);
+            body.EmitLocalActionInvocationVariable(out var invocationVariable);
 
             // body
             body.EmitCreateParameterTypesArray(Signature, parameterTypesVariable);
             body.EmitGetMethodSignature(Signature, parameterTypesVariable, methodSignatureVariable);
             body.EmitGetParameterSignatures(methodSignatureVariable, parameterSignaturesVariable);
             body.EmitCreateParameterDictionary(Signature, parameterVariable, parameterSignaturesVariable);
-            EmitNewActionInvocation(body, parameterVariable, methodSignatureVariable, invocationVariable);
+            body.EmitNewActionInvocation(parameterVariable, methodSignatureVariable, invocationVariable);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
 
             EmitReturnStatement(body);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     ActionInvocation invocation;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="invocationVariable"> The emitted local <see cref="ActionInvocation"/> variable. </param>
-        private void EmitLocalInvocationVariable(ILGenerator body, out LocalBuilder invocationVariable)
-        {
-            invocationVariable = body.DeclareLocal(typeof(ActionInvocation));
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     invocation = new ActionInvocation(parameter, methodSignature);
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterVariable"> The local <see cref="Dictionary{TKey, TValue}"/> variable. </param>
-        /// <param name="methodSignatureVariable"> The emitted local <see cref="MethodInfo"/> variable. </param>
-        /// <param name="invocationVariable"> The local <see cref="ActionInvocation"/> variable. </param>
-        private void EmitNewActionInvocation(
-            ILGenerator body,
-            LocalBuilder parameterVariable,
-            LocalBuilder methodSignatureVariable,
-            LocalBuilder invocationVariable)
-        {
-            body.Emit(OpCodes.Ldloc, parameterVariable.LocalIndex);
-            body.Emit(OpCodes.Ldloc, methodSignatureVariable.LocalIndex);
-            body.Emit(OpCodes.Newobj, ActionInvocationConstructor.Value);
-            body.Emit(OpCodes.Stloc, invocationVariable.LocalIndex);
         }
 
         /// <summary>
@@ -132,16 +86,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         {
             body.Emit(OpCodes.Nop);
             body.Emit(OpCodes.Ret);
-        }
-
-        /// <summary>
-        /// Initialization logic for the <see cref="ActionInvocationConstructor"/> property.
-        /// </summary>
-        /// <returns> The signature of the <see cref="ActionInvocation"/> constructor. </returns>
-        private static ConstructorInfo InitializeActionInvocationConstructor()
-        {
-            var constructor = typeof(ActionInvocation).GetConstructor(new[] { typeof(IDictionary<ParameterInfo, object>), typeof(MethodInfo) });
-            return constructor ?? throw new ArgumentNullException(nameof(ActionInvocationConstructor));
         }
 
         #endregion
