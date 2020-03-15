@@ -24,13 +24,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         #region Logic
 
         /// <summary>
+        ///Emits a local <see cref="ParameterIn"/> feature variable.
+        /// </summary>
+        /// <param name="body"> The body of the dynamic method. </param>
+        /// <param name="parameterInFeatureVariable"> The emitted local <see cref="ParameterIn"/> variable. </param>
+        /// <remarks>
         /// Emits the following source code:
         /// <![CDATA[
         ///     ParameterIn parameterInFeature;
         /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterInFeatureVariable"> The emitted local <see cref="ParameterIn"/> variable. </param>
+        /// </remarks>
         public static void EmitLocalParameterInFeatureVariable(
             this ILGenerator body, out LocalBuilder parameterInFeatureVariable)
         {
@@ -38,22 +41,28 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         }
 
         /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     parameterInFeature = new ParameterIn(methodSignature, new[] { ParamValue1, ... ParamValueN });
-        /// ]]>
+        /// Emits code to create a new <see cref="ParameterIn"/> instance for the given feature.
         /// </summary>
         /// <param name="body"> The body of the dynamic method. </param>
         /// <param name="methodSignatureVariable"> The emitted local <see cref="MethodInfo"/> variable. </param>
         /// <param name="parameterSignatures"> The dynamic method's parameter signatures. </param>
         /// <param name="paramterInFeatureVariable"> The emitted local <see cref="ParameterIn"/> variable. </param>
+        /// <remarks>
+        /// Emits the following source code:
+        /// <![CDATA[
+        ///     parameterInFeature = new ParameterIn(methodSignature, new[] { parameter1, ... parameterN });
+        /// ]]>
+        /// </remarks>
         public static void EmitNewParameterInFeature(
             this ILGenerator body,
             LocalBuilder methodSignatureVariable,
             ParameterInfo[] parameterSignatures,
             LocalBuilder paramterInFeatureVariable)
         {
+            // methodSignature,
             body.Emit(OpCodes.Ldloc, methodSignatureVariable.LocalIndex);
+
+            // new[] { parameter1, ... parameterN }
             body.Emit(OpCodes.Ldc_I4, parameterSignatures.Length);
             body.Emit(OpCodes.Newarr, typeof(object));
             for (var i=0; i< parameterSignatures.Length; ++i)
@@ -68,6 +77,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
                 }
                 body.Emit(OpCodes.Stelem_Ref);
             }
+
+            // parameterInFeature = new ParameterIn(...)
             body.Emit(OpCodes.Newobj, CreateParameterIn.Value);
             body.Emit(OpCodes.Stloc, paramterInFeatureVariable.LocalIndex);
         }
