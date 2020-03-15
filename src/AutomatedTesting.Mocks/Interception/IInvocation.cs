@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 
     /// <summary>
@@ -12,5 +13,27 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// Gets the signature of the invoked method or property.
         /// </summary>
         MethodInfo Signature { get; }
+
+        /// <summary>
+        /// Gets an incocation feature by type.
+        /// </summary>
+        /// <typeparam name="T"> The <see cref="IInvocationFeature"/>'s type. </typeparam>
+        /// <returns> The requested feature or null if no such feature exists. </returns>
+        T? GetFeature<T>() where T : class, IInvocationFeature;
+
+        /// <summary>
+        /// Query if an invocation feature of the specified type exists.
+        /// </summary>
+        /// <typeparam name="T"> The <see cref="IInvocationFeature"/>'s type. </typeparam>
+        /// <returns> True if the requested feature exists, false otherwise. </returns>
+        bool HasFeature<T>() where T : class, IInvocationFeature;
+
+        /// <summary>
+        /// Try to get an incocation feature by type.
+        /// </summary>
+        /// <typeparam name="T"> The <see cref="IInvocationFeature"/>'s type. </typeparam>
+        /// <param name="feature"> The requested feature or null if no such feature exists. </param>
+        /// <returns> True if the requested <paramref name="feature"/> exists, false otherwise. </returns>
+        bool TryGetFeature<T>([NotNullWhen(true)] out T? feature) where T : class, IInvocationFeature;
     }
 }
