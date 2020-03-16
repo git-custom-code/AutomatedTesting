@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
     using Interception;
+    using Interception.Parameters;
     using LightInject;
     using System.Collections.Generic;
     using System.Linq;
@@ -16,7 +17,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void EmitMethodImplementationForValueTypeInterfaceAction()
         {
             // Given
-            var iocContainer = new ServiceContainer();
+            using var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
             var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
             var interceptor = new ActionInterceptor();
@@ -29,19 +30,23 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as ActionInvocation;
+            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
             Assert.NotNull(invocation);
             Assert.Equal(nameof(IFooWithValueTypeAction.MethodWithOneParameter), invocation?.Signature.Name);
-            Assert.Single(invocation?.InputParameter);
-            Assert.Equal(typeof(int), invocation?.InputParameter?.First().type);
-            Assert.Equal(expectedValueType, invocation?.InputParameter?.First().value);
+            var inputParameter = invocation?.GetFeature<IParameterIn>();
+            Assert.NotNull(inputParameter);
+            Assert.Single(inputParameter?.InputParameterCollection);
+            var parameter = inputParameter?.InputParameterCollection?.FirstOrDefault();
+            Assert.Equal("first", parameter?.Name);
+            Assert.Equal(typeof(int), parameter?.Type);
+            Assert.Equal(expectedValueType, parameter?.Value);
         }
 
         [Fact(DisplayName = "Emit a dynamic method implementation for a reference type interface action")]
         public void EmitMethodImplementationForReferenceTypeInterfaceAction()
         {
             // Given
-            var iocContainer = new ServiceContainer();
+            using var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
             var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
             var interceptor = new ActionInterceptor();
@@ -54,12 +59,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as ActionInvocation;
+            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
             Assert.NotNull(invocation);
             Assert.Equal(nameof(IFooWithReferenceTypeAction.MethodWithOneParameter), invocation?.Signature.Name);
-            Assert.Single(invocation?.InputParameter);
-            Assert.Equal(typeof(object), invocation?.InputParameter?.First().type);
-            Assert.Equal(expectedReferencType, invocation?.InputParameter?.First().value);
+            var inputParameter = invocation?.GetFeature<IParameterIn>();
+            Assert.NotNull(inputParameter);
+            Assert.Single(inputParameter?.InputParameterCollection);
+            var parameter = inputParameter?.InputParameterCollection?.FirstOrDefault();
+            Assert.Equal("first", parameter?.Name);
+            Assert.Equal(typeof(object), parameter?.Type);
+            Assert.Equal(expectedReferencType, parameter?.Value);
         }
 
         #region Mocks

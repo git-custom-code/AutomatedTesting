@@ -2,6 +2,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
     using Extensions;
     using Interception;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
@@ -13,19 +14,28 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     /// </summary>
     /// <remarks>
     /// Emits the following source code:
+    ///
     /// <![CDATA[
-    ///     var parameterTypes = new[] { typeof(ParameterType1), ... , typeof(ParmameterTypeN) };
-    ///     var methodSignature = typeof(Interface).GetMethod(nameof(Method), parameterTypes);
-    ///     var parameterSignatures = methodSignature.GetParameters();
+    ///     var methodSignature = typeof(Interface).GetMethod(
+    ///         nameof(Method),
+    ///         Array.Empty<Type>());
     ///
-    ///     var parameter = new Dictionary<ParameterInfo, object>();
-    ///     parameter.Add(parameterSignatures[0], parameterValue1);
-    ///     ...
-    ///     parameter.Add(parameterSignatures[N-1], parameterValueN);
+    ///     var incovation = new Invocation(methodSignature);
+    ///     _interceptor.Intercept(incovation);
+    ///     return;
+    /// ]]>
     ///
-    ///     var invocation = new ActionInvocation(parameter, methodSignature);
-    ///     _interceptor.Intercept(invocation);
+    /// or
     ///
+    /// <![CDATA[
+    ///     var methodSignature = typeof(Interface).GetMethod(
+    ///         nameof(Method),
+    ///         new[] { typeof(parameter1), ... typeof(parameterN) });
+    ///
+    ///     var parameterInFeature = new ParameterIn(methodSignature, new[] { parameter1, ...  parameterN });
+    ///
+    ///     var incovation = new Invocation(methodSignature, parameterInFeature);
+    ///     _interceptor.Intercept(incovation);
     ///     return;
     /// ]]>
     /// </remarks>
@@ -50,6 +60,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc />
         public override void EmitMethodImplementation()
         {
+            var features = new List<LocalBuilder>();
+            var parameters = Signature.GetParameters();
+            var inParameters = parameters.Where(p => !p.IsOut && !p.ParameterType.IsByRef).ToArray();
+            // ToDo: Ref/Out
+
             var method = Type.DefineMethod(
                 Signature.Name,
                 MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Final,
@@ -58,34 +73,27 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             var body = method.GetILGenerator();
 
             // local variables
-            body.EmitLocalParameterTypesVariable(out var parameterTypesVariable);
             body.EmitLocalMethodSignatureVariable(out var methodSignatureVariable);
-            body.EmitLocalParameterSignaturesVariable(out var parameterSignaturesVariable);
-            body.EmitLocalParameterVariable(out var parameterVariable);
-            body.EmitLocalActionInvocationVariable(out var invocationVariable);
+
+            if (inParameters.Length > 0)
+            {
+                body.EmitLocalParameterInFeatureVariable(out var parameterInFeature);
+                features.Add(parameterInFeature);
+            }
+
+            body.EmitLocalInvocationVariable(out var invocationVariable);
 
             // body
-            body.EmitCreateParameterTypesArray(Signature, parameterTypesVariable);
-            body.EmitGetMethodSignature(Signature, parameterTypesVariable, methodSignatureVariable);
-            body.EmitGetParameterSignatures(methodSignatureVariable, parameterSignaturesVariable);
-            body.EmitCreateParameterDictionary(Signature, parameterVariable, parameterSignaturesVariable);
-            body.EmitNewActionInvocation(parameterVariable, methodSignatureVariable, invocationVariable);
+            body.EmitGetMethodSignature(Signature, methodSignatureVariable);
+
+            if (inParameters.Length > 0)
+            {
+                body.EmitNewParameterInFeature(methodSignatureVariable, parameters, features[0]);
+            }
+
+            body.EmitNewInvocation(invocationVariable, methodSignatureVariable, features);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
-
-            EmitReturnStatement(body);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     return;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        private void EmitReturnStatement(ILGenerator body)
-        {
-            body.Emit(OpCodes.Nop);
-            body.Emit(OpCodes.Ret);
+            body.EmitReturnStatement();
         }
 
         #endregion
