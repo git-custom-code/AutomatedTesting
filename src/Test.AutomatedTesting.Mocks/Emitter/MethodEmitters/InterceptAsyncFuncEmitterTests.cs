@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
     using Interception;
+    using Interception.Async;
     using LightInject;
     using System.Collections.Generic;
     using System.Linq;
@@ -17,7 +18,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public async Task EmitMethodImplementationForAsynchronousValueTypeInterfaceFuncAsync()
         {
             // Given
-            var iocContainer = new ServiceContainer();
+            using var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
             var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
             var interceptor = new AsyncFuncInterceptor();
@@ -25,12 +26,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             // When
             var foo = proxyFactory.CreateForInterface<IFooWithAsyncValueTypeFunc>(interceptor);
-            var result = await foo.MethodWithOneParameterAsync(expectedValueType).ConfigureAwait(false);
+            var task = foo.MethodWithOneParameterAsync(expectedValueType);
+            var result = await task.ConfigureAwait(false);
 
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as AsyncFuncInvocation;
+            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
             Assert.NotNull(invocation);
             Assert.Equal(nameof(IFooWithAsyncValueTypeFunc.MethodWithOneParameterAsync), invocation?.Signature.Name);
             Assert.Equal(42, result);
@@ -40,7 +42,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public async Task EmitMethodImplementationForAsynchronousReferenceTypeInterfaceFuncAsync()
         {
             // Given
-            var iocContainer = new ServiceContainer();
+            using var iocContainer = new ServiceContainer();
             iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
             var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
             var interceptor = new AsyncFuncInterceptor();
@@ -48,12 +50,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             // When
             var foo = proxyFactory.CreateForInterface<IFooWithAsyncReferenceTypeFunc>(interceptor);
-            var result = await foo.MethodWithOneParameterAsync(expectedReferenceType).ConfigureAwait(false);
+            var task = foo.MethodWithOneParameterAsync(expectedReferenceType);
+            var result = await task.ConfigureAwait(false);
 
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as AsyncFuncInvocation;
+            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
             Assert.NotNull(invocation);
             Assert.Equal(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithOneParameterAsync), invocation?.Signature.Name);
             Assert.Equal("foo", result);
@@ -67,16 +70,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             public void Intercept(IInvocation invocation)
             {
-                if (invocation is AsyncFuncInvocation asyncInvocation)
+                if (invocation.TryGetFeature<IAsyncInvocation<Task<int>>>(out var asyncValueType))
                 {
-                    if (invocation.Signature.ReturnType == typeof(Task<int>))
-                    {
-                        asyncInvocation.ReturnValue = Task.FromResult<int>(42);
-                    }
-                    else
-                    {
-                        asyncInvocation.ReturnValue = Task.FromResult<object?>("foo");
-                    }
+                    asyncValueType.ReturnValue = Task.FromResult<int>(42);
+                }
+                else if (invocation.TryGetFeature<IAsyncInvocation<Task<object?>>>(out var asyncReferenceType))
+                {
+                    asyncReferenceType.ReturnValue = Task.FromResult<object?>("foo");
                 }
 
                 ForwardedInvocations.Add(invocation);
