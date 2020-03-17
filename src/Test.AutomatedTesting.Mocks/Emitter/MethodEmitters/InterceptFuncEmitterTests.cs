@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
+    using CustomCode.AutomatedTesting.Mocks.Interception.ReturnValue;
     using Interception;
     using LightInject;
     using System.Collections.Generic;
@@ -22,7 +23,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
             var interceptor = new FuncWithValueTypeInterceptor();
             var expectedValueType = 13;
-            var expectedReferenceType = new object();
 
             // When
             var foo = proxyFactory.CreateForInterface<IFooWithValueTypeFunc>(interceptor);
@@ -31,7 +31,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as FuncInvocation;
+            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
             Assert.NotNull(invocation);
             Assert.Equal(nameof(IFooWithValueTypeFunc.MethodWithOneParameter), invocation?.Signature.Name);
             Assert.Equal(42, result);
@@ -54,7 +54,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as FuncInvocation;
+            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
             Assert.NotNull(invocation);
             Assert.Equal(nameof(IFooWithReferenceTypeFunc.MethodWithOneParameter), invocation?.Signature.Name);
             Assert.NotNull(result);
@@ -70,7 +70,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             public void Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
-                if (invocation is FuncInvocation funcInvocation)
+                if (invocation.TryGetFeature<IReturnValue<int>>(out var funcInvocation))
                 {
                     funcInvocation.ReturnValue = 42;
                 }
@@ -84,7 +84,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             public void Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
-                if (invocation is FuncInvocation funcInvocation)
+                if (invocation.TryGetFeature<IReturnValue<object>>(out var funcInvocation))
                 {
                     funcInvocation.ReturnValue = new StringBuilder("Foo");
                 }

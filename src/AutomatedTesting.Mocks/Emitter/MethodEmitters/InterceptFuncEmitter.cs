@@ -2,40 +2,52 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
     using Extensions;
     using Interception;
-    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
 
     /// <summary>
     /// Implementation of the <see cref="IMethodEmitter"/> interface for emitting dynamic methods with
-    /// a non-void return type and without any out or ref input parameters that will forward any calls
+    /// return type <see cref="void"/> and without any out or ref input parameters that will forward any calls
     /// to an injected <see cref="IInterceptor.Intercept(IInvocation)"/> instance.
     /// </summary>
     /// <remarks>
     /// Emits the following source code:
+    ///
     /// <![CDATA[
-    ///     var parameterTypes = new[] { typeof(ParameterType1), ... , typeof(ParmameterTypeN) };
-    ///     var methodSignature = typeof(Interface).GetMethod(nameof(Method), parameterTypes);
-    ///     var parameterSignatures = methodSignature.GetParameters();
+    ///     var methodSignature = typeof(Interface).GetMethod(
+    ///         nameof(Method),
+    ///         Array.Empty<Type>());
     ///
-    ///     var parameter = new Dictionary<ParameterInfo, object>();
-    ///     parameter.Add(parameterSignatures[0], parameterValue1);
-    ///     ...
-    ///     parameter.Add(parameterSignatures[N-1], parameterValueN);
+    ///     var returnValueFeature = new ReturnValueInvocation<T>();
     ///
-    ///     var invocation = new FuncInvocation(parameter, methodSignature);
-    ///     _interceptor.Intercept(invocation);
+    ///     var incovation = new Invocation(methodSignature, returnValueFeature);
+    ///     _interceptor.Intercept(incovation);
+    ///     return returnValueFeature.ReturnValue;
+    /// ]]>
     ///
-    ///     return (ReturnType)invocation.ReturnValue;
+    /// or
+    ///
+    /// <![CDATA[
+    ///     var methodSignature = typeof(Interface).GetMethod(
+    ///         nameof(Method),
+    ///         new[] { typeof(parameter1), ... typeof(parameterN) });
+    ///
+    ///     var returnValueFeature = new ReturnValueInvocation<T>();
+    ///     var parameterInFeature = new ParameterIn(methodSignature, new[] { parameter1, ...  parameterN });
+    ///
+    ///     var incovation = new Invocation(methodSignature, returnValueFeature, parameterInFeature);
+    ///     _interceptor.Intercept(incovation);
+    ///     return returnValueFeature.ReturnValue;
     /// ]]>
     /// </remarks>
-    public sealed class InterceptFuncEmitter : MethodEmitterBase
+    public sealed class InterceptFuncEmitter<T> : MethodEmitterBase
     {
         #region Dependencies
 
         /// <summary>
-        /// Creates a new instance of the <see cref="InterceptFuncEmitter"/> type.
+        /// Creates a new instance of the <see cref="InterceptFuncEmitter{T}"/> type.
         /// </summary>
         /// <param name="type"> The dynamic proxy type. </param>
         /// <param name="signature"> The signature of the method to be created. </param>
@@ -46,20 +58,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #endregion
 
-        #region Data
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="FuncInvocation.ReturnValue"/> getter.
-        /// </summary>
-        private static Lazy<MethodInfo> GetReturnValue { get; } = new Lazy<MethodInfo>(InitializeGetReturnValue, true);
-
-        #endregion
-
         #region Logic
 
         /// <inheritdoc />
         public override void EmitMethodImplementation()
         {
+            var features = new List<LocalBuilder>();
+            var parameters = Signature.GetParameters();
+            var inParameters = parameters.Where(p => !p.IsOut && !p.ParameterType.IsByRef).ToArray();
+            // ToDo: Ref/Out
+
             var method = Type.DefineMethod(
                 Signature.Name,
                 MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Final,
@@ -68,76 +76,31 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             var body = method.GetILGenerator();
 
             // local variables
-            body.EmitLocalParameterTypesVariable(out var parameterTypesVariable);
             body.EmitLocalMethodSignatureVariable(out var methodSignatureVariable);
-            body.EmitLocalParameterSignaturesVariable(out var parameterSignaturesVariable);
-            body.EmitLocalParameterVariable(out var parameterVariable);
-            body.EmitLocalFuncInvocationVariable(out var invocationVariable);
-            EmitLocalReturnValue(body, out var returnValue);
+
+            body.EmitLocalReturnValueFeatureVariable<T>(out var returnValueFeatureVariable);
+            features.Add(returnValueFeatureVariable);
+
+            if (inParameters.Length > 0)
+            {
+                body.EmitLocalParameterInFeatureVariable(out var parameterInFeature);
+                features.Add(parameterInFeature);
+            }
+
+            body.EmitLocalInvocationVariable(out var invocationVariable);
 
             // body
-            body.EmitCreateParameterTypesArray(Signature, parameterTypesVariable);
-            body.EmitGetMethodSignature(Signature, parameterTypesVariable, methodSignatureVariable);
-            body.EmitGetParameterSignatures(methodSignatureVariable, parameterSignaturesVariable);
-            body.EmitCreateParameterDictionary(Signature, parameterVariable, parameterSignaturesVariable);
-            body.EmitNewFuncInvocation(parameterVariable, methodSignatureVariable, invocationVariable);
+            body.EmitGetMethodSignature(Signature, methodSignatureVariable);
+
+            body.EmitNewReturnValueFeature<T>(returnValueFeatureVariable);
+            if (inParameters.Length > 0)
+            {
+                body.EmitNewParameterInFeature(methodSignatureVariable, parameters, features[1]);
+            }
+
+            body.EmitNewInvocation(invocationVariable, methodSignatureVariable, features);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
-
-            EmitReturnStatement(body, invocationVariable, returnValue);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     ReturnValueType returnValue;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="returnValue"> The emitted local return value. </param>
-        private void EmitLocalReturnValue(ILGenerator body, out LocalBuilder returnValue)
-        {
-            returnValue = body.DeclareLocal(Signature.ReturnType);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     return (ReturnType)invocation.ReturnValue;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="invocationVariable"> The local <see cref="FuncInvocation"/> variable. </param>
-        /// <param name="returnValue"> The emitted local return value. </param>
-        private void EmitReturnStatement(ILGenerator body, LocalBuilder invocationVariable, LocalBuilder returnValue)
-        {
-            var label = body.DefineLabel();
-
-            body.Emit(OpCodes.Nop);
-            body.Emit(OpCodes.Ldloc, invocationVariable.LocalIndex);
-            body.Emit(OpCodes.Callvirt, GetReturnValue.Value);
-            if (Signature.ReturnType.IsValueType)
-            {
-                body.Emit(OpCodes.Unbox_Any, Signature.ReturnType);
-            }
-            else
-            {
-                body.Emit(OpCodes.Castclass, Signature.ReturnType);
-            }
-            body.Emit(OpCodes.Stloc, returnValue.LocalIndex);
-            body.Emit(OpCodes.Br_S, label);
-            body.MarkLabel(label);
-            body.Emit(OpCodes.Ldloc, returnValue.LocalIndex);
-            body.Emit(OpCodes.Ret);
-        }
-
-        /// <summary>
-        /// Initialization logic for the <see cref="GetReturnValue"/> property.
-        /// </summary>
-        /// <returns> Thethe signature of the <see cref="FuncInvocation.ReturnValue"/> getter. </returns>
-        private static MethodInfo InitializeGetReturnValue()
-        {
-            var getReturnValue = typeof(FuncInvocation).GetProperty(nameof(FuncInvocation.ReturnValue))?.GetGetMethod();
-            return getReturnValue ?? throw new ArgumentNullException(nameof(GetReturnValue));
+            body.EmitReturnStatement<T>(returnValueFeatureVariable);
         }
 
         #endregion
