@@ -40,6 +40,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <![CDATA[
         ///     Invocation invocation;
         /// ]]>
+        /// </remarks>
         public static void EmitLocalInvocationVariable(this ILGenerator body, out LocalBuilder invocationVariable)
         {
             invocationVariable = body.DeclareLocal(typeof(Invocation));
