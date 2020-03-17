@@ -1,6 +1,10 @@
 namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 {
     using Interception;
+    using Interception.Async;
+    using Interception.ReturnValue;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
 
@@ -52,7 +56,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc />
         public bool CanApplyTo(IInvocation invocation)
         {
-            if (invocation is IHasReturnValue || invocation is IHasAsyncReturnValue)
+            if (invocation.HasFeature<IReturnValue<T>>())
             {
                 return invocation.Signature == Signature;
             }
@@ -69,26 +73,39 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc />
         public bool TryApplyTo(IInvocation invocation)
         {
-            if (invocation is IHasReturnValue returnValueInvocation)
+            if (invocation.Signature == Signature)
             {
-                if (invocation.Signature == Signature)
+                if (invocation.HasFeature<IAsyncInvocation>())
                 {
-                    returnValueInvocation.ReturnValue = ReturnValue;
-                    return true;
+                    if (invocation.TryGetFeature<IAsyncInvocation<T>>(out var asyncFeature))
+                    {
+                        asyncFeature.AsyncReturnValue = ReturnValue;
+                        return true;
+                    }
+                    else if (invocation.TryGetFeature<IAsyncInvocation<Task<T>>>(out var asyncTaskFeature))
+                    {
+                        asyncTaskFeature.AsyncReturnValue = Task.FromResult(ReturnValue);
+                        return true;
+                    }
+                    else if (invocation.TryGetFeature<IAsyncInvocation<ValueTask<T>>>(out var asyncValueTaskFeature))
+                    {
+                        asyncValueTaskFeature.AsyncReturnValue = new ValueTask<T>(ReturnValue);
+                        return true;
+                    }
+                    else if (invocation.TryGetFeature<IAsyncInvocation<IAsyncEnumerable<T>>>(out var asyncEnumerableFeature))
+                    {
+                        asyncEnumerableFeature.AsyncReturnValue = AsyncEnumerable.Create(_ =>
+                            AsyncEnumerator.Create(
+                                () => default,
+                                () => ReturnValue,
+                                () => default));
+                        return true;
+                    }
                 }
-            }
-            else if (invocation is IHasAsyncReturnValue asyncReturnValueInvocation)
-            {
-                if (invocation.Signature == Signature)
+                else if (invocation.TryGetFeature<IReturnValue<T>>(out var returnValueFeature))
                 {
-                    if (ReturnValue is Task asyncReturnValue)
-                    {
-                        asyncReturnValueInvocation.ReturnValue = asyncReturnValue;
-                    }
-                    else
-                    {
-                        asyncReturnValueInvocation.ReturnValue = Task.FromResult(ReturnValue);
-                    }
+
+                    returnValueFeature.ReturnValue = ReturnValue;
                     return true;
                 }
             }
