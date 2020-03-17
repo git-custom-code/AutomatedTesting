@@ -21,7 +21,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             = new ConcurrentDictionary<Type, ConstructorInfo>();
 
         /// <summary>
-        /// Gets a thread-safe cache for <see cref="IAsyncInvocation{T}.ReturnValue"/> getters.
+        /// Gets a thread-safe cache for <see cref="IAsyncInvocation{T}.AsyncReturnValue"/> getters.
         /// </summary>
         private static ConcurrentDictionary<Type, MethodInfo> AsyncFeatureReturnValueCache { get; }
             = new ConcurrentDictionary<Type, MethodInfo>();
@@ -69,7 +69,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         }
 
         /// <summary>
-        /// Emits code to return the <see cref="IAsyncInvocation{T}.ReturnValue"/>.
+        /// Emits code to return the <see cref="IAsyncInvocation{T}.AsyncReturnValue"/>.
         /// </summary>
         /// <param name="body"> The body of the dynamic method. </param>
         /// <param name="asyncFeatureVariable"> The emitted local <see cref="IAsyncInvocation{T}"/> variable. </param>
@@ -77,17 +77,17 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <remarks>
         /// Emits the following source code:
         /// <![CDATA[
-        ///     return asyncFeature.ReturnValue;
+        ///     return asyncFeature.AsyncReturnValue;
         /// ]]>
         /// </remarks>
-        public static void EmitReturnStatement<T>(
+        public static void EmitAsyncReturnStatement<T>(
             this ILGenerator body,
             LocalBuilder asyncFeatureVariable)
             where T : IAsyncInvocation
         {
             body.Emit(OpCodes.Ldloc, asyncFeatureVariable.LocalIndex);
-            var returnValueSignature = AsyncFeatureReturnValueCache.GetOrAdd(typeof(T), GetAsyncFeatureReturnValue<T>());
-            body.Emit(OpCodes.Callvirt, returnValueSignature);
+            var asyncReturnValueSignature = AsyncFeatureReturnValueCache.GetOrAdd(typeof(T), GetAsyncFeatureReturnValue<T>());
+            body.Emit(OpCodes.Callvirt, asyncReturnValueSignature);
             body.Emit(OpCodes.Ret);
         }
 
@@ -107,20 +107,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <summary>
         /// Initialization logic for a <see cref="AsyncFeatureReturnValueCache"/> item.
         /// </summary>
-        /// <returns> The signature of the <see cref="IAsyncInvocation{T}.ReturnValue"/> property's getter. </returns>
+        /// <returns> The signature of the <see cref="IAsyncInvocation{T}.AsyncReturnValue"/> property's getter. </returns>
         private static MethodInfo GetAsyncFeatureReturnValue<T>()
             where T : IAsyncInvocation
         {
             var type = typeof(T);
-            var propertyName = nameof(IAsyncInvocation<object>.ReturnValue);
-            var returnValueProperty = @type.GetProperty(propertyName);
-            if (returnValueProperty == null)
+            var propertyName = nameof(IAsyncInvocation<object>.AsyncReturnValue);
+            var asyncReturnValueProperty = @type.GetProperty(propertyName);
+            if (asyncReturnValueProperty == null)
             {
                 throw new PropertyInfoException(type, propertyName);
             }
 
-            var returnValueGetter = returnValueProperty.GetGetMethod();
-            return returnValueGetter ?? throw new MethodInfoException(type, $"get_{propertyName}");
+            var asyncReturnValueGetter = asyncReturnValueProperty.GetGetMethod();
+            return asyncReturnValueGetter ?? throw new MethodInfoException(type, $"get_{propertyName}");
         }
 
         #endregion

@@ -85,7 +85,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             {
                 if (invocation.TryGetFeature<IAsyncInvocation<Task>>(out var asyncInvocation))
                 {
-                    asyncInvocation.ReturnValue = Task.CompletedTask;
+                    asyncInvocation.AsyncReturnValue = Task.CompletedTask;
                 }
 
                 ForwardedInvocations.Add(invocation);

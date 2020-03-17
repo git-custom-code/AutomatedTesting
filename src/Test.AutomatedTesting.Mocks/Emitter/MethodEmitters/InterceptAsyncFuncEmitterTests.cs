@@ -72,11 +72,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             {
                 if (invocation.TryGetFeature<IAsyncInvocation<Task<int>>>(out var asyncValueType))
                 {
-                    asyncValueType.ReturnValue = Task.FromResult<int>(42);
+                    asyncValueType.AsyncReturnValue = Task.FromResult<int>(42);
                 }
                 else if (invocation.TryGetFeature<IAsyncInvocation<Task<object?>>>(out var asyncReferenceType))
                 {
-                    asyncReferenceType.ReturnValue = Task.FromResult<object?>("foo");
+                    asyncReferenceType.AsyncReturnValue = Task.FromResult<object?>("foo");
                 }
 
                 ForwardedInvocations.Add(invocation);

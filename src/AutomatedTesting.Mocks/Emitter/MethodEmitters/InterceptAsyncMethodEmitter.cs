@@ -27,7 +27,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     /// 
     ///     var incovation = new Invocation(methodSignature, asyncFeature);
     ///     _interceptor.Intercept(incovation);
-    ///     return asyncFeature.ReturnValue;
+    ///     return asyncFeature.AsyncReturnValue;
     /// ]]>
     ///
     /// or
@@ -42,7 +42,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     ///
     ///     var incovation = new Invocation(methodSignature, parameterInFeature, asyncFeature);
     ///     _interceptor.Intercept(incovation);
-    ///     return asyncFeature.ReturnValue;
+    ///     return asyncFeature.AsyncReturnValue;
     /// ]]>
     /// </remarks>
     public sealed class InterceptAsyncMethodEmitter<T> : MethodEmitterBase
@@ -104,7 +104,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
             body.EmitNewInvocation(invocationVariable, methodSignatureVariable, features);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
-            body.EmitReturnStatement<T>(asyncFeature);
+            body.EmitAsyncReturnStatement<T>(asyncFeature);
         }
 
         #endregion
