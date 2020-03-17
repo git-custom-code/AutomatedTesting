@@ -4,7 +4,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Generic feature interface for an <see cref="IInvocation"/> of an asynchrononou method.
+    /// Generic feature interface for an <see cref="IInvocation"/> of an asynchronous method.
     /// </summary>
     /// <typeparam name="T">
     /// The type of the asynchronous return value (<see cref="Task"/>, <see cref="Task{TResult}"/>,
@@ -15,6 +15,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
         /// <summary>
         /// Gets or sets the asynchronous return value of the intercepted method.
         /// </summary>
-        T ReturnValue { get; set; }
+        T AsyncReturnValue { get; set; }
     }
 }

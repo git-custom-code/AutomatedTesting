@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
 {
+    using Interception.ReturnValue;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -7,12 +8,29 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
     /// that return a <see cref="ValueTask{TResult}"/>.
     /// </summary>
     /// <typeparam name="TResult"> The type of the asynchronous result value. </typeparam>
-    public sealed class AsyncGenericValueTaskInvocation<TResult> : IAsyncInvocation<ValueTask<TResult>>
+    public sealed class AsyncGenericValueTaskInvocation<TResult> :
+        IAsyncInvocation<ValueTask<TResult>>, IReturnValue<TResult>
     {
         #region Data
 
         /// <inheritdoc />
-        public ValueTask<TResult> ReturnValue { get; set; } = new ValueTask<TResult>();
+        public ValueTask<TResult> AsyncReturnValue { get; set; } = new ValueTask<TResult>();
+
+        /// <inheritdoc />
+        TResult IReturnValue<TResult>.ReturnValue
+        {
+            get { return AsyncReturnValue.ConfigureAwait(false).GetAwaiter().GetResult(); }
+            set { AsyncReturnValue = new ValueTask<TResult>(value); }
+        }
+
+        /// <inheritdoc />
+        object? IReturnValue.ReturnValue
+        {
+            get { return (object?)((IReturnValue<TResult>)this).ReturnValue; }
+#pragma warning disable CS8601 // Possible null reference assignment.
+            set { ((IReturnValue<TResult>)this).ReturnValue = (TResult)value; }
+#pragma warning restore CS8601
+        }
 
         /// <inheritdoc />
         public AsyncInvocationType Type { get; } = AsyncInvocationType.GenericValueTask;

@@ -12,7 +12,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
         #region Data
 
         /// <inheritdoc />
-        public ValueTask ReturnValue { get; set; } = default;
+        public ValueTask AsyncReturnValue { get; set; } = default;
 
         /// <inheritdoc />
         public AsyncInvocationType Type { get; } = AsyncInvocationType.ValueTask;

@@ -11,7 +11,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
         #region Data
 
         /// <inheritdoc />
-        public Task ReturnValue { get; set; } = Task.CompletedTask;
+        public Task AsyncReturnValue { get; set; } = Task.CompletedTask;
 
         /// <inheritdoc />
         public AsyncInvocationType Type { get; } = AsyncInvocationType.Task;
