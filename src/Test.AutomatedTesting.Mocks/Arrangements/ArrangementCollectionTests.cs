@@ -1,9 +1,8 @@
 namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
 {
     using Interception;
+    using Interception.ReturnValue;
     using System;
-    using System.Collections.Generic;
-    using System.Reflection;
     using TestDomain;
     using Xunit;
 
@@ -64,18 +63,21 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var signature = typeof(IFooWithValueTypeFunc)
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var ohterSignature = typeof(IFooWithValueTypeFunc)
+            var otherSignature = typeof(IFooWithValueTypeFunc)
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithOneParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueArrangement<int>(signature, 42);
-            var otherArrangment = new ReturnValueArrangement<int>(ohterSignature, 13);
+            var otherArrangment = new ReturnValueArrangement<int>(otherSignature, 13);
             var arrangmentCollection = new ArrangementCollection(arrangment, otherArrangment);
 
             // When
             arrangmentCollection.ApplyTo(invocation);
 
             // Then
-            Assert.Equal(42, invocation.ReturnValue);
+            var feature = invocation.GetFeature<IReturnValue<int>>();
+            Assert.NotNull(feature);
+            Assert.Equal(42, feature?.ReturnValue);
         }
 
         [Fact(DisplayName = "Check if a matching arrangment exists for a method invocation")]
@@ -86,7 +88,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var otherSignature = typeof(IFooWithValueTypeFunc)
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithOneParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueArrangement<int>(signature, 42);
             var otherArrangment = new ReturnValueArrangement<int>(otherSignature, 13);
             var arrangmentCollection = new ArrangementCollection(arrangment, otherArrangment);
@@ -106,7 +109,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var otherSignature = typeof(IFooWithValueTypeFunc)
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithOneParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueArrangement<int>(signature, 42);
             var otherArrangment = new ReturnValueArrangement<int>(otherSignature, 13);
             var arrangmentCollection = new ArrangementCollection(arrangment, otherArrangment);
@@ -116,7 +120,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
 
             // Then
             Assert.True(hasAppliedArrangment);
-            Assert.Equal(42, invocation.ReturnValue);
+            var feature = invocation.GetFeature<IReturnValue<int>>();
+            Assert.NotNull(feature);
+            Assert.Equal(42, feature?.ReturnValue);
         }
     }
 }
