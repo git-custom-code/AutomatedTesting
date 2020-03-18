@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 {
     using Interception;
+    using Interception.Parameters;
     using System;
     using System.Collections.Concurrent;
     using System.Linq;
@@ -66,7 +67,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc />
         public bool CanApplyTo(IInvocation invocation)
         {
-            if (invocation is IHasInputParameter)
+            if (invocation.HasFeature<IParameterIn>())
             {
                 return invocation.Signature == Signature;
             }
@@ -83,11 +84,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc />
         public bool TryApplyTo(IInvocation invocation)
         {
-            if (invocation is IHasInputParameter parameterInvocation)
+            if (invocation.TryGetFeature<IParameterIn>(out var parameterInvocation))
             {
                 if (invocation.Signature == Signature)
                 {
-                    var @params = parameterInvocation.InputParameter as (Type, object?)[] ?? parameterInvocation.InputParameter.ToArray();
+                    var @params = parameterInvocation.InputParameterCollection.Select(p => (p.Type, p.Value)).ToArray();
                     var (canBeRecorded, recordedCall) = TryRecord(@params);
                     if (canBeRecorded)
                     {
