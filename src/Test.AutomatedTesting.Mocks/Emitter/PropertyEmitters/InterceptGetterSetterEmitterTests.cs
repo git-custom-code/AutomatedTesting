@@ -1,6 +1,8 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
     using Interception;
+    using Interception.Properties;
+    using Interception.ReturnValue;
     using LightInject;
     using System.Collections.Generic;
     using System.Linq;
@@ -29,14 +31,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Equal(2, interceptor.ForwardedInvocations.Count);
-            var getterInvocation = interceptor.ForwardedInvocations.First() as GetterInvocation;
-            Assert.NotNull(getterInvocation);
-            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), getterInvocation?.PropertySignature.Name);
+
+            var getterInvocation = interceptor.ForwardedInvocations.First();
+            Assert.True(getterInvocation.HasFeature<IPropertyInvocation>());
+            var getterFeature = getterInvocation.GetFeature<IPropertyInvocation>();
+            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), getterFeature.Signature.Name);
             Assert.Equal(42, result);
-            var setterInvocation = interceptor.ForwardedInvocations.Last() as SetterInvocation;
-            Assert.NotNull(setterInvocation);
-            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), setterInvocation?.PropertySignature.Name);
-            Assert.Equal(13, setterInvocation?.Value);
+
+            var setterInvocation = interceptor.ForwardedInvocations.Last();
+            Assert.True(setterInvocation.HasFeature<IPropertySetterValue>());
+            var setterFeature = setterInvocation.GetFeature<IPropertySetterValue>();
+            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), setterFeature.Signature.Name);
+            Assert.Equal(13, setterFeature.Value);
         }
 
         [Fact(DisplayName = "Emit a dynamic reference type property implementation for an interface")]
@@ -56,15 +62,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Equal(2, interceptor.ForwardedInvocations.Count);
-            var getterInvocation = interceptor.ForwardedInvocations.First() as GetterInvocation;
-            Assert.NotNull(getterInvocation);
-            Assert.Equal(nameof(IFooWithReferenceTypeProperties.GetterSetter), getterInvocation?.PropertySignature.Name);
-            Assert.NotNull(result);
+
+            var getterInvocation = interceptor.ForwardedInvocations.First();
+            Assert.True(getterInvocation.HasFeature<IPropertyInvocation>());
+            var getterFeature = getterInvocation.GetFeature<IPropertyInvocation>();
+            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), getterFeature.Signature.Name);
             Assert.Equal(typeof(double), result);
-            var setterInvocation = interceptor.ForwardedInvocations.Last() as SetterInvocation;
-            Assert.NotNull(setterInvocation);
-            Assert.Equal(nameof(IFooWithReferenceTypeProperties.GetterSetter), setterInvocation?.PropertySignature.Name);
-            Assert.Equal(typeof(string), setterInvocation?.Value);
+
+            var setterInvocation = interceptor.ForwardedInvocations.Last();
+            Assert.True(setterInvocation.HasFeature<IPropertySetterValue>());
+            var setterFeature = setterInvocation.GetFeature<IPropertySetterValue>();
+            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), setterFeature.Signature.Name);
+            Assert.Equal(typeof(string), setterFeature.Value);
         }
 
         #region Mocks
@@ -76,7 +85,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             public void Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
-                if (invocation is GetterInvocation getterInvocation)
+                if (invocation.TryGetFeature<IReturnValue<int>>(out var getterInvocation))
                 {
                     getterInvocation.ReturnValue = 42;
                 }
@@ -90,7 +99,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             public void Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
-                if (invocation is GetterInvocation getterInvocation)
+                if (invocation.TryGetFeature<IReturnValue<object?>>(out var getterInvocation))
                 {
                     getterInvocation.ReturnValue = typeof(double);
                 }
