@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
+    using ExceptionHandling;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -40,9 +41,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         #region Logic
 
         /// <inheritdoc />
-        public T? GetFeature<T>() where T : class, IInvocationFeature
+        public T GetFeature<T>() where T : class, IInvocationFeature
         {
-            return Features.Where(f => f is T).SingleOrDefault() as T;
+            var feature = (T?)Features.SingleOrDefault(f => f is T);
+            if (feature == null)
+            {
+                throw new MissingFeatureException(this, typeof(T));
+            }
+            return feature;
         }
 
         /// <inheritdoc />

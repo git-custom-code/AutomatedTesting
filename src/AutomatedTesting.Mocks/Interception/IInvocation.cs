@@ -19,7 +19,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// </summary>
         /// <typeparam name="T"> The <see cref="IInvocationFeature"/>'s type. </typeparam>
         /// <returns> The requested feature or null if no such feature exists. </returns>
-        T? GetFeature<T>() where T : class, IInvocationFeature;
+        T GetFeature<T>() where T : class, IInvocationFeature;
 
         /// <summary>
         /// Query if an invocation feature of the specified type exists.
