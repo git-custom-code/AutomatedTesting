@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
+    using ExceptionHandling;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 
@@ -18,7 +19,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// Gets an incocation feature by type.
         /// </summary>
         /// <typeparam name="T"> The <see cref="IInvocationFeature"/>'s type. </typeparam>
-        /// <returns> The requested feature or null if no such feature exists. </returns>
+        /// <returns> The requested feature. </returns>
+        /// <exception cref="MissingFeatureException"> Thrown if the requested feature does not exist. </exception>
         T GetFeature<T>() where T : class, IInvocationFeature;
 
         /// <summary>
