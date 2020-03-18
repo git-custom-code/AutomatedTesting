@@ -24,7 +24,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         #region Logic
 
         /// <summary>
-        ///Emits a local <see cref="ParameterIn"/> feature variable.
+        /// Emits a local <see cref="ParameterIn"/> feature variable.
         /// </summary>
         /// <param name="body"> The body of the dynamic method. </param>
         /// <param name="parameterInFeatureVariable"> The emitted local <see cref="ParameterIn"/> variable. </param>

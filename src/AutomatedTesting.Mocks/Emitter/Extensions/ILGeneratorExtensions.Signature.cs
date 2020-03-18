@@ -18,6 +18,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         private static Lazy<MethodInfo> GetMethod { get; } = new Lazy<MethodInfo>(InitializeGetMethod, true);
 
         /// <summary>
+        /// Gets the cached signature of the <see cref="Type.GetProperty(string)"/> method.
+        /// </summary>
+        private static Lazy<MethodInfo> GetProperty { get; } = new Lazy<MethodInfo>(InitializeGetProperty, true);
+
+        /// <summary>
         /// Gets the cached signature of the <see cref="Array.Empty{T}"/> static method.
         /// </summary>
         private static Lazy<MethodInfo> ArrayEmptyType { get; }
@@ -41,6 +46,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         public static void EmitLocalMethodSignatureVariable(this ILGenerator body, out LocalBuilder methodSignatureVariable)
         {
             methodSignatureVariable = body.DeclareLocal(typeof(MethodInfo));
+        }
+
+        /// <summary>
+        /// Emits a local <see cref="PropertyInfo"/> variable.
+        /// </summary>
+        /// <param name="body"> The body of the dynamic property. </param>
+        /// <param name="propertySignatureVariable"> The emitted local <see cref="PropertyInfo"/> variable. </param>
+        /// <remarks>
+        /// /// Emits the following source code:
+        /// <![CDATA[
+        ///     PropertyInfo propertySignature;
+        /// ]]>
+        /// </remarks>
+        public static void EmitLocalPropertySignatureVariable(this ILGenerator body, out LocalBuilder propertySignatureVariable)
+        {
+            propertySignatureVariable = body.DeclareLocal(typeof(PropertyInfo));
         }
 
         /// <summary>
@@ -95,6 +116,32 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         }
 
         /// <summary>
+        /// Emits a call to <see cref="Type.GetProperty(string)"/> in order to get the signature of the invoked property.
+        /// </summary>
+        /// <param name="body"> The body of the dynamic property. </param>
+        /// <param name="signature"> The dynamic property's signature. </param>
+        /// <param name="propertySignatureVariable"> The emitted local <see cref="PropertyInfo"/> variable. </param>
+        /// <remarks>
+        /// Emits the following source code:
+        /// <![CDATA[
+        ///     propertySignature = typeof(Interface).GetProperty(nameof(Property));
+        /// ]]>
+        /// </remarks>
+        public static void EmitGetPropertySignature(
+            this ILGenerator body,
+            PropertyInfo signature,
+            LocalBuilder propertySignatureVariable)
+        {
+#pragma warning disable CS8604 // Possible null reference argument.
+            body.Emit(OpCodes.Ldtoken, signature.DeclaringType);
+#pragma warning restore CS8604
+            body.Emit(OpCodes.Call, GetTypeFromHandle.Value);
+            body.Emit(OpCodes.Ldstr, signature.Name);
+            body.Emit(OpCodes.Call, GetProperty.Value);
+            body.Emit(OpCodes.Stloc, propertySignatureVariable.LocalIndex);
+        }
+
+        /// <summary>
         /// Initialization logic for the <see cref="GetMethod"/> property.
         /// </summary>
         /// <returns> The signature of the <see cref="Type.GetMethod(string, System.Type[])"/> method. </returns>
@@ -121,6 +168,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             }
             var arrayEmpty = openGenericArrayEmpty.MakeGenericMethod(typeof(Type));
             return arrayEmpty ?? throw new MethodInfoException(type, methodName);
+        }
+
+        /// <summary>
+        /// Initialization logic for the <see cref="GetProperty"/> property.
+        /// </summary>
+        /// <returns> The signature of the <see cref="Type.GetProperty(string)"/> method. </returns>
+        private static MethodInfo InitializeGetProperty()
+        {
+            var type = typeof(Type);
+            var propertyName = nameof(Type.GetProperty);
+            var getProperty = @type.GetMethod(propertyName, new[] { typeof(string) });
+            return getProperty ?? throw new PropertyInfoException(type, propertyName);
         }
 
         #endregion
