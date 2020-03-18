@@ -15,12 +15,36 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     /// </summary>
     /// <remarks>
     /// Emits the following source code:
-    /// <![CDATA[
-    ///     var propertySignature = typeof(Interface).GetProperty(nameof(Property));
-    ///     var invocation = new SetterInvocation(propertySignature);
-    ///     _interceptor.Intercept(invocation);
     ///
-    ///     return;
+    /// <![CDATA[
+    ///     var propertySignature = typeof(Interface).GetProperty(
+    ///         nameof(Property));
+    ///     var methodSignature = typeof(Interface).GetMethod(
+    ///         nameof(set_Property),
+    ///         Array.Empty<Type>());
+    ///
+    ///     var propertySetterValueFeature = new PropertySetterValue(propertySignature, value);
+    ///
+    ///     var incovation = new Invocation(methodSignature, propertySetterValueFeature);
+    ///     _interceptor.Intercept(incovation);
+    ///     return returnValueFeature.ReturnValue;
+    /// ]]>
+    ///
+    /// or
+    ///
+    /// <![CDATA[
+    ///     var propertySignature = typeof(Interface).GetProperty(
+    ///         nameof(Property));
+    ///     var methodSignature = typeof(Interface).GetMethod(
+    ///         nameof(set_Property),
+    ///         new[] { typeof(parameter1), ... typeof(parameterN) });
+    ///
+    ///     var propertySetterValueFeature = new PropertySetterValue(propertySignature, value);
+    ///     var parameterInFeature = new ParameterIn(methodSignature, new[] { parameter1, ...  parameterN });
+    ///
+    ///     var incovation = new Invocation(methodSignature, propertySetterValueFeature, parameterInFeature);
+    ///     _interceptor.Intercept(incovation);
+    ///     return returnValueFeature.ReturnValue;
     /// ]]>
     /// </remarks>
     public sealed class InterceptSetterEmitter : PropertyEmitterBase

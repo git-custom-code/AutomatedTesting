@@ -12,6 +12,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     /// Implementation of the <see cref="IPropertyEmitter"/> interface for emitting dynamic property getters
     /// that will forward any calls to an injected <see cref="IInterceptor.Intercept(IInvocation)"/> instance.
     /// </summary>
+    /// <typeparam name="T"> The type of the property. </typeparam>
     /// <remarks>
     /// Emits the following source code:
     ///
@@ -36,7 +37,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     ///     var propertySignature = typeof(Interface).GetProperty(
     ///         nameof(Property));
     ///     var methodSignature = typeof(Interface).GetMethod(
-    ///         nameof(Method),
+    ///         nameof(get_Property),
     ///         new[] { typeof(parameter1), ... typeof(parameterN) });
     ///
     ///     var propertyFeature = new PropertyInvocation(propertySignature);
@@ -53,7 +54,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         #region Dependencies
 
         /// <summary>
-        /// Creates a new instance of the <see cref="InterceptGetterEmitter"/> type.
+        /// Creates a new instance of the <see cref="InterceptGetterEmitter{T}"/> type.
         /// </summary>
         /// <param name="type"> The dynamic proxy type. </param>
         /// <param name="signature"> The signature of the property to be created. </param>
