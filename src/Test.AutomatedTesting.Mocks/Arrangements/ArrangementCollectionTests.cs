@@ -75,9 +75,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             arrangmentCollection.ApplyTo(invocation);
 
             // Then
+            Assert.True(invocation.HasFeature<IReturnValue<int>>());
             var feature = invocation.GetFeature<IReturnValue<int>>();
-            Assert.NotNull(feature);
-            Assert.Equal(42, feature?.ReturnValue);
+            Assert.Equal(42, feature.ReturnValue);
         }
 
         [Fact(DisplayName = "Check if a matching arrangment exists for a method invocation")]
@@ -120,9 +120,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
 
             // Then
             Assert.True(hasAppliedArrangment);
+            Assert.True(invocation.HasFeature<IReturnValue<int>>());
             var feature = invocation.GetFeature<IReturnValue<int>>();
-            Assert.NotNull(feature);
-            Assert.Equal(42, feature?.ReturnValue);
+            Assert.Equal(42, feature.ReturnValue);
         }
     }
 }
