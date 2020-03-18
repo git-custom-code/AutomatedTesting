@@ -22,25 +22,27 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
     public interface IFluentInterface
     {
         /// <summary>
-        /// Redeclaration that hides the <see cref="Equals(object)"/> method from IntelliSense.
+        /// Redeclaration that hides the <see cref="object.Equals(object?)"/> method from IntelliSense.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        bool Equals(object? obj);
+        bool Equals(object? other);
 
         /// <summary>
-        /// Redeclaration that hides the <see cref="GetHashCode"/> method from IntelliSense.
+        /// Redeclaration that hides the <see cref="object.GetHashCode"/> method from IntelliSense.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         int GetHashCode();
 
         /// <summary>
-        /// Redeclaration that hides the <see cref="GetType"/> method from IntelliSense.
+        /// Redeclaration that hides the <see cref="object.GetType"/> method from IntelliSense.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
+#pragma warning disable CA1716 // Identifiers should not match keywords
         Type GetType();
+#pragma warning restore CA1716
 
         /// <summary>
-        /// Redeclaration that hides the <see cref="ToString"/> method from IntelliSense.
+        /// Redeclaration that hides the <see cref="object.ToString"/> method from IntelliSense.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         string? ToString();

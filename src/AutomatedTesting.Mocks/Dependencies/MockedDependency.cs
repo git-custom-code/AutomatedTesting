@@ -57,18 +57,5 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         public Type Signature { get; }
 
         #endregion
-
-        #region Logic
-
-        /// <summary>
-        /// Convert a mocked dependecy to the type of the original dependency.
-        /// </summary>
-        /// <param name="dependency"> The dependency to be converted. </param>
-        public static implicit operator T(MockedDependency<T> dependency)
-        {
-            return dependency.Instance;
-        }
-
-        #endregion
     }
 }
