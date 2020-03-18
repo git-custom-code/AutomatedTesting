@@ -28,7 +28,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             // Then
             Assert.NotNull(emitter);
-            Assert.IsType<InterceptGetterEmitter>(emitter);
+            Assert.IsType<InterceptGetterEmitter<int>>(emitter);
         }
 
         [Fact(DisplayName = "Create property emitter for a setter only property")]
@@ -70,7 +70,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             // Then
             Assert.NotNull(emitter);
-            Assert.IsType<InterceptGetterSetterEmitter>(emitter);
+            Assert.IsType<InterceptGetterSetterEmitter<int>>(emitter);
         }
     }
 }
