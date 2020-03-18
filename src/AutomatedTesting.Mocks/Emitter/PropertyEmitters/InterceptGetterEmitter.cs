@@ -1,8 +1,10 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using ExceptionHandling;
     using Extensions;
     using Interception;
-    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
 
@@ -12,15 +14,41 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     /// </summary>
     /// <remarks>
     /// Emits the following source code:
-    /// <![CDATA[
-    ///     var propertySignature = typeof(Interface).GetProperty(nameof(Property));
-    ///     var invocation = new GetterInvocation(propertySignature);
-    ///     _interceptor.Intercept(invocation);
     ///
-    ///     return (PropertyType)invocation.ReturnValue;
+    /// <![CDATA[
+    ///     var propertySignature = typeof(Interface).GetProperty(
+    ///         nameof(Property));
+    ///     var methodSignature = typeof(Interface).GetMethod(
+    ///         nameof(get_Property),
+    ///         Array.Empty<Type>());
+    ///
+    ///     var propertyFeature = new PropertyInvocation(propertySignature);
+    ///     var returnValueFeature = new ReturnValueInvocation<T>();
+    ///
+    ///     var incovation = new Invocation(methodSignature, propertyFeature, returnValueFeature);
+    ///     _interceptor.Intercept(incovation);
+    ///     return returnValueFeature.ReturnValue;
+    /// ]]>
+    ///
+    /// or
+    ///
+    /// <![CDATA[
+    ///     var propertySignature = typeof(Interface).GetProperty(
+    ///         nameof(Property));
+    ///     var methodSignature = typeof(Interface).GetMethod(
+    ///         nameof(Method),
+    ///         new[] { typeof(parameter1), ... typeof(parameterN) });
+    ///
+    ///     var propertyFeature = new PropertyInvocation(propertySignature);
+    ///     var returnValueFeature = new ReturnValueInvocation<T>();
+    ///     var parameterInFeature = new ParameterIn(methodSignature, new[] { parameter1, ...  parameterN });
+    ///
+    ///     var incovation = new Invocation(methodSignature, propertyFeature, returnValueFeature, parameterInFeature);
+    ///     _interceptor.Intercept(incovation);
+    ///     return returnValueFeature.ReturnValue;
     /// ]]>
     /// </remarks>
-    public sealed class InterceptGetterEmitter : PropertyEmitterBase
+    public sealed class InterceptGetterEmitter<T> : PropertyEmitterBase
     {
         #region Dependencies
 
@@ -36,28 +64,25 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #endregion
 
-        #region Data
-
-        /// <summary>
-        /// Gets the cached signature of the <see cref="GetterInvocation.ReturnValue"/> getter.
-        /// </summary>
-        private static Lazy<MethodInfo> GetReturnValue { get; } = new Lazy<MethodInfo>(InitializeGetReturnValue, true);
-
-        #endregion
-
         #region Logic
 
         /// <inheritdoc />
         public override void EmitPropertyImplementation()
         {
+            var features = new List<LocalBuilder>();
+            var parameters = Signature.GetIndexParameters();
+            var inParameters = parameters.Where(p => !p.IsOut && !p.ParameterType.IsByRef).ToArray();
+            // ToDo: Ref/Out
+
             var property = Type.DefineProperty(
                 Signature.Name,
                 PropertyAttributes.None,
                 Signature.PropertyType,
                 null);
 
+            var getterSignature = Signature.GetGetMethod() ?? throw new MethodInfoException(Type, $"get_{Signature.Name}");
             var getter = Type.DefineMethod(
-                Signature.GetGetMethod()?.Name ?? $"get_{Signature.Name}",
+                getterSignature.Name,
                 MethodAttributes.Public | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.NewSlot | MethodAttributes.Virtual,
                 Signature.PropertyType,
                 null);
@@ -65,70 +90,38 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
             // local variables
             body.EmitLocalPropertySignatureVariable(out var propertySignatureVariable);
-            body.EmitLocalGetterInvocationVariable(out var invocationVariable);
-            EmitLocalReturnValue(body, out var returnValue);
+            body.EmitLocalMethodSignatureVariable(out var methodSignatureVariable);
+
+            body.EmitLocalPropertyFeatureVariable(out var propertyFeatureVariable);
+            features.Add(propertyFeatureVariable);
+
+            body.EmitLocalReturnValueFeatureVariable<T>(out var returnValueFeatureVariable);
+            features.Add(returnValueFeatureVariable);
+
+            if (inParameters.Length > 0)
+            {
+                body.EmitLocalParameterInFeatureVariable(out var parameterInFeature);
+                features.Add(parameterInFeature);
+            }
+
+            body.EmitLocalInvocationVariable(out var invocationVariable);
 
             // body
+            body.EmitGetMethodSignature(getterSignature, methodSignatureVariable);
             body.EmitGetPropertySignature(Signature, propertySignatureVariable);
-            body.EmitNewGetterInvocation(propertySignatureVariable, invocationVariable);
+
+            body.EmitNewPropertyFeature(propertySignatureVariable, propertyFeatureVariable);
+            body.EmitNewReturnValueFeature<T>(returnValueFeatureVariable);
+            if (inParameters.Length > 0)
+            {
+                body.EmitNewParameterInFeature(methodSignatureVariable, parameters, features[1]);
+            }
+
+            body.EmitNewInvocation(invocationVariable, methodSignatureVariable, features);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
-            EmitReturnStatement(body, invocationVariable, returnValue);
+            body.EmitReturnStatement<T>(returnValueFeatureVariable);
 
             property.SetGetMethod(getter);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     PropertyType returnValue;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic property's get method. </param>
-        /// <param name="returnValue"> The emitted local return value. </param>
-        private void EmitLocalReturnValue(ILGenerator body, out LocalBuilder returnValue)
-        {
-            returnValue = body.DeclareLocal(Signature.PropertyType);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     return (PropertyType)invocation.ReturnValue;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic property's get method. </param>
-        /// <param name="invocationVariable"> The local <see cref="GetterInvocation"/> variable. </param>
-        /// <param name="returnValue"> The emitted local return value. </param>
-        private void EmitReturnStatement(ILGenerator body, LocalBuilder invocationVariable, LocalBuilder returnValue)
-        {
-            var label = body.DefineLabel();
-
-            body.Emit(OpCodes.Nop);
-            body.Emit(OpCodes.Ldloc, invocationVariable.LocalIndex);
-            body.Emit(OpCodes.Callvirt, GetReturnValue.Value);
-            if (Signature.PropertyType.IsValueType)
-            {
-                body.Emit(OpCodes.Unbox_Any, Signature.PropertyType);
-            }
-            else
-            {
-                body.Emit(OpCodes.Castclass, Signature.PropertyType);
-            }
-            body.Emit(OpCodes.Stloc, returnValue.LocalIndex);
-            body.Emit(OpCodes.Br_S, label);
-            body.MarkLabel(label);
-            body.Emit(OpCodes.Ldloc, returnValue.LocalIndex);
-            body.Emit(OpCodes.Ret);
-        }
-
-        /// <summary>
-        /// Initialization logic for the <see cref="GetReturnValue"/> property.
-        /// </summary>
-        /// <returns> Thethe signature of the <see cref="GetterInvocation.ReturnValue"/> getter. </returns>
-        private static MethodInfo InitializeGetReturnValue()
-        {
-            var getReturnValue = typeof(GetterInvocation).GetProperty(nameof(GetterInvocation.ReturnValue))?.GetGetMethod();
-            return getReturnValue ?? throw new ArgumentNullException(nameof(GetReturnValue));
         }
 
         #endregion

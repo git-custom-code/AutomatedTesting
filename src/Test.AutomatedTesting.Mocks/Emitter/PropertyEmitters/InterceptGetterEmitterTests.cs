@@ -1,6 +1,8 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
     using Interception;
+    using Interception.Properties;
+    using Interception.ReturnValue;
     using LightInject;
     using System.Collections.Generic;
     using System.Linq;
@@ -9,7 +11,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     using Xunit;
 
     /// <summary>
-    /// Automated tests for the <see cref="InterceptGetterEmitter"/> type.
+    /// Automated tests for the <see cref="InterceptGetterEmitter{T}"/> type.
     /// </summary>
     public sealed class InterceptGetterEmitterTests
     {
@@ -29,9 +31,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as GetterInvocation;
-            Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithValueTypeProperties.Getter), invocation?.PropertySignature.Name);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            Assert.True(invocation.HasFeature<IPropertyInvocation>());
+            var feature = invocation.GetFeature<IPropertyInvocation>();
+            Assert.Equal(nameof(IFooWithValueTypeProperties.Getter), feature.Signature.Name);
             Assert.Equal(42, result);
         }
 
@@ -51,9 +54,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as GetterInvocation;
-            Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithReferenceTypeProperties.Getter), invocation?.PropertySignature.Name);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            Assert.True(invocation.HasFeature<IPropertyInvocation>());
+            var feature = invocation.GetFeature<IPropertyInvocation>();
+            Assert.Equal(nameof(IFooWithReferenceTypeProperties.Getter), feature.Signature.Name);
             Assert.NotNull(result);
             Assert.Equal("Foo", result?.ToString());
         }
@@ -67,7 +71,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             public void Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
-                if (invocation is GetterInvocation getterInvocation)
+                if (invocation.TryGetFeature<IReturnValue<int>>(out var getterInvocation))
                 {
                     getterInvocation.ReturnValue = 42;
                 }
@@ -81,7 +85,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             public void Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
-                if (invocation is GetterInvocation getterInvocation)
+                if (invocation.TryGetFeature<IReturnValue<object?>>(out var getterInvocation))
                 {
                     getterInvocation.ReturnValue = new StringBuilder("Foo");
                 }
