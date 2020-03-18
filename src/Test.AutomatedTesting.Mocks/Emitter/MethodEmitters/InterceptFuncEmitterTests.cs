@@ -31,9 +31,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
-            Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithValueTypeFunc.MethodWithOneParameter), invocation?.Signature.Name);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            Assert.Equal(nameof(IFooWithValueTypeFunc.MethodWithOneParameter), invocation.Signature.Name);
             Assert.Equal(42, result);
         }
 
@@ -54,9 +53,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
-            Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithReferenceTypeFunc.MethodWithOneParameter), invocation?.Signature.Name);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            Assert.Equal(nameof(IFooWithReferenceTypeFunc.MethodWithOneParameter), invocation.Signature.Name);
             Assert.NotNull(result);
             Assert.Equal("Foo", result?.ToString());
         }

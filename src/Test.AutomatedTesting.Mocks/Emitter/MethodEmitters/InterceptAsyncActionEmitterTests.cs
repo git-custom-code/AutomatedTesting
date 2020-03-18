@@ -33,16 +33,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
-            Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithAsyncValueTypeAction.MethodWithOneParameterAsync), invocation?.Signature.Name);
-            var inputParameter = invocation?.GetFeature<IParameterIn>();
-            Assert.NotNull(inputParameter);
-            Assert.Single(inputParameter?.InputParameterCollection);
-            var parameter = inputParameter?.InputParameterCollection?.FirstOrDefault();
-            Assert.Equal("first", parameter?.Name);
-            Assert.Equal(typeof(int), parameter?.Type);
-            Assert.Equal(expectedValueType, parameter?.Value);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            Assert.Equal(nameof(IFooWithAsyncValueTypeAction.MethodWithOneParameterAsync), invocation.Signature.Name);
+            var inputParameter = invocation.GetFeature<IParameterIn>();
+            Assert.Single(inputParameter.InputParameterCollection);
+            var parameter = inputParameter.InputParameterCollection.FirstOrDefault();
+            Assert.Equal("first", parameter.Name);
+            Assert.Equal(typeof(int), parameter.Type);
+            Assert.Equal(expectedValueType, parameter.Value);
         }
 
         [Fact(DisplayName = "Emit a dynamic method implementation for an asynchronous reference type interface action")]
@@ -63,16 +61,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single() as Invocation;
-            Assert.NotNull(invocation);
-            Assert.Equal(nameof(IFooWithAsyncReferenceTypeAction.MethodWithOneParameterAsync), invocation?.Signature.Name);
-            var inputParameter = invocation?.GetFeature<IParameterIn>();
-            Assert.NotNull(inputParameter);
-            Assert.Single(inputParameter?.InputParameterCollection);
-            var parameter = inputParameter?.InputParameterCollection?.FirstOrDefault();
-            Assert.Equal("first", parameter?.Name);
-            Assert.Equal(typeof(object), parameter?.Type);
-            Assert.Equal(expectedReferenceType, parameter?.Value);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            Assert.Equal(nameof(IFooWithAsyncReferenceTypeAction.MethodWithOneParameterAsync), invocation.Signature.Name);
+            var inputParameter = invocation.GetFeature<IParameterIn>();
+            Assert.Single(inputParameter.InputParameterCollection);
+            var parameter = inputParameter.InputParameterCollection.FirstOrDefault();
+            Assert.Equal("first", parameter.Name);
+            Assert.Equal(typeof(object), parameter.Type);
+            Assert.Equal(expectedReferenceType, parameter.Value);
         }
 
         #region Mocks
