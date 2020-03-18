@@ -96,7 +96,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
                     {
                         asyncEnumerableFeature.AsyncReturnValue = AsyncEnumerable.Create(_ =>
                             AsyncEnumerator.Create(
-                                () => default,
+                                () => new ValueTask<bool>(true),
                                 () => ReturnValue,
                                 () => default));
                         return true;
@@ -104,7 +104,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
                 }
                 else if (invocation.TryGetFeature<IReturnValue<T>>(out var returnValueFeature))
                 {
-
                     returnValueFeature.ReturnValue = ReturnValue;
                     return true;
                 }
