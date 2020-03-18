@@ -1,7 +1,10 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
     using Arrangements;
+    using CustomCode.AutomatedTesting.Mocks.Interception.Async;
+    using Interception.ReturnValue;
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -35,20 +38,31 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         {
             if (Arrangements.TryApplyTo(invocation) == false)
             {
-                if (invocation is FuncInvocation funcInvocation)
+                if (invocation.TryGetFeature<AsyncTaskInvocation>(out var taskFeature))
                 {
-                    var @default = GetDefault(funcInvocation.Signature.ReturnType);
-                    funcInvocation.ReturnValue = @default;
+                    taskFeature.AsyncReturnValue = Task.CompletedTask;
                 }
-                else if (invocation is AsyncActionInvocation asyncActionInvocation)
+                else if (invocation.TryGetFeature<AsyncValueTaskInvocation>(out var valueTaskFeature))
                 {
-                    asyncActionInvocation.ReturnValue = Task.CompletedTask;
+                    valueTaskFeature.AsyncReturnValue = new ValueTask();
                 }
-                else if (invocation is AsyncFuncInvocation asyncFuncInvocation)
+                else if (invocation.TryGetFeature<IReturnValue>(out var feature))
                 {
-                    var returnType = asyncFuncInvocation.Signature.ReturnType.GenericTypeArguments[0];
-                    var @default = GetDefault(returnType);
-                    asyncFuncInvocation.ReturnValue = Task.FromResult(@default);
+                    if (invocation.Signature.ReturnType == typeof(Task<>) ||
+                        invocation.Signature.ReturnType == typeof(ValueTask<>))
+                    {
+                        var returnType = invocation.Signature.ReturnType.GenericTypeArguments[0];
+                        feature.ReturnValue = GetDefault(returnType);
+                    }
+                    else if (invocation.Signature.ReturnType == typeof(IAsyncEnumerable<>))
+                    {
+                        // TODO
+                    }
+                    else
+                    {
+                        var @default = GetDefault(invocation.Signature.ReturnType);
+                        feature.ReturnValue = @default;
+                    }
                 }
             }
         }
