@@ -5,7 +5,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Properties
     /// <summary>
     /// Non-generic feature interface for an <see cref="IInvocation"/> of a property setter.
     /// </summary>
-    public interface IPropertySetterValue : IInvocationFeature
+    public interface IPropertySetterValue : IPropertyInvocation
     {
         /// <summary>
         /// Gets the type of the setter's value.

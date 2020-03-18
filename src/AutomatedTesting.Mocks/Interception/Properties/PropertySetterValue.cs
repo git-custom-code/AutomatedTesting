@@ -6,7 +6,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Properties
     /// <summary>
     /// Implementation of an <see cref="IInvocationFeature"/> for intercepted property setters.
     /// </summary>
-    public sealed class PropertySetterValue : IPropertySetterValue, IPropertyInvocation
+    public sealed class PropertySetterValue : IPropertySetterValue
     {
         #region Dependencies
 

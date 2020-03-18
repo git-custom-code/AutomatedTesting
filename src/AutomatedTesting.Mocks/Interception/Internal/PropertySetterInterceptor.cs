@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception.Internal
 {
     using Fluent;
+    using Properties;
     using System;
     using System.Reflection;
 
@@ -27,11 +28,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Internal
         /// <inheritdoc />
         public void Intercept(IInvocation invocation)
         {
-            if (invocation is SetterInvocation setter)
+            if (invocation.TryGetFeature<IPropertySetterValue>(out var setter))
             {
                 if (DiscoveredSetter == null)
                 {
-                    DiscoveredSetter = setter.Signature;
+                    DiscoveredSetter = setter.Signature.GetSetMethod();
                 }
                 else
                 {
