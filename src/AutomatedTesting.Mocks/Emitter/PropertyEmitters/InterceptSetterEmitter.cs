@@ -1,8 +1,11 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using ExceptionHandling;
     using Extensions;
     using Interception;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
 
@@ -41,14 +44,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc />
         public override void EmitPropertyImplementation()
         {
+            var features = new List<LocalBuilder>();
+            var parameters = Signature.GetIndexParameters();
+            var inParameters = parameters.Where(p => !p.IsOut && !p.ParameterType.IsByRef).ToArray();
+            // ToDo: Ref/Out
+
             var property = Type.DefineProperty(
                 Signature.Name,
                 PropertyAttributes.None,
                 Signature.PropertyType,
                 null);
 
+            var setterSignature = Signature.GetSetMethod() ?? throw new MethodInfoException(Type, $"set_{Signature.Name}");
             var setter = Type.DefineMethod(
-                Signature.GetSetMethod()?.Name ?? $"set_{Signature.Name}",
+                setterSignature.Name,
                 MethodAttributes.Public | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.NewSlot | MethodAttributes.Virtual,
                 null,
                 new Type[] { Signature.PropertyType });
@@ -56,32 +65,33 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
             // local variables
             body.EmitLocalPropertySignatureVariable(out var propertySignatureVariable);
-            body.EmitLocalSetterInvocationVariable(out var invocationVariable);
+            body.EmitLocalMethodSignatureVariable(out var methodSignatureVariable);
+
+            body.EmitLocalPropertySetterValueFeatureVariable(out var propertySetterValueFeatureVariable);
+            features.Add(propertySetterValueFeatureVariable);
+            if (inParameters.Length > 0)
+            {
+                body.EmitLocalParameterInFeatureVariable(out var parameterInFeature);
+                features.Add(parameterInFeature);
+            }
+
+            body.EmitLocalInvocationVariable(out var invocationVariable);
 
             // body
             body.EmitGetPropertySignature(Signature, propertySignatureVariable);
-            body.EmitNewSetterInvocation(Signature.PropertyType, propertySignatureVariable, invocationVariable);
+            body.EmitGetMethodSignature(setterSignature, methodSignatureVariable);
+
+            body.EmitNewPropertySetterValueFeature(Signature, propertySignatureVariable, propertySetterValueFeatureVariable);
+            if (inParameters.Length > 0)
+            {
+                body.EmitNewParameterInFeature(methodSignatureVariable, parameters, features[1]);
+            }
+
+            body.EmitNewInvocation(invocationVariable, methodSignatureVariable, features);
             body.EmitInterceptCall(InterceptorField, invocationVariable);
-            EmitReturnStatement(body);
+            body.EmitReturnStatement();
 
             property.SetSetMethod(setter);
-        }
-
-        /// <summary>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     return;
-        /// ]]>
-        /// </summary>
-        /// <param name="body"> The body of the dynamic property's set method. </param>
-        private void EmitReturnStatement(ILGenerator body)
-        {
-            var label = body.DefineLabel();
-
-            body.Emit(OpCodes.Nop);
-            body.Emit(OpCodes.Br_S, label);
-            body.MarkLabel(label);
-            body.Emit(OpCodes.Ret);
         }
 
         #endregion

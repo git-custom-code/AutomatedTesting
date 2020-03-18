@@ -94,10 +94,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
             body.EmitLocalPropertyFeatureVariable(out var propertyFeatureVariable);
             features.Add(propertyFeatureVariable);
-
             body.EmitLocalReturnValueFeatureVariable<T>(out var returnValueFeatureVariable);
             features.Add(returnValueFeatureVariable);
-
             if (inParameters.Length > 0)
             {
                 body.EmitLocalParameterInFeatureVariable(out var parameterInFeature);
@@ -107,8 +105,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.EmitLocalInvocationVariable(out var invocationVariable);
 
             // body
-            body.EmitGetMethodSignature(getterSignature, methodSignatureVariable);
             body.EmitGetPropertySignature(Signature, propertySignatureVariable);
+            body.EmitGetMethodSignature(getterSignature, methodSignatureVariable);
 
             body.EmitNewPropertyFeature(propertySignatureVariable, propertyFeatureVariable);
             body.EmitNewReturnValueFeature<T>(returnValueFeatureVariable);
