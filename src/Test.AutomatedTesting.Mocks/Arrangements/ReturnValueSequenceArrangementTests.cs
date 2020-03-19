@@ -1,9 +1,11 @@
 namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
 {
+    using CustomCode.AutomatedTesting.Mocks.Interception.Properties;
     using Interception;
+    using Interception.Async;
+    using Interception.ReturnValue;
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
     using System.Threading.Tasks;
     using TestDomain;
     using Xunit;
@@ -19,18 +21,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var signature = typeof(IFooWithValueTypeFunc)
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42, 65 }));
 
             // When
+            var feature = invocation.GetFeature<IReturnValue<int>>();
             arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
+            var fourth = feature.ReturnValue;
 
             // Then
             Assert.Equal(13, first);
@@ -48,18 +52,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value3 = new object();
             var signature = typeof(IFooWithReferenceTypeFunc)
                 .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var returnValueFeature = new ReturnValueInvocation<object?>();
+            var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2, value3 }));
 
             // When
+            var feature = invocation.GetFeature<IReturnValue<object?>>();
             arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
+            var fourth = feature.ReturnValue;
 
             // Then
             Assert.Equal(value1, first);
@@ -74,32 +80,34 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var signature = typeof(IFooWithAsyncValueTypeFunc)
                 .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
-            var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var asyncFeature = new AsyncGenericTaskInvocation<int>();
+            var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42, 65 }));
 
             // When
+            var feature = invocation.GetFeature<IAsyncInvocation<Task<int>>>();
             arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
+            var fourth = feature.AsyncReturnValue;
 
             // Then
             Assert.NotNull(first);
             Assert.IsAssignableFrom<Task<int>>(first);
-            Assert.Equal(13, ((Task<int>)first).Result);
+            Assert.Equal(13, first.Result);
             Assert.NotNull(second);
             Assert.IsAssignableFrom<Task<int>>(second);
-            Assert.Equal(42, ((Task<int>)second).Result);
+            Assert.Equal(42, second.Result);
             Assert.NotNull(third);
             Assert.IsAssignableFrom<Task<int>>(third);
-            Assert.Equal(65, ((Task<int>)third).Result);
+            Assert.Equal(65, third.Result);
             Assert.NotNull(fourth);
             Assert.IsAssignableFrom<Task<int>>(fourth);
-            Assert.Equal(65, ((Task<int>)fourth).Result);
+            Assert.Equal(65, fourth.Result);
         }
 
         [Fact(DisplayName = "Apply a sequence of arranged return values (task of value type) to an invocation of an async method")]
@@ -108,7 +116,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var signature = typeof(IFooWithAsyncValueTypeFunc)
                 .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
-            var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var asyncFeature = new AsyncGenericTaskInvocation<int>();
+            var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<Task<int>>(signature, new List<Task<int>>(new[]
                 {
                     Task.FromResult(13),
@@ -117,28 +126,29 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
                 }));
 
             // When
+            var feature = invocation.GetFeature<IAsyncInvocation<Task<int>>>();
             arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
+            var fourth = feature.AsyncReturnValue;
 
             // Then
             Assert.NotNull(first);
             Assert.IsAssignableFrom<Task<int>>(first);
-            Assert.Equal(13, ((Task<int>)first).Result);
+            Assert.Equal(13, first.Result);
             Assert.NotNull(second);
             Assert.IsAssignableFrom<Task<int>>(second);
-            Assert.Equal(42, ((Task<int>)second).Result);
+            Assert.Equal(42, second.Result);
             Assert.NotNull(third);
             Assert.IsAssignableFrom<Task<int>>(third);
-            Assert.Equal(65, ((Task<int>)third).Result);
+            Assert.Equal(65, third.Result);
             Assert.NotNull(fourth);
             Assert.IsAssignableFrom<Task<int>>(fourth);
-            Assert.Equal(65, ((Task<int>)fourth).Result);
+            Assert.Equal(65, fourth.Result);
         }
 
         [Fact(DisplayName = "Apply a sequence of arranged return values (reference type) to an invocation of an async method")]
@@ -150,32 +160,34 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value3 = new object();
             var signature = typeof(IFooWithAsyncReferenceTypeFunc)
                 .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
-            var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var asyncFeature = new AsyncGenericTaskInvocation<object?>();
+            var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2, value3 }));
 
             // When
+            var feature = invocation.GetFeature<IAsyncInvocation<Task<object?>>>();
             arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
+            var fourth = feature.AsyncReturnValue;
 
             // Then
             Assert.NotNull(first);
             Assert.IsAssignableFrom<Task<object?>>(first);
-            Assert.Equal(value1, ((Task<object?>)first).Result);
+            Assert.Equal(value1, first.Result);
             Assert.NotNull(second);
             Assert.IsAssignableFrom<Task<object?>>(second);
-            Assert.Equal(value2, ((Task<object?>)second).Result);
+            Assert.Equal(value2, second.Result);
             Assert.NotNull(third);
             Assert.IsAssignableFrom<Task<object?>>(third);
-            Assert.Equal(value3, ((Task<object?>)third).Result);
+            Assert.Equal(value3, third.Result);
             Assert.NotNull(fourth);
             Assert.IsAssignableFrom<Task<object?>>(fourth);
-            Assert.Equal(value3, ((Task<object?>)fourth).Result);
+            Assert.Equal(value3, fourth.Result);
         }
 
         [Fact(DisplayName = "Apply a sequence of arranged return values (task of reference type) to an invocation of an async method")]
@@ -187,7 +199,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value3 = new object();
             var signature = typeof(IFooWithAsyncReferenceTypeFunc)
                 .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
-            var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var asyncFeature = new AsyncGenericTaskInvocation<object?>();
+            var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<Task<object?>>(signature, new List<Task<object?>>(new[]
                 {
                     Task.FromResult<object?>(value1),
@@ -196,28 +209,29 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
                 }));
 
             // When
+            var feature = invocation.GetFeature<IAsyncInvocation<Task<object?>>>();
             arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.AsyncReturnValue;
             arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
+            var fourth = feature.AsyncReturnValue;
 
             // Then
             Assert.NotNull(first);
             Assert.IsAssignableFrom<Task<object?>>(first);
-            Assert.Equal(value1, ((Task<object?>)first).Result);
+            Assert.Equal(value1, first.Result);
             Assert.NotNull(second);
             Assert.IsAssignableFrom<Task<object?>>(second);
-            Assert.Equal(value2, ((Task<object?>)second).Result);
+            Assert.Equal(value2, second.Result);
             Assert.NotNull(third);
             Assert.IsAssignableFrom<Task<object?>>(third);
-            Assert.Equal(value3, ((Task<object?>)third).Result);
+            Assert.Equal(value3, third.Result);
             Assert.NotNull(fourth);
             Assert.IsAssignableFrom<Task<object?>>(fourth);
-            Assert.Equal(value3, ((Task<object?>)fourth).Result);
+            Assert.Equal(value3, fourth.Result);
         }
 
         [Fact(DisplayName = "Apply a sequence of arranged return values (value type) to an invocation of a property getter")]
@@ -227,45 +241,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var signature = typeof(IFooWithValueTypeProperties)
                 .GetProperty(nameof(IFooWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
-            var invocation = new GetterInvocation(signature);
+
+            var propertyFeature = new PropertyInvocation(signature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(getter, propertyFeature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(getter, new List<int>(new[] { 13, 42, 65 }));
 
             // When
+            var feature = invocation.GetFeature<IReturnValue<int>>();
             arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
-
-            // Then
-            Assert.Equal(13, first);
-            Assert.Equal(42, second);
-            Assert.Equal(65, third);
-            Assert.Equal(65, fourth);
-        }
-
-        [Fact(DisplayName = "Apply a sequence of arranged return values (value type) to an invocation of a property getter")]
-        public void ApplySequenceOfValueTypeReturnValuesGetterSetterArrangement()
-        {
-            // Given
-            var signature = typeof(IFooWithValueTypeProperties)
-                .GetProperty(nameof(IFooWithValueTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
-            var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
-            var invocation = new GetterInvocation(signature);
-            var arrangment = new ReturnValueSequenceArrangement<int>(getter, new List<int>(new[] { 13, 42, 65 }));
-
-            // When
-            arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
-            arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
-            arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
-            arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
+            var fourth = feature.ReturnValue;
 
             // Then
             Assert.Equal(13, first);
@@ -284,48 +275,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var signature = typeof(IFooWithReferenceTypeProperties)
                 .GetProperty(nameof(IFooWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
-            var invocation = new GetterInvocation(signature);
+
+            var propertyFeature = new PropertyInvocation(signature);
+            var returnValueFeature = new ReturnValueInvocation<object?>();
+            var invocation = new Invocation(getter, propertyFeature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(getter, new List<object?>(new[] { value1, value2, value3 }));
 
             // When
+            var feature = invocation.GetFeature<IReturnValue<object?>>();
             arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.ReturnValue;
             arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
-
-            // Then
-            Assert.Equal(value1, first);
-            Assert.Equal(value2, second);
-            Assert.Equal(value3, third);
-            Assert.Equal(value3, fourth);
-        }
-
-        [Fact(DisplayName = "Apply a sequence of arranged return values (reference type) to an invocation of a property getter")]
-        public void ApplySequenceOfReferenceTypeReturnValuesGetterSetterArrangement()
-        {
-            // Given
-            var value1 = new object();
-            var value2 = new object();
-            var value3 = new object();
-            var signature = typeof(IFooWithReferenceTypeProperties)
-                .GetProperty(nameof(IFooWithReferenceTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
-            var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
-            var invocation = new GetterInvocation(signature);
-            var arrangment = new ReturnValueSequenceArrangement<object?>(getter, new List<object?>(new[] { value1, value2, value3 }));
-
-            // When
-            arrangment.ApplyTo(invocation);
-            var first = invocation.ReturnValue;
-            arrangment.ApplyTo(invocation);
-            var second = invocation.ReturnValue;
-            arrangment.ApplyTo(invocation);
-            var third = invocation.ReturnValue;
-            arrangment.ApplyTo(invocation);
-            var fourth = invocation.ReturnValue;
+            var fourth = feature.ReturnValue;
 
             // Then
             Assert.Equal(value1, first);
@@ -342,14 +307,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var referenceTypeSignature = typeof(IFooWithReferenceTypeFunc)
                 .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), referenceTypeSignature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(referenceTypeSignature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(valueTypeSignature, new List<int>(new[] { 42 }));
 
             // When
             arrangment.ApplyTo(invocation);
 
             // Then
-            Assert.Null(invocation.ReturnValue);
+            var feature = invocation.GetFeature<IReturnValue<int>>();
+            Assert.Equal(default, feature.ReturnValue);
         }
 
         [Fact(DisplayName = "Ensure that CanApplyTo returns true if the invoked method signature matches")]
@@ -358,7 +325,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var signature = typeof(IFooWithValueTypeFunc)
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 42 }));
 
             // When
@@ -366,7 +334,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
 
             // Then
             Assert.True(canApply);
-            Assert.Null(invocation.ReturnValue);
+            var feature = invocation.GetFeature<IReturnValue<int>>();
+            Assert.Equal(default, feature.ReturnValue);
         }
 
         [Fact(DisplayName = "Ensure that CanApplyTo returns false if the invoked method signature does not match")]
@@ -377,7 +346,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var referenceTypeSignature = typeof(IFooWithReferenceTypeFunc)
                 .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), referenceTypeSignature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(referenceTypeSignature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(valueTypeSignature, new List<int>(new[] { 42 }));
 
             // When
@@ -385,7 +355,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
 
             // Then
             Assert.False(canApply);
-            Assert.Null(invocation.ReturnValue);
+            var feature = invocation.GetFeature<IReturnValue<int>>();
+            Assert.Equal(default, feature.ReturnValue);
         }
 
         [Fact(DisplayName = "Try to apply a sequence of arranged return values (value type) to an invocation of a non-async method")]
@@ -394,16 +365,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var signature = typeof(IFooWithValueTypeFunc)
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42 }));
 
             // When
+            var feature = invocation.GetFeature<IReturnValue<int>>();
             var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.ReturnValue;
             var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.ReturnValue;
             var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.ReturnValue;
 
             // Then
             Assert.True(wasAppliedFirst);
@@ -422,16 +395,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value2 = new object();
             var signature = typeof(IFooWithReferenceTypeFunc)
                 .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var returnValueFeature = new ReturnValueInvocation<object?>();
+            var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2 }));
 
             // When
+            var feature = invocation.GetFeature<IReturnValue<object?>>();
             var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.ReturnValue;
             var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.ReturnValue;
             var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.ReturnValue;
 
             // Then
             Assert.True(wasAppliedFirst);
@@ -448,30 +423,32 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var signature = typeof(IFooWithAsyncValueTypeFunc)
                 .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
-            var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var asyncFeature = new AsyncGenericTaskInvocation<int>();
+            var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42 }));
 
             // When
+            var feature = invocation.GetFeature<IAsyncInvocation<Task<int>>>();
             var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.AsyncReturnValue;
             var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.AsyncReturnValue;
             var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.AsyncReturnValue;
 
             // Then
             Assert.True(wasAppliedFirst);
             Assert.NotNull(first);
             Assert.IsAssignableFrom<Task<int>>(first);
-            Assert.Equal(13, ((Task<int>)first).Result);
+            Assert.Equal(13, first.Result);
             Assert.True(wasAppliedSecond);
             Assert.NotNull(second);
             Assert.IsAssignableFrom<Task<int>>(second);
-            Assert.Equal(42, ((Task<int>)second).Result);
+            Assert.Equal(42, second.Result);
             Assert.True(wasAppliedThird);
             Assert.NotNull(third);
             Assert.IsAssignableFrom<Task<int>>(third);
-            Assert.Equal(42, ((Task<int>)third).Result);
+            Assert.Equal(42, third.Result);
         }
 
         [Fact(DisplayName = "Try to apply a sequence of arranged return values (task of value type) to an invocation of an async method")]
@@ -480,7 +457,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var signature = typeof(IFooWithAsyncValueTypeFunc)
                 .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
-            var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var asyncFeature = new AsyncGenericTaskInvocation<int>();
+            var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<Task<int>>(signature, new List<Task<int>>(new[]
                 {
                     Task.FromResult(13),
@@ -488,26 +466,27 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
                 }));
 
             // When
+            var feature = invocation.GetFeature<IAsyncInvocation<Task<int>>>();
             var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.AsyncReturnValue;
             var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.AsyncReturnValue;
             var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.AsyncReturnValue;
 
             // Then
             Assert.True(wasAppliedFirst);
             Assert.NotNull(first);
             Assert.IsAssignableFrom<Task<int>>(first);
-            Assert.Equal(13, ((Task<int>)first).Result);
+            Assert.Equal(13, first.Result);
             Assert.True(wasAppliedSecond);
             Assert.NotNull(second);
             Assert.IsAssignableFrom<Task<int>>(second);
-            Assert.Equal(42, ((Task<int>)second).Result);
+            Assert.Equal(42, second.Result);
             Assert.True(wasAppliedThird);
             Assert.NotNull(third);
             Assert.IsAssignableFrom<Task<int>>(third);
-            Assert.Equal(42, ((Task<int>)third).Result);
+            Assert.Equal(42, third.Result);
         }
 
         [Fact(DisplayName = "Try to apply a sequence of arranged return values (reference type) to an invocation of an async method")]
@@ -518,30 +497,32 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value2 = new object();
             var signature = typeof(IFooWithAsyncReferenceTypeFunc)
                 .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
-            var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var asyncFeature = new AsyncGenericTaskInvocation<object?>();
+            var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2 }));
 
             // When
+            var feature = invocation.GetFeature<IAsyncInvocation<Task<object?>>>();
             var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.AsyncReturnValue;
             var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.AsyncReturnValue;
             var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.AsyncReturnValue;
 
             // Then
             Assert.True(wasAppliedFirst);
             Assert.NotNull(first);
             Assert.IsAssignableFrom<Task<object?>>(first);
-            Assert.Equal(value1, ((Task<object?>)first).Result);
+            Assert.Equal(value1, first.Result);
             Assert.True(wasAppliedSecond);
             Assert.NotNull(second);
             Assert.IsAssignableFrom<Task<object?>>(second);
-            Assert.Equal(value2, ((Task<object?>)second).Result);
+            Assert.Equal(value2, second.Result);
             Assert.True(wasAppliedThird);
             Assert.NotNull(third);
             Assert.IsAssignableFrom<Task<object?>>(third);
-            Assert.Equal(value2, ((Task<object?>)third).Result);
+            Assert.Equal(value2, third.Result);
         }
 
         [Fact(DisplayName = "Try to apply a sequence of arranged return values (task of reference type) to an invocation of an async method")]
@@ -552,7 +533,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value2 = new object();
             var signature = typeof(IFooWithAsyncReferenceTypeFunc)
                 .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
-            var invocation = new AsyncFuncInvocation(new Dictionary<ParameterInfo, object>(), signature);
+            var asyncFeature = new AsyncGenericTaskInvocation<object?>();
+            var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<Task<object?>>(signature, new List<Task<object?>>(new[]
                 {
                     Task.FromResult<object?>(value1),
@@ -560,26 +542,27 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
                 }));
 
             // When
+            var feature = invocation.GetFeature<IAsyncInvocation<Task<object?>>>();
             var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.AsyncReturnValue;
             var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.AsyncReturnValue;
             var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.AsyncReturnValue;
 
             // Then
             Assert.True(wasAppliedFirst);
             Assert.NotNull(first);
             Assert.IsAssignableFrom<Task<object?>>(first);
-            Assert.Equal(value1, ((Task<object?>)first).Result);
+            Assert.Equal(value1, first.Result);
             Assert.True(wasAppliedSecond);
             Assert.NotNull(second);
             Assert.IsAssignableFrom<Task<object?>>(second);
-            Assert.Equal(value2, ((Task<object?>)second).Result);
+            Assert.Equal(value2, second.Result);
             Assert.True(wasAppliedThird);
             Assert.NotNull(third);
             Assert.IsAssignableFrom<Task<object?>>(third);
-            Assert.Equal(value2, ((Task<object?>)third).Result);
+            Assert.Equal(value2, third.Result);
         }
 
         [Fact(DisplayName = "Try to apply a sequence of arranged return values (value type) to an invocation of a property getter")]
@@ -589,43 +572,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var signature = typeof(IFooWithValueTypeProperties)
                 .GetProperty(nameof(IFooWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
-            var invocation = new GetterInvocation(signature);
+
+            var propertyFeature = new PropertyInvocation(signature);
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(getter, propertyFeature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(getter, new List<int>(new[] { 13, 42 }));
 
             // When
+            var feature = invocation.GetFeature<IReturnValue<int>>();
             var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.ReturnValue;
             var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.ReturnValue;
             var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
-
-            // Then
-            Assert.True(wasAppliedFirst);
-            Assert.Equal(13, first);
-            Assert.True(wasAppliedSecond);
-            Assert.Equal(42, second);
-            Assert.True(wasAppliedThird);
-            Assert.Equal(42, third);
-        }
-
-        [Fact(DisplayName = "Try to apply a sequence of arranged return values (value type) to an invocation of a property getter")]
-        public void TryApplySequenceOfValueTypeReturnValuesGetterSetterArrangement()
-        {
-            // Given
-            var signature = typeof(IFooWithValueTypeProperties)
-                .GetProperty(nameof(IFooWithValueTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
-            var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
-            var invocation = new GetterInvocation(signature);
-            var arrangment = new ReturnValueSequenceArrangement<int>(getter, new List<int>(new[] { 13, 42 }));
-
-            // When
-            var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
-            var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
-            var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.ReturnValue;
 
             // Then
             Assert.True(wasAppliedFirst);
@@ -645,45 +605,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var signature = typeof(IFooWithReferenceTypeProperties)
                 .GetProperty(nameof(IFooWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
-            var invocation = new GetterInvocation(signature);
+
+            var propertyFeature = new PropertyInvocation(signature);
+            var returnValueFeature = new ReturnValueInvocation<object?>();
+            var invocation = new Invocation(getter, propertyFeature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(getter, new List<object?>(new[] { value1, value2 }));
 
             // When
+            var feature = invocation.GetFeature<IReturnValue<object?>>();
             var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
+            var first = feature.ReturnValue;
             var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
+            var second = feature.ReturnValue;
             var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
-
-            // Then
-            Assert.True(wasAppliedFirst);
-            Assert.Equal(value1, first);
-            Assert.True(wasAppliedSecond);
-            Assert.Equal(value2, second);
-            Assert.True(wasAppliedThird);
-            Assert.Equal(value2, third);
-        }
-
-        [Fact(DisplayName = "Try to apply a sequence of arranged return values (reference type) to an invocation of a property getter")]
-        public void TryApplySequenceOfReferenceTypeReturnValuesGetterSetterArrangement()
-        {
-            // Given
-            var value1 = new object();
-            var value2 = new object();
-            var signature = typeof(IFooWithReferenceTypeProperties)
-                .GetProperty(nameof(IFooWithReferenceTypeProperties.GetterSetter)) ?? throw new InvalidOperationException();
-            var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
-            var invocation = new GetterInvocation(signature);
-            var arrangment = new ReturnValueSequenceArrangement<object?>(getter, new List<object?>(new[] { value1, value2 }));
-
-            // When
-            var wasAppliedFirst = arrangment.TryApplyTo(invocation);
-            var first = invocation.ReturnValue;
-            var wasAppliedSecond = arrangment.TryApplyTo(invocation);
-            var second = invocation.ReturnValue;
-            var wasAppliedThird = arrangment.TryApplyTo(invocation);
-            var third = invocation.ReturnValue;
+            var third = feature.ReturnValue;
 
             // Then
             Assert.True(wasAppliedFirst);
@@ -702,7 +637,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
                 .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var referenceTypeSignature = typeof(IFooWithReferenceTypeFunc)
                 .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var invocation = new FuncInvocation(new Dictionary<ParameterInfo, object>(), referenceTypeSignature);
+
+            var returnValueFeature = new ReturnValueInvocation<int>();
+            var invocation = new Invocation(referenceTypeSignature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(valueTypeSignature, new List<int>(new[] { 42 }));
 
             // When
@@ -710,7 +647,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
 
             // Then
             Assert.False(wasApplied);
-            Assert.Null(invocation.ReturnValue);
+            var feature = invocation.GetFeature<IReturnValue<int>>();
+            Assert.Equal(default, feature.ReturnValue);
         }
     }
 }
