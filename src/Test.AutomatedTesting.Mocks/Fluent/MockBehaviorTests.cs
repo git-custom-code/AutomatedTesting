@@ -16,7 +16,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IFooWithValueTypeAction>(arrangements);
+            var mockArrangements = new MockBehavior<IFooActionParameterless>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(b => b.MethodWithoutParameter());
@@ -31,7 +31,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IFooWithValueTypeAction>(arrangements);
+            var mockArrangements = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.MethodWithOneParameter(0));
@@ -65,7 +65,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IFooWithValueTypeAction>(arrangements);
+            var mockArrangements = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.MethodWithOneParameter(0));
