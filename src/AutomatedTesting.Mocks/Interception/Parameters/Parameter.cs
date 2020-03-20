@@ -72,7 +72,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         /// <inheritdoc />
         public bool Equals([AllowNull] Parameter other)
         {
-            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(Name, other?.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <inheritdoc />
