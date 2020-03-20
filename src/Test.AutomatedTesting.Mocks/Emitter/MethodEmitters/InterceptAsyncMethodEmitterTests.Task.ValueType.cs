@@ -3,7 +3,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     #region Usings
 
     using Interception.Async;
-    using Interception.Parameters;
     using Mocks.Tests.Extensions;
     using System.Linq;
     using System.Threading.Tasks;
@@ -17,28 +16,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     /// </summary>
     public sealed partial class InterceptAsyncMethodEmitterTests
     {
-        [Fact(DisplayName = "MethodEmitter: Task (value type) without parameters")]
-        public async Task TaskWithoutValueTypeParametersAsync()
-        {
-            // Given
-            var proxyFactory = CreateFactory();
-            var interceptor = new AsyncInterceptor();
-
-            // When
-            var foo = proxyFactory.CreateForInterface<IFooTaskValueTypeParameterless>(interceptor);
-            var task = foo.MethodWithoutParameterAsync();
-            await task.ConfigureAwait(false);
-
-            // Then
-            Assert.NotNull(foo);
-
-            Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single();
-            invocation.ShouldInterceptMethodWithName(nameof(IFooTaskValueTypeParameterless.MethodWithoutParameterAsync));
-            invocation.ShouldBeAsyncInvocationOfType(AsyncInvocationType.Task);
-            invocation.ShouldHaveNoParameterIn();
-        }
-
         [Fact(DisplayName = "MethodEmitter: Task (value type) with single parameter")]
         public async Task TaskWithSingleValueTypeParameterAsync()
         {
