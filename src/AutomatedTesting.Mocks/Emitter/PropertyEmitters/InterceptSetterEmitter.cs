@@ -3,6 +3,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     using ExceptionHandling;
     using Extensions;
     using Interception;
+    using Interception.Parameters;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -95,7 +96,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             features.Add(propertySetterValueFeatureVariable);
             if (inParameters.Length > 0)
             {
-                body.EmitLocalParameterInFeatureVariable(out var parameterInFeature);
+                body.EmitLocalParameterFeatureVariable<ParameterIn>(out var parameterInFeature);
                 features.Add(parameterInFeature);
             }
 
@@ -108,7 +109,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.EmitNewPropertySetterValueFeature(Signature, propertySignatureVariable, propertySetterValueFeatureVariable);
             if (inParameters.Length > 0)
             {
-                body.EmitNewParameterInFeature(methodSignatureVariable, parameters, features[1]);
+                body.EmitNewParameterFeature<ParameterIn>(methodSignatureVariable, parameters, features[1]);
             }
 
             body.EmitNewInvocation(invocationVariable, methodSignatureVariable, features);

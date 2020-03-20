@@ -2,6 +2,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
     using Extensions;
     using Interception;
+    using Interception.Parameters;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -83,7 +84,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
             if (inParameters.Length > 0)
             {
-                body.EmitLocalParameterInFeatureVariable(out var parameterInFeature);
+                body.EmitLocalParameterFeatureVariable<ParameterIn>(out var parameterInFeature);
                 features.Add(parameterInFeature);
             }
 
@@ -95,7 +96,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             body.EmitNewReturnValueFeature<T>(returnValueFeatureVariable);
             if (inParameters.Length > 0)
             {
-                body.EmitNewParameterInFeature(methodSignatureVariable, parameters, features[1]);
+                body.EmitNewParameterFeature<ParameterIn>(methodSignatureVariable, parameters, features[1]);
             }
 
             body.EmitNewInvocation(invocationVariable, methodSignatureVariable, features);
