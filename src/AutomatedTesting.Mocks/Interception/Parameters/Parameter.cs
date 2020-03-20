@@ -6,7 +6,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
     /// <summary>
     /// Record that contains the name, value and type of a single method's parameter.
     /// </summary>
-    public struct Parameter : IEquatable<Parameter>
+    public sealed class Parameter : IEquatable<Parameter>
     {
         #region Dependencies
 
@@ -35,7 +35,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         /// <summary>
         /// Gets the parameter's <see cref="System.Type"/>.
         /// </summary>
-        public readonly Type Type { get; }
+        public Type Type { get; }
 
         /// <summary>
         /// Gets or sets the parameter's value.
