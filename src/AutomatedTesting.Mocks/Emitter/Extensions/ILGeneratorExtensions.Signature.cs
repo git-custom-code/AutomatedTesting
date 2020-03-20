@@ -28,6 +28,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         private static Lazy<MethodInfo> ArrayEmptyType { get; }
             = new Lazy<MethodInfo>(InitializeArrayEmptyType, true);
 
+        /// <summary>
+        /// Gets the cached signature of the <see cref="Type.MakeByRefType"/> method.
+        /// </summary>
+        private static Lazy<MethodInfo> MakeByRefType { get; }
+            = new Lazy<MethodInfo>(InitializeMakeByRefType, true);
+
         #endregion
 
         #region Logic
@@ -102,10 +108,25 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
 
                 for (var i = 0u; i < parameters.Length; ++i)
                 {
+                    var parameter = parameters[i];
+
                     body.Emit(OpCodes.Dup);
                     body.Emit(OpCodes.Ldc_I4, i);
-                    body.Emit(OpCodes.Ldtoken, parameters[i].ParameterType);
+
+                    var type = parameter.ParameterType;
+                    if (parameter.ParameterType.IsByRef)
+                    {
+                        type = type.GetElementType() ?? throw new MethodInfoException(typeof(Type), nameof(Type.GetElementType));
+                    }
+
+                    body.Emit(OpCodes.Ldtoken, type);
                     body.Emit(OpCodes.Call, GetTypeFromHandle.Value);
+
+                    if (parameter.ParameterType.IsByRef)
+                    {
+                        body.Emit(OpCodes.Callvirt, MakeByRefType.Value);
+                    }
+
                     body.Emit(OpCodes.Stelem_Ref);
                 }
             }
@@ -151,6 +172,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             var methodName = nameof(Type.GetMethod);
             var getMethod = @type.GetMethod(methodName, new[] { typeof(string), typeof(Type[]) });
             return getMethod ?? throw new MethodInfoException(type, methodName);
+        }
+
+        /// <summary>
+        /// Initialization logic for the <see cref="MakeByRefType"/> property.
+        /// </summary>
+        /// <returns> The signature of the <see cref="Type.MakeByRefType()"/> method. </returns>
+        private static MethodInfo InitializeMakeByRefType()
+        {
+            var type = typeof(Type);
+            var methodName = nameof(Type.MakeByRefType);
+            var makeByRefType = @type.GetMethod(methodName, Array.Empty<Type>());
+            return makeByRefType ?? throw new MethodInfoException(type, methodName);
         }
 
         /// <summary>
