@@ -78,8 +78,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplyAsyncSequenceOfValueTypeReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IFooWithAsyncValueTypeFunc)
-                .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooGenericTaskValueTypeParameterless)
+                .GetMethod(nameof(IFooGenericTaskValueTypeParameterless.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var asyncFeature = new AsyncGenericTaskInvocation<int>();
             var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42, 65 }));
@@ -114,8 +114,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplyAsyncSequenceOfValueTypeTaskReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IFooWithAsyncValueTypeFunc)
-                .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooGenericTaskValueTypeParameterless)
+                .GetMethod(nameof(IFooGenericTaskValueTypeParameterless.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var asyncFeature = new AsyncGenericTaskInvocation<int>();
             var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<Task<int>>(signature, new List<Task<int>>(new[]
@@ -158,8 +158,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value1 = new object();
             var value2 = new object();
             var value3 = new object();
-            var signature = typeof(IFooWithAsyncReferenceTypeFunc)
-                .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooGenericTaskReferenceTypeParameterless)
+                .GetMethod(nameof(IFooGenericTaskReferenceTypeParameterless.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var asyncFeature = new AsyncGenericTaskInvocation<object?>();
             var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2, value3 }));
@@ -197,8 +197,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value1 = new object();
             var value2 = new object();
             var value3 = new object();
-            var signature = typeof(IFooWithAsyncReferenceTypeFunc)
-                .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooGenericTaskReferenceTypeParameterless)
+                .GetMethod(nameof(IFooGenericTaskReferenceTypeParameterless.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var asyncFeature = new AsyncGenericTaskInvocation<object?>();
             var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<Task<object?>>(signature, new List<Task<object?>>(new[]
@@ -421,8 +421,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplyAsyncSequenceOfValueTypeReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IFooWithAsyncValueTypeFunc)
-                .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooGenericTaskValueTypeParameterless)
+                .GetMethod(nameof(IFooGenericTaskValueTypeParameterless.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var asyncFeature = new AsyncGenericTaskInvocation<int>();
             var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42 }));
@@ -455,8 +455,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplyAsyncSequenceOfValueTypeTaskReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IFooWithAsyncValueTypeFunc)
-                .GetMethod(nameof(IFooWithAsyncValueTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooGenericTaskValueTypeParameterless)
+                .GetMethod(nameof(IFooGenericTaskValueTypeParameterless.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var asyncFeature = new AsyncGenericTaskInvocation<int>();
             var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<Task<int>>(signature, new List<Task<int>>(new[]
@@ -495,8 +495,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var value1 = new object();
             var value2 = new object();
-            var signature = typeof(IFooWithAsyncReferenceTypeFunc)
-                .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooGenericTaskReferenceTypeParameterless)
+                .GetMethod(nameof(IFooGenericTaskReferenceTypeParameterless.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var asyncFeature = new AsyncGenericTaskInvocation<object?>();
             var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2 }));
@@ -531,8 +531,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var value1 = new object();
             var value2 = new object();
-            var signature = typeof(IFooWithAsyncReferenceTypeFunc)
-                .GetMethod(nameof(IFooWithAsyncReferenceTypeFunc.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooGenericTaskReferenceTypeParameterless)
+                .GetMethod(nameof(IFooGenericTaskReferenceTypeParameterless.MethodWithoutParameterAsync)) ?? throw new InvalidOperationException();
             var asyncFeature = new AsyncGenericTaskInvocation<object?>();
             var invocation = new Invocation(signature, asyncFeature);
             var arrangment = new ReturnValueSequenceArrangement<Task<object?>>(signature, new List<Task<object?>>(new[]
