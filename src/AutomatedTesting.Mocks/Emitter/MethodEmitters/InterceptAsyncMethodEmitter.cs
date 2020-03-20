@@ -38,7 +38,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     ///         new[] { typeof(parameter1), ... typeof(parameterN) });
     ///
     ///     var parameterInFeature = new ParameterIn(methodSignature, new[] { parameter1, ...  parameterN });
-    ///     var asyncFeature = new AsyncTaskInvocation();
+    ///     var asyncFeature = new Async...Invocation();
     ///
     ///     var incovation = new Invocation(methodSignature, parameterInFeature, asyncFeature);
     ///     _interceptor.Intercept(incovation);
