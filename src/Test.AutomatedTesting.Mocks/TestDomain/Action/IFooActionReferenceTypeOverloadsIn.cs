@@ -7,8 +7,8 @@ namespace CustomCode.AutomatedTesting.Mocks.TestDomain
     public interface IFooActionReferenceTypeOverloadsIn<T> : IFoo
         where T : class
     {
-        void MethodWithOneParameter(T? first);
+        void MethodWithOverload(T? first);
 
-        void MethodWithOneParameter(T? first, T? second);
+        void MethodWithOverload(T? first, T? second);
     }
 }

@@ -7,8 +7,8 @@ namespace CustomCode.AutomatedTesting.Mocks.TestDomain
     public interface IFooActionValueTypeOverloadsIn<T> : IFoo
         where T : struct
     {
-        void MethodWithOneParameter(T first);
+        void MethodWithOverload(T first);
 
-        void MethodWithOneParameter(T first, T second);
+        void MethodWithOverload(T first, T second);
     }
 }
