@@ -1,4 +1,4 @@
-namespace CustomCode.AutomatedTesting.Mocks.Tests.Extensions
+namespace CustomCode.AutomatedTesting.Mocks.Core.Extensions
 {
     using Interception;
     using Interception.Async;
