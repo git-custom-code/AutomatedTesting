@@ -88,9 +88,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             LocalBuilder methodSignatureVariable)
         {
             // nameof(Method)
-#pragma warning disable CS8604 // Possible null reference argument.
+#nullable disable
             body.Emit(OpCodes.Ldtoken, signature.DeclaringType);
-#pragma warning restore CS8604
+#nullable restore
             body.Emit(OpCodes.Call, GetTypeFromHandle.Value);
             body.Emit(OpCodes.Ldstr, signature.Name);
 
@@ -153,9 +153,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             PropertyInfo signature,
             LocalBuilder propertySignatureVariable)
         {
-#pragma warning disable CS8604 // Possible null reference argument.
+#nullable disable
             body.Emit(OpCodes.Ldtoken, signature.DeclaringType);
-#pragma warning restore CS8604
+#nullable restore
             body.Emit(OpCodes.Call, GetTypeFromHandle.Value);
             body.Emit(OpCodes.Ldstr, signature.Name);
             body.Emit(OpCodes.Call, GetProperty.Value);
