@@ -3,6 +3,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
     using ExceptionHandling;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
 
@@ -51,13 +52,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         #region Logic
 
         /// <inheritdoc />
+        [return: MaybeNull]
         public T GetValue<T>(string name)
         {
             var parameter = RefParameterCollection
                 .Single(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
-#pragma warning disable CS8603 // Possible null reference return.
             return (T)parameter.Value;
-#pragma warning restore CS8603
         }
 
         /// <inheritdoc />

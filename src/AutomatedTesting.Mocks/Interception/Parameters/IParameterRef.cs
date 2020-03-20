@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Non-generic feature interface for an <see cref="IInvocation"/> of a method that has ref parameters.
@@ -18,6 +19,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         /// <typeparam name="T"> The type of the specified value. </typeparam>
         /// <param name="name"> The unique name of the parameter. </param>
         /// <returns> The ref parameter's current value. </returns>
-        T GetValue<T>(string name)
+        [return: MaybeNull]
+        T GetValue<T>(string name);
     }
 }
