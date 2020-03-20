@@ -50,9 +50,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 if (parameter.Length == 1 &&
                     parameter[0].type == typeof(T1))
                 {
-#pragma warning disable CS8601 // Possible null reference assignment.
+#nullable disable
                     var value = (T1)parameter[0].value;
-#pragma warning restore CS8601
+#nullable restore
                     return (true, value);
                 }
 
@@ -75,10 +75,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 {
                     var values =
                         (
-#pragma warning disable CS8601 // Possible null reference assignment.
+#nullable disable
                             (T1)parameter[0].value,
                             (T2)parameter[1].value
-#pragma warning restore CS8601
+#nullable restore
                         );
                     return (true, values);
                 }
@@ -103,11 +103,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 {
                     var values =
                         (
-#pragma warning disable CS8601 // Possible null reference assignment.
+#nullable disable
                             (T1)parameter[0].value,
                             (T2)parameter[1].value,
                             (T3)parameter[2].value
-#pragma warning restore CS8601
+#nullable restore
                         );
                     return (true, values);
                 }
@@ -133,12 +133,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 {
                     var values =
                         (
-#pragma warning disable CS8601 // Possible null reference assignment.
+#nullable disable
                             (T1)parameter[0].value,
                             (T2)parameter[1].value,
                             (T3)parameter[2].value,
                             (T4)parameter[3].value
-#pragma warning restore CS8601
+#nullable restore
                         );
                     return (true, values);
                 }
@@ -165,13 +165,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 {
                     var values =
                         (
-#pragma warning disable CS8601 // Possible null reference assignment.
+#nullable disable
                             (T1)parameter[0].value,
                             (T2)parameter[1].value,
                             (T3)parameter[2].value,
                             (T4)parameter[3].value,
                             (T5)parameter[4].value
-#pragma warning restore CS8601
+#nullable restore
                         );
                     return (true, values);
                 }
@@ -199,14 +199,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 {
                     var values =
                         (
-#pragma warning disable CS8601 // Possible null reference assignment.
+#nullable disable
                             (T1)parameter[0].value,
                             (T2)parameter[1].value,
                             (T3)parameter[2].value,
                             (T4)parameter[3].value,
                             (T5)parameter[4].value,
                             (T6)parameter[5].value
-#pragma warning restore CS8601
+#nullable restore
                         );
                     return (true, values);
                 }
@@ -235,7 +235,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 {
                     var values =
                         (
-#pragma warning disable CS8601 // Possible null reference assignment.
+#nullable disable
                             (T1)parameter[0].value,
                             (T2)parameter[1].value,
                             (T3)parameter[2].value,
@@ -243,7 +243,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T5)parameter[4].value,
                             (T6)parameter[5].value,
                             (T7)parameter[6].value
-#pragma warning restore CS8601
+#nullable restore
                         );
                     return (true, values);
                 }
@@ -273,7 +273,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 {
                     var values =
                         (
-#pragma warning disable CS8601 // Possible null reference assignment.
+#nullable disable
                             (T1)parameter[0].value,
                             (T2)parameter[1].value,
                             (T3)parameter[2].value,
@@ -282,7 +282,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T6)parameter[5].value,
                             (T7)parameter[6].value,
                             (T8)parameter[7].value
-#pragma warning restore CS8601
+#nullable restore
                         );
                     return (true, values);
                 }
@@ -313,7 +313,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 {
                     var values =
                         (
-#pragma warning disable CS8601 // Possible null reference assignment.
+#nullable disable
                             (T1)parameter[0].value,
                             (T2)parameter[1].value,
                             (T3)parameter[2].value,
@@ -323,7 +323,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T7)parameter[6].value,
                             (T8)parameter[7].value,
                             (T9)parameter[8].value
-#pragma warning restore CS8601
+#nullable restore
                         );
                     return (true, values);
                 }
