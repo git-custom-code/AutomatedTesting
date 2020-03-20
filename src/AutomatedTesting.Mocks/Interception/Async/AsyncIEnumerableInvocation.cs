@@ -1,9 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
 {
     using Interception.ReturnValue;
-    using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -54,9 +52,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
         object? IReturnValue.ReturnValue
         {
             get { return (object?)((IReturnValue<IEnumerable<T>>)this).ReturnValue; }
-#pragma warning disable CS8601 // Possible null reference assignment.
             set { ((IReturnValue<IEnumerable<T>>)this).ReturnValue = value as IEnumerable<T>; }
-#pragma warning restore CS8601
         }
 
         /// <inheritdoc />

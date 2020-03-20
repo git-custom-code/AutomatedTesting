@@ -1,6 +1,5 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
 {
-    using System;
     using System.Threading.Tasks;
 
     /// <summary>

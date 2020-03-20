@@ -27,9 +27,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
         object? IReturnValue.ReturnValue
         {
             get { return (object?)((IReturnValue<TResult>)this).ReturnValue; }
-#pragma warning disable CS8601 // Possible null reference assignment.
             set { ((IReturnValue<TResult>)this).ReturnValue = (TResult)value; }
-#pragma warning restore CS8601
         }
 
         /// <inheritdoc />

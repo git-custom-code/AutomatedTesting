@@ -14,9 +14,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
         #region Data
 
         /// <inheritdoc />
-#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
-        public Task<TResult> AsyncReturnValue { get; set; } = Task.FromResult(default(TResult));
-#pragma warning restore CS8653
+#nullable disable
+        public Task<TResult> AsyncReturnValue { get; set; } = Task.FromResult<TResult>(default);
+#nullable restore
 
         /// <inheritdoc />
         TResult IReturnValue<TResult>.ReturnValue
@@ -29,9 +29,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
         object? IReturnValue.ReturnValue
         {
             get { return (object?)((IReturnValue<TResult>)this).ReturnValue; }
-#pragma warning disable CS8601 // Possible null reference assignment.
             set { ((IReturnValue<TResult>)this).ReturnValue = (TResult)value; }
-#pragma warning restore CS8601
         }
 
         /// <inheritdoc />
