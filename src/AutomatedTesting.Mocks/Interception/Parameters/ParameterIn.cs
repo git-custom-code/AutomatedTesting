@@ -14,8 +14,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         /// <summary>
         /// Creates a new instance of the <see cref="ParameterIn"/> type.
         /// </summary>
-        /// <param name="signature"></param>
-        /// <param name="values"></param>
+        /// <param name="signature"> The intercepted method's signature. </param>
+        /// <param name="values"> The intercepted method's in(put) parameters. <param>
         public ParameterIn(MethodInfo signature, object?[] values)
         {
             var inputParameter = new List<Parameter>();
