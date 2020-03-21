@@ -35,13 +35,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     ///
     ///     var parameterInFeature = new ParameterIn(methodSignature, new[] { parameterIn1, ...  parameterInX });
     ///     var parameterRefFeature = new ParameterRef(methodSignature, new[] { parameterRef1, ...  parameterRefY });
+    ///     var parameterOutFeature = new ParameterOut(methodSignature);
     ///
-    ///     var incovation = new Invocation(methodSignature, parameterInFeature);
+    ///     var incovation = new Invocation(methodSignature, parameterInFeature, parameterRefFeature, parameterOutFeature);
     ///     _interceptor.Intercept(incovation);
     ///
-    ///     parameterRef1 = parameterRefFeatre.GetValue<Type1>("Name1");
+    ///     parameterRef1 = parameterRefFeature.GetValue<Type1>("Name1");
     ///     ...
-    ///     parameterRefY = parameterRefFeatre.GetValue<TypeY>("NameY");
+    ///     parameterRefY = parameterRefFeature.GetValue<TypeY>("NameY");
+    ///
+    ///     parameterOut1 = parameterOutFeature.GetValue<Type1>("Name1");
+    ///     ...
+    ///     parameterOutZ = parameterOutFeature.GetValue<TypeY>("NameZ");
     ///
     ///     return;
     /// ]]>
@@ -69,9 +74,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         {
             var features = new List<LocalBuilder>();
             var parameters = Signature.GetParameters();
+            var parameterIn = (LocalBuilder?)null;
             var inParameters = parameters.Where(p => !p.IsOut && !p.ParameterType.IsByRef).ToArray();
-            var refParameters = parameters.Where(p => p.ParameterType.IsByRef).ToArray();
-            // ToDo: Out
+            var parameterRef = (LocalBuilder?)null;
+            var refParameters = parameters.Where(p => !p.IsOut && p.ParameterType.IsByRef).ToArray();
+            var parameterOut = (LocalBuilder?)null;
+            var outParameters = parameters.Where(p => p.IsOut && p.ParameterType.IsByRef).ToArray();
 
             var method = Type.DefineMethod(
                 Signature.Name,
@@ -81,49 +89,51 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             var body = method.GetILGenerator();
 
             // local variables
-            body.EmitLocalMethodSignatureVariable(out var methodSignatureVariable);
-
+            body.EmitLocalMethodSignatureVariable(out var signature);
             if (inParameters.Length > 0)
             {
-                body.EmitLocalParameterFeatureVariable<ParameterIn>(out var parameterInFeature);
-                features.Add(parameterInFeature);
+                parameterIn = body.EmitLocalParameterFeatureVariable<ParameterIn>();
+                features.Add(parameterIn);
             }
             if (refParameters.Length > 0)
             {
-                body.EmitLocalParameterFeatureVariable<ParameterRef>(out var parameterRefFeature);
-                features.Add(parameterRefFeature);
+                parameterRef = body.EmitLocalParameterFeatureVariable<ParameterRef>();
+                features.Add(parameterRef);
             }
-
-            body.EmitLocalInvocationVariable(out var invocationVariable);
+            if (outParameters.Length > 0)
+            {
+                parameterOut = body.EmitLocalParameterFeatureVariable<ParameterOut>();
+                features.Add(parameterOut);
+            }
+            body.EmitLocalInvocationVariable(out var invocation);
 
             // body
-            body.EmitGetMethodSignature(Signature, methodSignatureVariable);
-
-            if (inParameters.Length > 0)
+            body.EmitGetMethodSignature(Signature, signature);
+            if (parameterIn != null)
             {
-                body.EmitNewParameterFeature<ParameterIn>(methodSignatureVariable, parameters, features[0]);
+                body.EmitNewParameterFeature<ParameterIn>(signature, parameters, parameterIn);
             }
-            if (refParameters.Length > 0)
+            if (parameterRef != null)
             {
-                var index = (inParameters.Length > 0) ? 1 : 0;
-                body.EmitNewParameterFeature<ParameterRef>(methodSignatureVariable, parameters, features[index]);
+                body.EmitNewParameterFeature<ParameterRef>(signature, parameters, parameterRef);
             }
-
-            body.EmitNewInvocation(invocationVariable, methodSignatureVariable, features);
-            body.EmitInterceptCall(InterceptorField, invocationVariable);
-
-            if (refParameters.Length > 0)
+            if (parameterOut != null)
             {
-                var index = (inParameters.Length > 0) ? 1 : 0;
-                foreach (var parameter in refParameters)
-                {
-                    body.EmitSyncRefParameter(parameter, features[index]);
-                }
+                body.EmitNewParameterFeature<ParameterOut>(signature, parameters, parameterOut);
             }
-
+            body.EmitNewInvocation(invocation, signature, features);
+            body.EmitInterceptCall(InterceptorField, invocation);
+            if (parameterRef != null)
+            {
+                body.EmitSyncParameter<ParameterRef>(refParameters, parameterRef);
+            }
+            if (parameterOut != null)
+            {
+                body.EmitSyncParameter<ParameterOut>(outParameters, parameterOut);
+            }
             body.EmitReturnStatement();
-        }
 
-        #endregion
+            #endregion
+        }
     }
 }
