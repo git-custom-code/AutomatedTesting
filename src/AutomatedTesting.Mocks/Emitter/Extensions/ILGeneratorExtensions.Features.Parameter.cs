@@ -21,9 +21,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             = new ConcurrentDictionary<Type, ConstructorInfo>();
 
         /// <summary>
-        /// Gets the cached signature of the <see cref="ParameterRef.GetValue{T}(string)"/> method.
+        /// Gets the cached signature of the <see cref="IParameterRefOrOut.GetValue{T}(string)"/> method.
         /// </summary>
-        private static ConcurrentDictionary<Type, MethodInfo> ParameterRefGetValueCache { get; }
+        private static ConcurrentDictionary<Type, MethodInfo> ParameterGetValueCache { get; }
             = new ConcurrentDictionary<Type, MethodInfo>();
 
         #endregion
@@ -34,27 +34,26 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// Emits a local parameter feature variable.
         /// </summary>
         /// <typeparam name="T">
-        /// <see cref="ParameterIn"/>, <see cref="ParameterRef"/> or
+        /// <see cref="ParameterIn"/>, <see cref="ParameterRef"/> or <see cref="ParameterOut"/>.
         /// </typeparam>
         /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterFeatureVariable"> The emitted local parameter variable. </param>
+        /// <returns> The emitted local parameter variable. </returns>
         /// <remarks>
         /// Emits the following source code:
         /// <![CDATA[
         ///     ParameterIn/Ref/Out parameterFeature;
         /// ]]>
         /// </remarks>
-        public static void EmitLocalParameterFeatureVariable<T>(
-            this ILGenerator body, out LocalBuilder parameterFeatureVariable)
+        public static LocalBuilder EmitLocalParameterFeatureVariable<T>(this ILGenerator body)
         {
-            parameterFeatureVariable = body.DeclareLocal(typeof(T));
+            return body.DeclareLocal(typeof(T));
         }
 
         /// <summary>
         /// Emits code to create a new parameter feature instance for the given feature.
         /// </summary>
         /// <typeparam name="T">
-        /// <see cref="ParameterIn"/>, <see cref="ParameterRef"/> or
+        /// <see cref="ParameterIn"/>, <see cref="ParameterRef"/> or <see cref="ParameterOut"/>.
         /// </typeparam>
         /// <param name="body"> The body of the dynamic method. </param>
         /// <param name="methodSignatureVariable"> The emitted local <see cref="MethodInfo"/> variable. </param>
@@ -62,8 +61,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <param name="parameterFeatureVariable"> The emitted local parameter variable. </param>
         /// <remarks>
         /// Emits the following source code:
+        ///
         /// <![CDATA[
-        ///     parameterFeature = new ParameterIn/Ref/Out(methodSignature, new[] { parameter1, ... parameterN });
+        ///     parameterFeature = new ParameterIn/Ref(methodSignature, new[] { parameter1, ... parameterN });
+        /// ]]>
+        ///
+        /// or
+        ///
+        /// <![CDATA[
+        ///     parameterFeature = new ParameterOut(methodSignature);
         /// ]]>
         /// </remarks>
         public static void EmitNewParameterFeature<T>(
@@ -75,29 +81,32 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             // methodSignature,
             body.Emit(OpCodes.Ldloc, methodSignatureVariable.LocalIndex);
 
-            // new[] { parameter1, ... parameterN }
-            body.Emit(OpCodes.Ldc_I4, parameterSignatures.Length);
-            body.Emit(OpCodes.Newarr, typeof(object));
-            for (var i=0; i< parameterSignatures.Length; ++i)
+            if (typeof(T) != typeof(ParameterOut))
             {
-                body.Emit(OpCodes.Dup);
-                body.Emit(OpCodes.Ldc_I4, i);
-                body.Emit(OpCodes.Ldarg, parameterSignatures[i].Position + 1);
-
-                var type = parameterSignatures[i].ParameterType;
-                if (type.IsByRef)
+                // new[] { parameter1, ... parameterN }
+                body.Emit(OpCodes.Ldc_I4, parameterSignatures.Length);
+                body.Emit(OpCodes.Newarr, typeof(object));
+                for (var i = 0; i < parameterSignatures.Length; ++i)
                 {
-                    type = type.GetElementType()
-                        ?? throw new MethodInfoException(typeof(Type), nameof(Type.GetElementType));
-                    body.Emit(OpCodes.Ldobj, type);
-                }
+                    body.Emit(OpCodes.Dup);
+                    body.Emit(OpCodes.Ldc_I4, i);
+                    body.Emit(OpCodes.Ldarg, parameterSignatures[i].Position + 1);
 
-                if (type.IsValueType)
-                {
-                    body.Emit(OpCodes.Box, type);
-                }
+                    var type = parameterSignatures[i].ParameterType;
+                    if (type.IsByRef)
+                    {
+                        type = type.GetElementType()
+                            ?? throw new MethodInfoException(typeof(Type), nameof(Type.GetElementType));
+                        body.Emit(OpCodes.Ldobj, type);
+                    }
 
-                body.Emit(OpCodes.Stelem_Ref);
+                    if (type.IsValueType)
+                    {
+                        body.Emit(OpCodes.Box, type);
+                    }
+
+                    body.Emit(OpCodes.Stelem_Ref);
+                }
             }
 
             // parameterFeature = new ParameterIn/Ref/Out(...)
@@ -107,57 +116,73 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         }
 
         /// <summary>
-        /// Emit a call to <see cref="ParameterRef.GetValue{T}(string)"/> and store the result in the associated ref
-        /// parameter of the intercepted method.
+        /// Emit a call to <see cref="IParameterRefOrOut.GetValue{T}(string)"/> and store the result in the
+        /// associated ref or out parameter of the intercepted method.
         /// </summary>
+        /// <typeparam name="T">
+        /// <see cref="ParameterRef"/> or <see cref="ParameterOut"/>.
+        /// </typeparam>
         /// <param name="body"> The body of the dynamic method. </param>
-        /// <param name="parameterSignature"> The signature of the ref parameter to be synced. </param>
-        /// <param name="parameterRefFeatureVariable"> The emitted local parameter ref feature variable. </param>
+        /// <param name="parameterSignatures"> The signatures of the ref/out parameter to be synced. </param>
+        /// <param name="parameterRefFeatureVariable"> The emitted local parameter ref/out feature variable. </param>
         /// <remarks>
         /// Emits the following source code:
         /// <![CDATA[
-        ///     refParameter = parameterRefFeature.GetValue<ParameterType>("ParameterName");
+        ///     ref/outParameter1 = parameterRef/OutFeature.GetValue<ParameterType1>("ParameterName1");
+        ///     ...
+        ///     ref/outParameterN = parameterRef/OutFeature.GetValue<ParameterTypeN>("ParameterNameN");
         /// ]]>
         /// </remarks>
-        public static void EmitSyncRefParameter(
+        public static void EmitSyncParameter<T>(
             this ILGenerator body,
-            ParameterInfo parameterSignature,
+            ParameterInfo[] parameterSignatures,
             LocalBuilder parameterRefFeatureVariable)
         {
-            body.Emit(OpCodes.Ldarg, parameterSignature.Position + 1);
-            body.Emit(OpCodes.Ldloc, parameterRefFeatureVariable.LocalIndex);
-            body.Emit(OpCodes.Ldstr, parameterSignature.Name ?? "unknown");
+            foreach (var parameterSignature in parameterSignatures)
+            {
+                body.Emit(OpCodes.Ldarg, parameterSignature.Position + 1);
+                body.Emit(OpCodes.Ldloc, parameterRefFeatureVariable.LocalIndex);
+                body.Emit(OpCodes.Ldstr, parameterSignature.Name ?? "unknown");
 
-            var type = parameterSignature.ParameterType.GetElementType()
-                ?? throw new MethodInfoException(typeof(Type), nameof(Type.GetElementType));
-            var getValue = ParameterRefGetValueCache.GetOrAdd(type, _ => InitializeParameterRefGetValue(type));
-            body.Emit(OpCodes.Callvirt, getValue);
-            body.Emit(OpCodes.Stobj, type);
+                var type = parameterSignature.ParameterType.GetElementType()
+                    ?? throw new MethodInfoException(typeof(Type), nameof(Type.GetElementType));
+                var getValue = ParameterGetValueCache.GetOrAdd(type, _ => InitializeParameterGetValue(type));
+                body.Emit(OpCodes.Callvirt, getValue);
+                body.Emit(OpCodes.Stobj, type);
+            }
         }
 
         /// <summary>
         /// Initialization logic for a new <see cref="ParameterFeatureCache"/> item.
         /// </summary>
         /// <typeparam name="T">
-        /// <see cref="ParameterIn"/>, <see cref="ParameterRef"/> or
+        /// <see cref="ParameterIn"/>, <see cref="ParameterRef"/> or <see cref="ParameterOut"/>.
         /// </typeparam>
         /// <returns> The signature of the feature constructor. </returns>
         private static ConstructorInfo InitializeParameterFeature<T>()
         {
             var type = typeof(T);
-            var constructor = type.GetConstructor(new[] { typeof(MethodInfo), typeof(object?[]) });
-            return constructor ?? throw new ConstructorInfoException(type);
+            if (type == typeof(ParameterOut))
+            {
+                var constructor = type.GetConstructor(new[] { typeof(MethodInfo) });
+                return constructor ?? throw new ConstructorInfoException(type);
+            }
+            else
+            {
+                var constructor = type.GetConstructor(new[] { typeof(MethodInfo), typeof(object?[]) });
+                return constructor ?? throw new ConstructorInfoException(type);
+            }
         }
 
         /// <summary>
-        /// Initialization logic for a new <see cref="ParameterRefGetValueCache"/> item.
+        /// Initialization logic for a new <see cref="ParameterGetValueCache"/> item.
         /// </summary>
         /// <param name="parameterType"> The type of the ref parameter. </param>
-        /// <returns> The signature of the <see cref="ParameterRef.GetValue{T}(string)"/> method. </returns>
-        private static MethodInfo InitializeParameterRefGetValue(Type parameterType)
+        /// <returns> The signature of the <see cref="IParameterRefOrOut.GetValue{T}(string)"/> method. </returns>
+        private static MethodInfo InitializeParameterGetValue(Type parameterType)
         {
-            var type = typeof(ParameterRef);
-            var methodName = nameof(ParameterRef.GetValue);
+            var type = typeof(IParameterRefOrOut);
+            var methodName = nameof(IParameterRefOrOut.GetValue);
             var getValue = type.GetMethod(methodName, new[] { typeof(string) });
             var getValueGeneric = getValue?.MakeGenericMethod(parameterType);
             return getValueGeneric ?? throw new MethodInfoException(type, methodName);
