@@ -84,8 +84,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
             if (inParameters.Length > 0)
             {
-                body.EmitLocalParameterFeatureVariable<ParameterIn>(out var parameterInFeature);
-                features.Add(parameterInFeature);
+                features.Add(body.EmitLocalParameterFeatureVariable<ParameterIn>());
             }
 
             body.EmitLocalAsyncFeatureVariable<T>(out var asyncFeature);

@@ -100,8 +100,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             features.Add(returnValueFeatureVariable);
             if (inParameters.Length > 0)
             {
-                body.EmitLocalParameterFeatureVariable<ParameterIn>(out var parameterInFeature);
-                features.Add(parameterInFeature);
+                features.Add(body.EmitLocalParameterFeatureVariable<ParameterIn>());
             }
 
             body.EmitLocalInvocationVariable(out var invocationVariable);
