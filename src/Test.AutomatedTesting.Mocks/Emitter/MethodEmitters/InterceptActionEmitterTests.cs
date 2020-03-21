@@ -2,12 +2,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
     #region Usings
 
+    using Core.Context;
     using Core.Extensions;
     using Interception;
     using Interception.Parameters;
-    using LightInject;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using TestDomain;
     using Xunit;
@@ -17,13 +18,24 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     /// <summary>
     /// Automated tests for the <see cref="InterceptActionEmitter"/> type.
     /// </summary>
-    public sealed partial class InterceptActionEmitterTests
+    public sealed partial class InterceptActionEmitterTests : IClassFixture<ProxyFactoryContext>
     {
+        #region Dependencies
+
+        public InterceptActionEmitterTests(ProxyFactoryContext context)
+        {
+            Context = context;
+        }
+
+        private ProxyFactoryContext Context { get; }
+
+        #endregion
+
         [Fact(DisplayName = "MethodEmitter: Action without parameters")]
         public void ActionWithoutParameters()
         {
             // Given
-            var proxyFactory = CreateFactory();
+            var proxyFactory = Context.ProxyFactory;
             var interceptor = new ActionInterceptor();
 
             // When
@@ -38,23 +50,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             invocation.ShouldInterceptMethodWithName(nameof(IFooActionParameterless.MethodWithoutParameter));
             invocation.ShouldHaveNoParameterIn();
             invocation.ShouldHaveNoParameterRef();
+            invocation.ShouldHaveNoParameterOut();
         }
-
-        #region Logic
-
-        /// <summary>
-        /// Creates a new <see cref="IDynamicProxyFactory"/> instance.
-        /// </summary>
-        /// <returns> The newly created instance. </returns>
-        private IDynamicProxyFactory CreateFactory()
-        {
-            using var iocContainer = new ServiceContainer();
-            iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
-            var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
-            return proxyFactory;
-        }
-
-        #endregion
 
         #region Interceptor
 
@@ -87,6 +84,31 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
                         {
                             parameter.Value = null;
                         }
+                    }
+                }
+            }
+        }
+
+        private sealed class OutParameterInterceptor<T> : IInterceptor
+        {
+            public OutParameterInterceptor([AllowNull] T value)
+            {
+                Value = value;
+            }
+
+            [AllowNull, MaybeNull]
+            private T Value { get; }
+
+            public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
+
+            public void Intercept(IInvocation invocation)
+            {
+                ForwardedInvocations.Add(invocation);
+                if (invocation.TryGetFeature<IParameterOut>(out var parameterOut))
+                {
+                    foreach (var parameter in parameterOut.OutParameterCollection)
+                    {
+                        parameter.Value = Value;
                     }
                 }
             }
