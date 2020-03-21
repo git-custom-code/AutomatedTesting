@@ -19,8 +19,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplySequenceOfValueTypeReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IFooWithValueTypeFunc)
-                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooFuncValueTypeParameterless<int>)
+                .GetMethod(nameof(IFooFuncValueTypeParameterless<int>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var returnValueFeature = new ReturnValueInvocation<int>();
             var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42, 65 }));
@@ -50,8 +50,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             var value1 = new object();
             var value2 = new object();
             var value3 = new object();
-            var signature = typeof(IFooWithReferenceTypeFunc)
-                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooFuncReferenceTypeParameterless<object>)
+                .GetMethod(nameof(IFooFuncReferenceTypeParameterless<object>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var returnValueFeature = new ReturnValueInvocation<object?>();
             var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2, value3 }));
@@ -303,10 +303,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void EnsureNoArrangentIsAppliedToNonMatchingInvocation()
         {
             // Given
-            var valueTypeSignature = typeof(IFooWithValueTypeFunc)
-                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var referenceTypeSignature = typeof(IFooWithReferenceTypeFunc)
-                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var valueTypeSignature = typeof(IFooFuncValueTypeParameterless<int>)
+                .GetMethod(nameof(IFooFuncValueTypeParameterless<int>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var referenceTypeSignature = typeof(IFooFuncReferenceTypeParameterless<object>)
+                .GetMethod(nameof(IFooFuncReferenceTypeParameterless<object>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var returnValueFeature = new ReturnValueInvocation<int>();
             var invocation = new Invocation(referenceTypeSignature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(valueTypeSignature, new List<int>(new[] { 42 }));
@@ -323,8 +323,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void CanApplyWithMatchingSignatureReturnsTrue()
         {
             // Given
-            var signature = typeof(IFooWithValueTypeFunc)
-                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooFuncValueTypeParameterless<int>)
+                .GetMethod(nameof(IFooFuncValueTypeParameterless<int>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var returnValueFeature = new ReturnValueInvocation<int>();
             var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 42 }));
@@ -342,10 +342,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void CanApplyWithNonMatchingSignatureReturnsFalse()
         {
             // Given
-            var valueTypeSignature = typeof(IFooWithValueTypeFunc)
-                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var referenceTypeSignature = typeof(IFooWithReferenceTypeFunc)
-                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var valueTypeSignature = typeof(IFooFuncValueTypeParameterless<int>)
+                .GetMethod(nameof(IFooFuncValueTypeParameterless<int>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var referenceTypeSignature = typeof(IFooFuncReferenceTypeParameterless<object>)
+                .GetMethod(nameof(IFooFuncReferenceTypeParameterless<object>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var returnValueFeature = new ReturnValueInvocation<int>();
             var invocation = new Invocation(referenceTypeSignature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(valueTypeSignature, new List<int>(new[] { 42 }));
@@ -363,8 +363,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplySequenceOfValueTypeReturnValuesArrangement()
         {
             // Given
-            var signature = typeof(IFooWithValueTypeFunc)
-                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooFuncValueTypeParameterless<int>)
+                .GetMethod(nameof(IFooFuncValueTypeParameterless<int>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var returnValueFeature = new ReturnValueInvocation<int>();
             var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<int>(signature, new List<int>(new[] { 13, 42 }));
@@ -393,8 +393,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
             // Given
             var value1 = new object();
             var value2 = new object();
-            var signature = typeof(IFooWithReferenceTypeFunc)
-                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooFuncReferenceTypeParameterless<object>)
+                .GetMethod(nameof(IFooFuncReferenceTypeParameterless<object>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
             var returnValueFeature = new ReturnValueInvocation<object?>();
             var invocation = new Invocation(signature, returnValueFeature);
             var arrangment = new ReturnValueSequenceArrangement<object?>(signature, new List<object?>(new[] { value1, value2 }));
@@ -633,10 +633,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void EnsureTryApplyIsFalseForNonMatchingInvocation()
         {
             // Given
-            var valueTypeSignature = typeof(IFooWithValueTypeFunc)
-                .GetMethod(nameof(IFooWithValueTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
-            var referenceTypeSignature = typeof(IFooWithReferenceTypeFunc)
-                .GetMethod(nameof(IFooWithReferenceTypeFunc.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var valueTypeSignature = typeof(IFooFuncValueTypeParameterless<int>)
+                .GetMethod(nameof(IFooFuncValueTypeParameterless<int>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
+            var referenceTypeSignature = typeof(IFooFuncReferenceTypeParameterless<object>)
+                .GetMethod(nameof(IFooFuncReferenceTypeParameterless<object>.MethodWithoutParameter)) ?? throw new InvalidOperationException();
 
             var returnValueFeature = new ReturnValueInvocation<int>();
             var invocation = new Invocation(referenceTypeSignature, returnValueFeature);

@@ -45,21 +45,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
         #region ReferenceTypeAction
 
-        [Fact(DisplayName = "Setup the behavior of a mocked method with void return type and without parameters")]
-        public void SetupBehaviorOfReferenceTypeActionWithoutParameter()
-        {
-            // Given
-            var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IFooWithReferenceTypeAction>(arrangements);
-
-            // When
-            var callArrangements = mockArrangements.That(b => b.MethodWithoutParameter());
-
-            // Then
-            Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior>(callArrangements);
-        }
-
         [Fact(DisplayName = "Setup the call behavior of a mocked method with void return type and one parameter")]
         public void SetupBehaviorOfReferenceTypeActionWithOneParameter()
         {
@@ -84,7 +69,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IFooWithValueTypeFunc>(arrangements);
+            var mockArrangements = new MockBehavior<IFooFuncValueTypeParameterless<int>>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(b => b.MethodWithoutParameter());
@@ -99,7 +84,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IFooWithValueTypeFunc>(arrangements);
+            var mockArrangements = new MockBehavior<IFooFuncValueTypeParameterIn<int>>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.MethodWithOneParameter(0));
@@ -118,7 +103,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IFooWithReferenceTypeFunc>(arrangements);
+            var mockArrangements = new MockBehavior<IFooFuncReferenceTypeParameterless<object>>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(b => b.MethodWithoutParameter());
@@ -133,7 +118,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         {
             // Given
             var arrangements = new ArrangementCollection();
-            var mockArrangements = new MockBehavior<IFooWithReferenceTypeFunc>(arrangements);
+            var mockArrangements = new MockBehavior<IFooFuncReferenceTypeParameterIn<object>>(arrangements);
 
             // When
             var callArrangements = mockArrangements.That(f => f.MethodWithOneParameter(0));
