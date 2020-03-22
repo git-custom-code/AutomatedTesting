@@ -151,8 +151,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void ApplyValueTypeGetterReturnValueArrangement()
         {
             // Given
-            var signature = typeof(IFooWithValueTypeProperties)
-                .GetProperty(nameof(IFooWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooValueTypeGetter<int>)
+                .GetProperty(nameof(IFooValueTypeGetter<int>.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
 
             var propertyFeature = new PropertyInvocation(signature);
@@ -174,8 +174,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         {
             // Given
             var value = new object();
-            var signature = typeof(IFooWithReferenceTypeProperties)
-                .GetProperty(nameof(IFooWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooReferenceTypeGetter<object>)
+                .GetProperty(nameof(IFooReferenceTypeGetter<object>.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
 
             var propertyFeature = new PropertyInvocation(signature);
@@ -402,8 +402,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         public void TryApplyValueTypeGetterReturnValueArrangement()
         {
             // Given
-            var signature = typeof(IFooWithValueTypeProperties)
-                .GetProperty(nameof(IFooWithValueTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooValueTypeGetter<int>)
+                .GetProperty(nameof(IFooValueTypeGetter<int>.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
 
             var propertyFeature = new PropertyInvocation(signature);
@@ -426,8 +426,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements.Tests
         {
             // Given
             var value = new object();
-            var signature = typeof(IFooWithReferenceTypeProperties)
-                .GetProperty(nameof(IFooWithReferenceTypeProperties.Getter)) ?? throw new InvalidOperationException();
+            var signature = typeof(IFooReferenceTypeGetter<object>)
+                .GetProperty(nameof(IFooReferenceTypeGetter<object>.Getter)) ?? throw new InvalidOperationException();
             var getter = signature.GetGetMethod() ?? throw new InvalidOperationException();
 
             var propertyFeature = new PropertyInvocation(signature);
