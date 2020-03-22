@@ -20,8 +20,4 @@
     <ProjectReference Include="..\AutomatedTesting.Mocks\AutomatedTesting.Mocks.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Emitter\MethodEmitters\Func\" />
-  </ItemGroup>
-
 </Project>
