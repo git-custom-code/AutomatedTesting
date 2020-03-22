@@ -1,107 +1,114 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
+    #region Usings
+
     using Interception;
-    using Interception.Properties;
     using Interception.ReturnValue;
-    using LightInject;
+    using Mocks.Core.Context;
+    using Mocks.Core.Data;
+    using Mocks.Core.Extensions;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using TestDomain;
     using Xunit;
 
+    #endregion
+
     /// <summary>
-    /// Automated tests for the <see cref="InterceptGetterSetterEmitter"/> type.
+    /// Automated tests for the <see cref="InterceptGetterSetterEmitter{T}"/> type.
     /// </summary>
-    public sealed class InterceptGetterSetterEmitterTests
+    public sealed class InterceptGetterSetterEmitterTests : IClassFixture<ProxyFactoryContext>
     {
-        [Fact(DisplayName = "Emit a dynamic value type property implementation for an interface")]
-        public void EmitImplementationForValueTypeProperty()
+        #region Dependencies
+
+        public InterceptGetterSetterEmitterTests(ProxyFactoryContext context)
+        {
+            Context = context;
+        }
+
+        private ProxyFactoryContext Context { get; }
+
+        #endregion
+
+        [Theory(DisplayName = "PropertyEmitter: Getter/Setter (value type)")]
+        [ClassData(typeof(TwoParameterValueTypeData))]
+        public void PropertyGetterValueType<T>(T expectedResult, T expectedValue)
+            where T : struct
         {
             // Given
-            using var iocContainer = new ServiceContainer();
-            iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
-            var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
-            var interceptor = new ValueTypeInterceptor();
+            var proxyFactory = Context.ProxyFactory;
+            var interceptor = new PropertyInterceptor<T>(expectedResult);
 
             // When
-            var foo = proxyFactory.CreateForInterface<IFooWithValueTypeProperties>(interceptor);
+            var foo = proxyFactory.CreateForInterface<IFooValueTypeProperty<T>>(interceptor);
             var result = foo.GetterSetter;
-            foo.GetterSetter = 13;
+            foo.GetterSetter = expectedValue;
 
             // Then
             Assert.NotNull(foo);
+
             Assert.Equal(2, interceptor.ForwardedInvocations.Count);
 
-            var getterInvocation = interceptor.ForwardedInvocations.First();
-            Assert.True(getterInvocation.HasFeature<IPropertyInvocation>());
-            var getterFeature = getterInvocation.GetFeature<IPropertyInvocation>();
-            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), getterFeature.Signature.Name);
-            Assert.Equal(42, result);
+            var invocation = interceptor.ForwardedInvocations.First();
+            invocation.ShouldInterceptPropertyWithName(nameof(IFooValueTypeProperty<T>.GetterSetter));
+            invocation.ShouldHaveReturnValue(expectedResult);
+            Assert.Equal(expectedResult, result);
 
-            var setterInvocation = interceptor.ForwardedInvocations.Last();
-            Assert.True(setterInvocation.HasFeature<IPropertySetterValue>());
-            var setterFeature = setterInvocation.GetFeature<IPropertySetterValue>();
-            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), setterFeature.Signature.Name);
-            Assert.Equal(13, setterFeature.Value);
+            invocation = interceptor.ForwardedInvocations.Last();
+            invocation.ShouldInterceptPropertyWithName(nameof(IFooValueTypeProperty<T>.GetterSetter));
+            invocation.ShouldHavePropertyValue(typeof(T), expectedValue);
         }
 
-        [Fact(DisplayName = "Emit a dynamic reference type property implementation for an interface")]
-        public void EmitImplementationForReferenceTypeProperty()
+        [Theory(DisplayName = "PropertyEmitter: Getter/Setter (reference type)")]
+        [ClassData(typeof(TwoParameterReferenceTypeData))]
+        public void PropertyGetterReferenceType<T>(T? expectedResult, T? expectedValue)
+            where T : class
         {
             // Given
-            using var iocContainer = new ServiceContainer();
-            iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
-            var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
-            var interceptor = new ReferenceTypeInterceptor();
+            var proxyFactory = Context.ProxyFactory;
+            var interceptor = new PropertyInterceptor<T>(expectedResult);
 
             // When
-            var foo = proxyFactory.CreateForInterface<IFooWithReferenceTypeProperties>(interceptor);
+            var foo = proxyFactory.CreateForInterface<IFooReferenceTypeProperty<T>>(interceptor);
             var result = foo.GetterSetter;
-            foo.GetterSetter = typeof(string);
+            foo.GetterSetter = expectedValue;
 
             // Then
             Assert.NotNull(foo);
+
             Assert.Equal(2, interceptor.ForwardedInvocations.Count);
 
-            var getterInvocation = interceptor.ForwardedInvocations.First();
-            Assert.True(getterInvocation.HasFeature<IPropertyInvocation>());
-            var getterFeature = getterInvocation.GetFeature<IPropertyInvocation>();
-            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), getterFeature.Signature.Name);
-            Assert.Equal(typeof(double), result);
+            var invocation = interceptor.ForwardedInvocations.First();
+            invocation.ShouldInterceptPropertyWithName(nameof(IFooReferenceTypeProperty<T>.GetterSetter));
+            invocation.ShouldHaveReturnValue(expectedResult);
+            Assert.Equal(expectedResult, result);
 
-            var setterInvocation = interceptor.ForwardedInvocations.Last();
-            Assert.True(setterInvocation.HasFeature<IPropertySetterValue>());
-            var setterFeature = setterInvocation.GetFeature<IPropertySetterValue>();
-            Assert.Equal(nameof(IFooWithValueTypeProperties.GetterSetter), setterFeature.Signature.Name);
-            Assert.Equal(typeof(string), setterFeature.Value);
+            invocation = interceptor.ForwardedInvocations.Last();
+            invocation.ShouldInterceptPropertyWithName(nameof(IFooReferenceTypeProperty<T>.GetterSetter));
+            invocation.ShouldHavePropertyValue(typeof(T), expectedValue);
         }
 
-        #region Mocks
+        #region Interceptor
 
-        private sealed class ValueTypeInterceptor : IInterceptor
+        private sealed class PropertyInterceptor<T> : IInterceptor
         {
-            public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
-
-            public void Intercept(IInvocation invocation)
+            public PropertyInterceptor([AllowNull] T result)
             {
-                ForwardedInvocations.Add(invocation);
-                if (invocation.TryGetFeature<IReturnValue<int>>(out var getterInvocation))
-                {
-                    getterInvocation.ReturnValue = 42;
-                }
+                Result = result;
             }
-        }
 
-        private sealed class ReferenceTypeInterceptor : IInterceptor
-        {
+            [AllowNull, MaybeNull]
+            public T Result { get; }
+
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
             public void Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
-                if (invocation.TryGetFeature<IReturnValue<object?>>(out var getterInvocation))
+                if (invocation.TryGetFeature<IReturnValue<T>>(out var getterInvocation))
                 {
-                    getterInvocation.ReturnValue = typeof(double);
+                    getterInvocation.ReturnValue = Result;
                 }
             }
         }

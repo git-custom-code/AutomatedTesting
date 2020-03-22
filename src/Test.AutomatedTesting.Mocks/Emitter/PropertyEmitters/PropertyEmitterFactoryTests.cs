@@ -16,8 +16,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Given
             TypeBuilder? typeBuilder = null;
             FieldBuilder? interceptor = null;
-            var type = typeof(IFooWithValueTypeProperties);
-            var propertyName = nameof(IFooWithValueTypeProperties.Getter);
+            var type = typeof(IFooValueTypeGetter<int>);
+            var propertyName = nameof(IFooValueTypeGetter<int>.Getter);
             var property = type.GetProperty(propertyName) ?? throw new PropertyInfoException(type, propertyName);
             var factory = new PropertyEmitterFactory();
 
@@ -37,8 +37,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Given
             TypeBuilder? typeBuilder = null;
             FieldBuilder? interceptor = null;
-            var type = typeof(IFooWithValueTypeProperties);
-            var propertyName = nameof(IFooWithValueTypeProperties.Setter);
+            var type = typeof(IFooValueTypeSetter<int>);
+            var propertyName = nameof(IFooValueTypeSetter<int>.Setter);
             var property = type.GetProperty(propertyName) ?? throw new PropertyInfoException(type, propertyName);
             var factory = new PropertyEmitterFactory();
 
@@ -58,8 +58,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Given
             TypeBuilder? typeBuilder = null;
             FieldBuilder? interceptor = null;
-            var type = typeof(IFooWithValueTypeProperties);
-            var propertyName = nameof(IFooWithValueTypeProperties.GetterSetter);
+            var type = typeof(IFooValueTypeProperty<int>);
+            var propertyName = nameof(IFooValueTypeProperty<int>.GetterSetter);
             var property = type.GetProperty(propertyName) ?? throw new PropertyInfoException(type, propertyName);
             var factory = new PropertyEmitterFactory();
 
