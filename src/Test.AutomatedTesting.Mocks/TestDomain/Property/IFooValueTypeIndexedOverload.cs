@@ -6,8 +6,8 @@ namespace CustomCode.AutomatedTesting.Mocks.TestDomain
     public interface IFooValueTypeIndexedOverload<T> : IFoo
         where T : struct
     {
-        T this[T i] { get; set; }
+        T this[T first] { get; set; }
 
-        T this[T i, T j] { get; set; }
+        T this[T first, T second] { get; set; }
     }
 }

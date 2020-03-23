@@ -6,6 +6,6 @@ namespace CustomCode.AutomatedTesting.Mocks.TestDomain
     public interface IFooReferenceTypeIndexedGetter<T> : IFoo
         where T : class
     {
-        T? this[T? i] { get; }
+        T? this[T? first] { get; }
     }
 }

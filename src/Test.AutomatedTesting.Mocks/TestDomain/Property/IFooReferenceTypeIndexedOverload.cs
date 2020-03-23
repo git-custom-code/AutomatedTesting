@@ -7,8 +7,8 @@ namespace CustomCode.AutomatedTesting.Mocks.TestDomain
     public interface IFooReferenceTypeIndexedOverload<T> : IFoo
         where T : class
     {
-        T? this[T? i] { get; set; }
+        T? this[T? first] { get; set; }
 
-        T? this[T? i, T? j] { get; set; }
+        T? this[T? first, T? second] { get; set; }
     }
 }

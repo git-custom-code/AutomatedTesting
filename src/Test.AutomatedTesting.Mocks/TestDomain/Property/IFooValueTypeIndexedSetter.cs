@@ -6,6 +6,6 @@ namespace CustomCode.AutomatedTesting.Mocks.TestDomain
     public interface IFooValueTypeIndexedSetter<T> : IFoo
         where T : struct
     {
-        T this[T i] { set; }
+        T this[T first] { set; }
     }
 }
