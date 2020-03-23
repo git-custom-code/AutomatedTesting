@@ -20,7 +20,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         {
             var inputParameter = new List<Parameter>();
             var methodParameter = signature.GetParameters();
-            for (var i=0; i<methodParameter.Length; ++i)
+            for (var i=0; i<values.Length; ++i)
             {
                 var parameter = methodParameter[i];
                 if (!parameter.IsOut && !parameter.ParameterType.IsByRef)
