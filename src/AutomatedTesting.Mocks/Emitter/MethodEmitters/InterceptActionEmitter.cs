@@ -85,7 +85,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                 Signature.Name,
                 MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Final,
                 Signature.ReturnType,
-                Signature.GetParameters().Select(p => p.ParameterType).ToArray());
+                parameters.Select(p => p.ParameterType).ToArray());
             var body = method.GetILGenerator();
 
             // local variables
