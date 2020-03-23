@@ -145,7 +145,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <remarks>
         /// Emits the following source code:
         /// <![CDATA[
-        ///     propertySignature = typeof(Interface).GetProperty(nameof(Property));
+        ///     propertySignature = typeof(Interface).GetProperty(nameof(Property), new[] { typeof(parameter1), ... typeof(parameterN) });
         /// ]]>
         /// </remarks>
         public static void EmitGetPropertySignature(
@@ -153,11 +153,35 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             PropertyInfo signature,
             LocalBuilder propertySignatureVariable)
         {
+            // nameof(Property)
 #nullable disable
             body.Emit(OpCodes.Ldtoken, signature.DeclaringType);
 #nullable restore
             body.Emit(OpCodes.Call, GetTypeFromHandle.Value);
             body.Emit(OpCodes.Ldstr, signature.Name);
+
+            var parameters = signature.GetIndexParameters();
+            if (parameters.Length == 0)
+            {
+                // Array.Empty<Type>()
+                body.Emit(OpCodes.Call, ArrayEmptyType.Value);
+            }
+            else
+            {
+                // new[] { typeof(parmeter1), ... typeof(parameterN) }
+                body.Emit(OpCodes.Ldc_I4, parameters.Length);
+                body.Emit(OpCodes.Newarr, typeof(Type));
+                for (var i = 0u; i < parameters.Length; ++i)
+                {
+                    body.Emit(OpCodes.Dup);
+                    body.Emit(OpCodes.Ldc_I4, i);
+                    body.Emit(OpCodes.Ldtoken, parameters[i].ParameterType);
+                    body.Emit(OpCodes.Call, GetTypeFromHandle.Value);
+                    body.Emit(OpCodes.Stelem_Ref);
+                }
+            }
+
+            // propertySignature = GetProperty
             body.Emit(OpCodes.Call, GetProperty.Value);
             body.Emit(OpCodes.Stloc, propertySignatureVariable.LocalIndex);
         }
@@ -206,12 +230,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <summary>
         /// Initialization logic for the <see cref="GetProperty"/> property.
         /// </summary>
-        /// <returns> The signature of the <see cref="Type.GetProperty(string)"/> method. </returns>
+        /// <returns> The signature of the <see cref="Type.GetProperty(string, Type[])"/> method. </returns>
         private static MethodInfo InitializeGetProperty()
         {
             var type = typeof(Type);
             var propertyName = nameof(Type.GetProperty);
-            var getProperty = @type.GetMethod(propertyName, new[] { typeof(string) });
+            var getProperty = @type.GetMethod(propertyName, new[] { typeof(string), typeof(Type[]) });
             return getProperty ?? throw new PropertyInfoException(type, propertyName);
         }
 

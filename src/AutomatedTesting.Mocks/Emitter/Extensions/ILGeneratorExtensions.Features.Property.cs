@@ -97,6 +97,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// <param name="signature"> The property's signature. </param>
         /// <param name="propertySignatureVariable"> The emitted local <see cref="PropertyInfo"/> variable. </param>
         /// <param name="propertySetterValueFeatureVariable"> The emitted local <see cref="PropertySetterValue"/> variable. </param>
+        /// <param name="valueParameterIndex"> The index of the setter's value parameter. </param>
         /// <remarks>
         /// Emits the following source code:
         /// <![CDATA[
@@ -107,13 +108,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             this ILGenerator body,
             PropertyInfo signature,
             LocalBuilder propertySignatureVariable,
-            LocalBuilder propertySetterValueFeatureVariable)
+            LocalBuilder propertySetterValueFeatureVariable,
+            int valueParameterIndex = 1)
         {
             // propertySignature,
             body.Emit(OpCodes.Ldloc, propertySignatureVariable.LocalIndex);
 
             // value
-            body.Emit(OpCodes.Ldarg_1);
+            body.Emit(OpCodes.Ldarg, valueParameterIndex);
             if (signature.PropertyType.IsValueType)
             {
                 body.Emit(OpCodes.Box, signature.PropertyType);
