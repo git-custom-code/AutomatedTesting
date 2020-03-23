@@ -54,6 +54,31 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Equal(expectedResult, result);
         }
 
+        [Theory(DisplayName = "PropertyEmitter: Indexed Getter (value type)")]
+        [ClassData(typeof(TwoParameterValueTypeData))]
+        public void PropertyIndexedGetterValueType<T>(T expectedResult, T expectedValue)
+            where T : struct
+        {
+            // Given
+            var proxyFactory = Context.ProxyFactory;
+            var interceptor = new GetterInterceptor<T>(expectedResult);
+
+            // When
+            var foo = proxyFactory.CreateForInterface<IFooValueTypeIndexedGetter<T>>(interceptor);
+            var result = foo[expectedValue];
+
+            // Then
+            Assert.NotNull(foo);
+
+            Assert.Single(interceptor.ForwardedInvocations);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            invocation.ShouldInterceptPropertyWithName("Item");
+            invocation.ShouldHaveParameterInCountOf(1);
+            invocation.ShouldHaveParameterIn("first", typeof(T), expectedValue);
+            invocation.ShouldHaveReturnValue(expectedResult);
+            Assert.Equal(expectedResult, result);
+        }
+
         [Theory(DisplayName = "PropertyEmitter: Getter (reference type)")]
         [ClassData(typeof(ReferenceTypeData))]
         public void PropertyGetterReferenceType<T>(T? expectedResult)
@@ -73,6 +98,31 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Single(interceptor.ForwardedInvocations);
             var invocation = interceptor.ForwardedInvocations.Single();
             invocation.ShouldInterceptPropertyWithName(nameof(IFooReferenceTypeGetter<T>.Getter));
+            invocation.ShouldHaveReturnValue(expectedResult);
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Theory(DisplayName = "PropertyEmitter: Indexed Getter (reference type)")]
+        [ClassData(typeof(TwoParameterReferenceTypeData))]
+        public void PropertyIndexedGetterReferenceType<T>(T? expectedResult, T? expectedValue)
+            where T : class
+        {
+            // Given
+            var proxyFactory = Context.ProxyFactory;
+            var interceptor = new GetterInterceptor<T>(expectedResult);
+
+            // When
+            var foo = proxyFactory.CreateForInterface<IFooReferenceTypeIndexedGetter<T>>(interceptor);
+            var result = foo[expectedValue];
+
+            // Then
+            Assert.NotNull(foo);
+
+            Assert.Single(interceptor.ForwardedInvocations);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            invocation.ShouldInterceptPropertyWithName("Item");
+            invocation.ShouldHaveParameterInCountOf(1);
+            invocation.ShouldHaveParameterIn("first", typeof(T), expectedValue);
             invocation.ShouldHaveReturnValue(expectedResult);
             Assert.Equal(expectedResult, result);
         }
