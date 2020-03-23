@@ -22,9 +22,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var factory = new PropertyEmitterFactory();
 
             // When
-#pragma warning disable CS8604 // Possible null reference argument.
+#nullable disable
             var emitter = factory.CreatePropertyEmitterFor(property, typeBuilder, interceptor);
-#pragma warning restore CS8604
+#nullable restore
 
             // Then
             Assert.NotNull(emitter);
@@ -43,9 +43,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var factory = new PropertyEmitterFactory();
 
             // When
-#pragma warning disable CS8604 // Possible null reference argument.
+#nullable disable
             var emitter = factory.CreatePropertyEmitterFor(property, typeBuilder, interceptor);
-#pragma warning restore CS8604
+#nullable restore
 
             // Then
             Assert.NotNull(emitter);
@@ -64,9 +64,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var factory = new PropertyEmitterFactory();
 
             // When
-#pragma warning disable CS8604 // Possible null reference argument.
+#nullable disable
             var emitter = factory.CreatePropertyEmitterFor(property, typeBuilder, interceptor);
-#pragma warning restore CS8604
+#nullable restore
 
             // Then
             Assert.NotNull(emitter);
