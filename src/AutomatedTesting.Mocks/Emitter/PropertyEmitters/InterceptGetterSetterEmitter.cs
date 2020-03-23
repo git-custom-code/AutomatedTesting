@@ -101,52 +101,49 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         {
             var features = new List<LocalBuilder>();
             var parameters = Signature.GetIndexParameters();
+            var types = parameters.Select(p => p.ParameterType).ToArray();
+            var typesAndValue = types.Concat(new[] { Signature.PropertyType }).ToArray();
             var inParameters = parameters.Where(p => !p.IsOut && !p.ParameterType.IsByRef).ToArray();
-            // ToDo: Ref/Out
 
             var property = Type.DefineProperty(
                 Signature.Name,
                 PropertyAttributes.None,
                 Signature.PropertyType,
-                null);
+                types);
 
             var getterSignature = Signature.GetGetMethod() ?? throw new MethodInfoException(Type, $"get_{Signature.Name}");
             var getter = Type.DefineMethod(
                 getterSignature.Name,
                 MethodAttributes.Public | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.NewSlot | MethodAttributes.Virtual,
                 Signature.PropertyType,
-                null);
+                types);
             var body = getter.GetILGenerator();
 
             // local variables
-            body.EmitLocalPropertySignatureVariable(out var getterPropertySignatureVariable);
-            body.EmitLocalMethodSignatureVariable(out var getterMethodSignatureVariable);
-
-            body.EmitLocalPropertyFeatureVariable(out var propertyFeatureVariable);
-            features.Add(propertyFeatureVariable);
-            body.EmitLocalReturnValueFeatureVariable<T>(out var returnValueFeatureVariable);
-            features.Add(returnValueFeatureVariable);
+            body.EmitLocalPropertySignatureVariable(out var getterPropertySignature);
+            body.EmitLocalMethodSignatureVariable(out var getterMethodSignature);
+            body.EmitLocalPropertyFeatureVariable(out var propertyFeature);
+            features.Add(propertyFeature);
+            body.EmitLocalReturnValueFeatureVariable<T>(out var returnValue);
+            features.Add(returnValue);
             if (inParameters.Length > 0)
             {
                 features.Add(body.EmitLocalParameterFeatureVariable<ParameterIn>());
             }
-
-            body.EmitLocalInvocationVariable(out var getterInvocationVariable);
+            body.EmitLocalInvocationVariable(out var getterInvocation);
 
             // body
-            body.EmitGetPropertySignature(Signature, getterPropertySignatureVariable);
-            body.EmitGetMethodSignature(getterSignature, getterMethodSignatureVariable);
-
-            body.EmitNewPropertyFeature(getterPropertySignatureVariable, propertyFeatureVariable);
-            body.EmitNewReturnValueFeature<T>(returnValueFeatureVariable);
+            body.EmitGetPropertySignature(Signature, getterPropertySignature);
+            body.EmitGetMethodSignature(getterSignature, getterMethodSignature);
+            body.EmitNewPropertyFeature(getterPropertySignature, propertyFeature);
+            body.EmitNewReturnValueFeature<T>(returnValue);
             if (inParameters.Length > 0)
             {
-                body.EmitNewParameterFeature<ParameterIn>(getterMethodSignatureVariable, parameters, features[1]);
+                body.EmitNewParameterFeature<ParameterIn>(getterMethodSignature, parameters, features[2]);
             }
-
-            body.EmitNewInvocation(getterInvocationVariable, getterMethodSignatureVariable, features);
-            body.EmitInterceptCall(InterceptorField, getterInvocationVariable);
-            body.EmitReturnStatement<T>(returnValueFeatureVariable);
+            body.EmitNewInvocation(getterInvocation, getterMethodSignature, features);
+            body.EmitInterceptCall(InterceptorField, getterInvocation);
+            body.EmitReturnStatement<T>(returnValue);
 
             property.SetGetMethod(getter);
 
@@ -158,34 +155,30 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                 setterSignature.Name,
                 MethodAttributes.Public | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.NewSlot | MethodAttributes.Virtual,
                 null,
-                new Type[] { Signature.PropertyType });
+                typesAndValue);
             body = setter.GetILGenerator();
 
             // local variables
-            body.EmitLocalPropertySignatureVariable(out var setterPropertySignatureVariable);
-            body.EmitLocalMethodSignatureVariable(out var setterMethodSignatureVariable);
-
-            body.EmitLocalPropertySetterValueFeatureVariable(out var propertySetterValueFeatureVariable);
-            features.Add(propertySetterValueFeatureVariable);
+            body.EmitLocalPropertySignatureVariable(out var setterPropertySignature);
+            body.EmitLocalMethodSignatureVariable(out var setterMethodSignature);
+            body.EmitLocalPropertySetterValueFeatureVariable(out var setterValue);
+            features.Add(setterValue);
             if (inParameters.Length > 0)
             {
                 features.Add(body.EmitLocalParameterFeatureVariable<ParameterIn>());
             }
-
-            body.EmitLocalInvocationVariable(out var setterInvocationVariable);
+            body.EmitLocalInvocationVariable(out var setterInvocation);
 
             // body
-            body.EmitGetPropertySignature(Signature, setterPropertySignatureVariable);
-            body.EmitGetMethodSignature(setterSignature, setterMethodSignatureVariable);
-
-            body.EmitNewPropertySetterValueFeature(Signature, setterPropertySignatureVariable, propertySetterValueFeatureVariable);
+            body.EmitGetPropertySignature(Signature, setterPropertySignature);
+            body.EmitGetMethodSignature(setterSignature, setterMethodSignature);
+            body.EmitNewPropertySetterValueFeature(Signature, setterPropertySignature, setterValue, typesAndValue.Length);
             if (inParameters.Length > 0)
             {
-                body.EmitNewParameterFeature<ParameterIn>(setterMethodSignatureVariable, parameters, features[1]);
+                body.EmitNewParameterFeature<ParameterIn>(setterMethodSignature, parameters, features[1]);
             }
-
-            body.EmitNewInvocation(setterInvocationVariable, setterMethodSignatureVariable, features);
-            body.EmitInterceptCall(InterceptorField, setterInvocationVariable);
+            body.EmitNewInvocation(setterInvocation, setterMethodSignature, features);
+            body.EmitInterceptCall(InterceptorField, setterInvocation);
             body.EmitReturnStatement();
 
             property.SetSetMethod(setter);
