@@ -34,6 +34,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         #region Data
 
         /// <summary>
+        /// Gets a thread-safe cache to prevent that the same dynamic partial proxy type is being created multiple times.
+        /// </summary>
+        private ConcurrentDictionary<Type, Type> PartialProxyTypeCache { get; } = new ConcurrentDictionary<Type, Type>();
+
+        /// <summary>
         /// Gets a thread-safe cache to prevent that the same dynamic proxy type is being created multiple times.
         /// </summary>
         private ConcurrentDictionary<Type, Type> ProxyTypeCache { get; } = new ConcurrentDictionary<Type, Type>();
@@ -41,6 +46,39 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         #endregion
 
         #region Logic
+
+        /// <inheritdoc />
+        public T CreateDecorator<T>(T decoratee, IInterceptor interceptor) where T : notnull
+        {
+            var signature = typeof(T);
+            var decorator = CreateDecorator(signature, decoratee, interceptor);
+            if (decorator is T typedDecorator)
+            {
+                return typedDecorator;
+            }
+
+            throw new Exception($"Unable to create a decorator for interface {signature.Name}");
+        }
+
+        /// <inheritdoc />
+        public object CreateDecorator(Type signature, object decoratee, IInterceptor interceptor)
+        {
+            try
+            {
+                var decoratorType = PartialProxyTypeCache.GetOrAdd(signature, EmitPartialProxyTypeFor);
+                var decorator = Activator.CreateInstance(decoratorType, new[] { decoratee, interceptor });
+                if (decorator != null)
+                {
+                    return decorator;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Unable to create a decorator for interface {signature.Name}", e);
+            }
+
+            throw new Exception($"Unable to create a decorator for interface {signature.Name}");
+        }
 
         /// <inheritdoc />
         public T CreateForInterface<T>(IInterceptor interceptor) where T : notnull
@@ -73,6 +111,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             }
 
             throw new Exception($"Unable to create a proxy for interface {signature.Name}");
+        }
+
+        /// <summary>
+        /// Emits a new dynamic partial proxy type for an interface with the the given <paramref name="signature"/>.
+        /// </summary>
+        /// <param name="signature"> The signature of the interface that should be implemented by the partial proxy. </param>
+        /// <returns>
+        /// The dynamic partial proxy type that implements an interface with the given <paramref name="signature"/>.
+        /// </returns>
+        private Type EmitPartialProxyTypeFor(Type signature)
+        {
+            var proxyName = $"{signature.FullName}PartialMock";
+            var dynamicType = AssemblyEmitter.EmitType(proxyName);
+            dynamicType.ImplementDecorator(signature);
+            var proxyType = dynamicType.ToType();
+            return proxyType;
         }
 
         /// <summary>

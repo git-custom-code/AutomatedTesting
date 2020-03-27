@@ -34,6 +34,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             public TypeBuilder Builder { get; }
 
+            public void ImplementDecorator<T>() where T : class
+            {
+                throw new NotImplementedException();
+            }
+
+            public void ImplementDecorator(Type signature)
+            {
+                throw new NotImplementedException();
+            }
+
             public void ImplementInterface<T>() where T : class
             {
                 throw new NotImplementedException();
