@@ -3,8 +3,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     #region Usings
 
     using Core.Context;
+    using Core.Extensions;
     using Interception;
     using System.Collections.Generic;
+    using System.Linq;
     using TestDomain;
     using Xunit;
 
@@ -26,12 +28,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
         #endregion
 
-        [Fact(DisplayName = "MethodDecorateEmitter: Action without parameters")]
+        [Fact(DisplayName = "DecorateActionEmitter: Action without parameters")]
         public void ActionWithoutParameters()
         {
             // Given
             var proxyFactory = Context.ProxyFactory;
-            var interceptor = new ActionInterceptor();
+            var interceptor = new ActionInterceptor(false);
             var decoratee = new FooActionParameterless();
 
             // When
@@ -41,17 +43,56 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(foo);
             Assert.Equal(1u, decoratee.CallCount);
+
+            Assert.Single(interceptor.ForwardedInvocations);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            invocation.ShouldInterceptMethodWithName(nameof(IFooActionParameterless.MethodWithoutParameter));
+            invocation.ShouldHaveNoParameterIn();
+            invocation.ShouldHaveNoParameterRef();
+            invocation.ShouldHaveNoParameterOut();
+        }
+
+        [Fact(DisplayName = "DecorateActionEmitter: Action without parameters (intercepted)")]
+        public void ActionWithoutParametersIntercepted()
+        {
+            // Given
+            var proxyFactory = Context.ProxyFactory;
+            var interceptor = new ActionInterceptor(true);
+            var decoratee = new FooActionParameterless();
+
+            // When
+            var foo = proxyFactory.CreateDecorator<IFooActionParameterless>(decoratee, interceptor);
+            foo.MethodWithoutParameter();
+
+            // Then
+            Assert.NotNull(foo);
+            Assert.Equal(0u, decoratee.CallCount);
+
+            Assert.Single(interceptor.ForwardedInvocations);
+            var invocation = interceptor.ForwardedInvocations.Single();
+            invocation.ShouldInterceptMethodWithName(nameof(IFooActionParameterless.MethodWithoutParameter));
+            invocation.ShouldHaveNoParameterIn();
+            invocation.ShouldHaveNoParameterRef();
+            invocation.ShouldHaveNoParameterOut();
         }
 
         #region Interceptor
 
         private sealed class ActionInterceptor : IInterceptor
         {
+            public ActionInterceptor(bool wasIntercepted)
+            {
+                WasIntercepted = wasIntercepted;
+            }
+
+            private bool WasIntercepted { get; }
+
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-            public void Intercept(IInvocation invocation)
+            public bool Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
+                return WasIntercepted;
             }
         }
 
