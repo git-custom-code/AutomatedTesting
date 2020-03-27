@@ -61,6 +61,54 @@ namespace CustomCode.AutomatedTesting.Mocks
         }
 
         /// <summary>
+        /// Create a partial <see cref="IMocked{T}"/> instance for the given type <typeparamref name="T"/>
+        /// whose dependencies (and recursively their dependencies, all the way down) will be replaced
+        /// by decorated dependencies that will either execute any arrangments or call the original logic
+        /// if no arrangements exist.
+        /// </summary>
+        /// <typeparam name="T"> The signature of the type under test. </typeparam>
+        /// <param name="container">
+        /// The ioc container used (by production code) to create dependency instances.
+        /// </param>
+        /// <returns> A new partially mocked instance of the type under test. </returns>
+        public static IMocked<T> CreatePartialMocked<T>(IServiceContainer container)
+            where T : class
+        {
+            var type = typeof(T);
+            if (type.IsClass == false)
+            {
+                throw new ArgumentException($"Type {type.Name} must be a class");
+            }
+
+            var constructor = SelectConstructor(type);
+            var mockedDependencies = new List<IMockedDependency>();
+            foreach (var service in container.AvailableServices)
+            {
+                container.Decorate(new DecoratorRegistration()
+                {
+                    CanDecorate = s => true,
+                    ServiceType = service.ServiceType,
+                    FactoryExpression = (Func<IServiceFactory, object, object>)((f, s) =>
+                        {
+                            var dependency = DependencyFactory.CreateDecoratedDependency(service.ServiceType, s);
+                            mockedDependencies.Add(dependency);
+                            return dependency.Instance;
+                        })
+                });
+            }
+
+            var ctorDependencies = new List<object>();
+            foreach (var dependency in constructor.GetParameters())
+            {
+                var decoratedInstance = container.GetInstance(dependency.ParameterType);
+                ctorDependencies.Add(decoratedInstance);
+            }
+
+            var instance = (T)constructor.Invoke(ctorDependencies.ToArray());
+            return new Mocked<T>(instance, mockedDependencies);
+        }
+
+        /// <summary>
         /// Select the appropriate public constructor for the given <paramref name="type"/> that
         /// will be used to creat the <see cref="IMocked{T}"/> instance.
         /// </summary>
