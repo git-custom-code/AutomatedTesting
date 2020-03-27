@@ -38,6 +38,42 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         #region Logic
 
         /// <inheritdoc />
+        public IMockedDependency CreateDecoratedDependency(Type dependency, object decoratee)
+        {
+            if (!dependency.IsInterface)
+            {
+                throw new ArgumentException($"Invalid non-interface type '{dependency.FullName}'");
+            }
+
+            var arrangements = new ArrangementCollection();
+            var interceptor = InterceptorFactory.CreateInterceptorFor(MockBehavior.Partial, arrangements);
+            var proxy = DynamicProxyFactory.CreateDecorator(dependency, decoratee, interceptor);
+            var mockedDependencyType = typeof(MockedDependency<>).MakeGenericType(dependency);
+            var instance = Activator.CreateInstance(mockedDependencyType, new[] { arrangements, interceptor, proxy });
+            if (instance is IMockedDependency mockedDependency)
+            {
+                return mockedDependency;
+            }
+
+            throw new Exception();
+        }
+
+        /// <inheritdoc />
+        public IMockedDependency<T> CreateDecoratedDependency<T>(T decoratee)
+            where T : notnull
+        {
+            if (!typeof(T).IsInterface)
+            {
+                throw new ArgumentException($"Invalid non-interface type '{typeof(T).FullName}'");
+            }
+
+            var arrangements = new ArrangementCollection();
+            var interceptor = InterceptorFactory.CreateInterceptorFor(MockBehavior.Partial, arrangements);
+            var proxy = DynamicProxyFactory.CreateDecorator<T>(decoratee, interceptor);
+            return new MockedDependency<T>(arrangements, interceptor, proxy);
+        }
+
+        /// <inheritdoc />
         public IMockedDependency CreateMockedDependency(Type dependency, MockBehavior behavior)
         {
             if (!dependency.IsInterface)
