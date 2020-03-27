@@ -34,37 +34,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         #region Logic
 
         /// <inheritdoc />
-        public void Intercept(IInvocation invocation)
+        public bool Intercept(IInvocation invocation)
         {
-            if (Arrangements.TryApplyTo(invocation) == false)
+            if (Arrangements.TryApplyTo(invocation))
             {
-                if (invocation.TryGetFeature<AsyncTaskInvocation>(out var taskFeature))
-                {
-                    taskFeature.AsyncReturnValue = Task.CompletedTask;
-                }
-                else if (invocation.TryGetFeature<AsyncValueTaskInvocation>(out var valueTaskFeature))
-                {
-                    valueTaskFeature.AsyncReturnValue = new ValueTask();
-                }
-                else if (invocation.TryGetFeature<IReturnValue>(out var feature))
-                {
-                    if (invocation.Signature.ReturnType == typeof(Task<>) ||
-                        invocation.Signature.ReturnType == typeof(ValueTask<>))
-                    {
-                        var returnType = invocation.Signature.ReturnType.GenericTypeArguments[0];
-                        feature.ReturnValue = GetDefault(returnType);
-                    }
-                    else if (invocation.Signature.ReturnType == typeof(IAsyncEnumerable<>))
-                    {
-                        // TODO
-                    }
-                    else
-                    {
-                        var @default = GetDefault(invocation.Signature.ReturnType);
-                        feature.ReturnValue = @default;
-                    }
-                }
+                return true;
             }
+
+            return false;
         }
 
         /// <summary>

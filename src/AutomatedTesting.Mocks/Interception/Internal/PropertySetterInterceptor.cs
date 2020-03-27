@@ -26,19 +26,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Internal
         #region Logic
 
         /// <inheritdoc />
-        public void Intercept(IInvocation invocation)
+        public bool Intercept(IInvocation invocation)
         {
             if (invocation.TryGetFeature<IPropertySetterValue>(out var setter))
             {
                 if (DiscoveredSetter == null)
                 {
                     DiscoveredSetter = setter.Signature.GetSetMethod();
+                    return true;
                 }
                 else
                 {
                     throw new Exception("Discovered more than one property setter call");
                 }
             }
+
+            return false;
         }
 
         #endregion

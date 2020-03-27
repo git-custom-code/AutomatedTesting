@@ -38,6 +38,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             body.Emit(OpCodes.Ldfld, interceptorField);
             body.Emit(OpCodes.Ldloc, invocationVariable.LocalIndex);
             body.Emit(OpCodes.Callvirt, Intercept.Value);
+            body.Emit(OpCodes.Pop);
         }
 
         /// <summary>

@@ -46,13 +46,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-            public void Intercept(IInvocation invocation)
+            public bool Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
                 if (invocation.TryGetFeature<IReturnValue<T>>(out var feature))
                 {
                     feature.ReturnValue = Value;
+                    return true;
                 }
+
+                return false;
             }
         }
 
@@ -68,7 +71,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-            public void Intercept(IInvocation invocation)
+            public bool Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
                 if (invocation.TryGetFeature<IParameterRef>(out var parameterRef))
@@ -90,6 +93,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
                 {
                     feature.ReturnValue = Value;
                 }
+
+                return true;
             }
         }
 
@@ -109,7 +114,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-            public void Intercept(IInvocation invocation)
+            public bool Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
                 if (invocation.TryGetFeature<IParameterOut>(out var parameterOut))
@@ -123,6 +128,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
                 {
                     feature.ReturnValue = Result;
                 }
+
+                return true;
             }
         }
 

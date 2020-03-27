@@ -10,8 +10,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// Intercept a method or property call.
         /// </summary>
         /// <param name="invocation">
-        /// Contains relevant information about the original method/property call like e.g. signatrue, parameters or return value.
+        /// Contains relevant information about the original method/property call like e.g. signature, parameters or return value.
         /// </param>
-        void Intercept(IInvocation invocation);
+        /// <returns>
+        /// True if the method or property call was sucessfully intercepted, false otherwise.
+        /// </returns>
+        bool Intercept(IInvocation invocation);
     }
 }

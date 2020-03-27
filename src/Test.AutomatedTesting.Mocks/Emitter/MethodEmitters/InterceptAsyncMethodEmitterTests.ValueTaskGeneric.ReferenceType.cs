@@ -122,13 +122,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         {
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-            public void Intercept(IInvocation invocation)
+            public bool Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
                 if (invocation.TryGetFeature<IAsyncInvocation<ValueTask<object?>>>(out var asyncFeature))
                 {
                     asyncFeature.AsyncReturnValue = new ValueTask<object?>("foo");
+                    return true;
                 }
+
+                return false;
             }
         }
 

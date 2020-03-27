@@ -59,9 +59,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         {
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-            public void Intercept(IInvocation invocation)
+            public bool Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
+                return true;
             }
         }
 
@@ -69,7 +70,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         {
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-            public void Intercept(IInvocation invocation)
+            public bool Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
                 if (invocation.TryGetFeature<IParameterRef>(out var parameterRef))
@@ -85,7 +86,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
                             parameter.Value = null;
                         }
                     }
+
+                    return true;
                 }
+
+                return false;
             }
         }
 
@@ -101,7 +106,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-            public void Intercept(IInvocation invocation)
+            public bool Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
                 if (invocation.TryGetFeature<IParameterOut>(out var parameterOut))
@@ -110,7 +115,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
                     {
                         parameter.Value = Value;
                     }
+
+                    return true;
                 }
+
+                return false;
             }
         }
 

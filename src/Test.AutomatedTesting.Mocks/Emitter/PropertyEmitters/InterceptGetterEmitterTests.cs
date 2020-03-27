@@ -141,13 +141,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-            public void Intercept(IInvocation invocation)
+            public bool Intercept(IInvocation invocation)
             {
                 ForwardedInvocations.Add(invocation);
                 if (invocation.TryGetFeature<IReturnValue<T>>(out var getterInvocation))
                 {
                     getterInvocation.ReturnValue = Result;
+                    return true;
                 }
+
+                return false;
             }
         }
 
