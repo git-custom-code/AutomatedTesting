@@ -1,0 +1,63 @@
+namespace CustomCode.AutomatedTesting.Mocks.Emitter
+{
+    using Interception;
+    using System.Reflection;
+    using System.Reflection.Emit;
+
+    /// <summary>
+    /// Abstract base type for <see cref="IMethodEmitter"/> interface implementations that defines
+    /// a set of common functionality that can be used by the specialized implementations.
+    /// </summary>
+    public abstract partial class MethodDecoratorEmitterBase : IMethodEmitter
+    {
+        #region Dependencies
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="MethodDecoratorEmitterBase"/> type.
+        /// </summary>
+        /// <param name="type"> The dynamic proxy type. </param>
+        /// <param name="signature"> The signature of the method to be created. </param>
+        /// <param name="decorateeField"> The <paramref name="type"/>'s decoratee backing field. </param>
+        /// <param name="interceptorField"> The <paramref name="type"/>'s <see cref="IInterceptor"/> backing field. </param>
+        protected MethodDecoratorEmitterBase(
+            TypeBuilder type,
+            MethodInfo signature,
+            FieldBuilder decorateeField,
+            FieldBuilder interceptorField)
+        {
+            Type = type;
+            Signature = signature;
+            DecorateeField = decorateeField;
+            InterceptorField = interceptorField;
+        }
+
+        /// <summary>
+        /// Gets The <see cref="Type"/>'s decoratee backing field.
+        /// </summary>
+        protected FieldBuilder DecorateeField { get; }
+
+        /// <summary>
+        /// Gets The <see cref="Type"/>'s <see cref="IInterceptor"/> backing field.
+        /// </summary>
+        protected FieldBuilder InterceptorField { get; }
+
+        /// <summary>
+        /// Gets the signature of the method to be created.
+        /// </summary>
+        protected MethodInfo Signature { get; }
+
+        /// <summary>
+        /// Gets the dynamic proxy type.
+        /// </summary>
+        protected TypeBuilder Type { get; }
+
+        #endregion
+
+        #region Logic
+
+        /// <inheritdoc />
+        public abstract void EmitMethodImplementation();
+
+        #endregion
+    }
+}
