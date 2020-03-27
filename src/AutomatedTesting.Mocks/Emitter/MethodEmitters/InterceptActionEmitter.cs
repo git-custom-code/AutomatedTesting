@@ -132,8 +132,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                 body.EmitSyncParameter<ParameterOut>(outParameters, parameterOut);
             }
             body.EmitReturnStatement();
-
-            #endregion
         }
+
+        #endregion
     }
 }
