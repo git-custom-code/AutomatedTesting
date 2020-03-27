@@ -1,11 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
     using Arrangements;
-    using CustomCode.AutomatedTesting.Mocks.Interception.Async;
-    using Interception.ReturnValue;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Implementation of the <see cref="IInterceptor"/> interface for mocked dependency instances that will return
@@ -36,26 +31,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// <inheritdoc />
         public bool Intercept(IInvocation invocation)
         {
-            if (Arrangements.TryApplyTo(invocation))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Gets the default value for a given <paramref name="type"/>.
-        /// </summary>
-        /// <param name="type"> The type whose default value should be returned. </param>
-        /// <returns> The default value for the given <paramref name="type"/>. </returns>
-        private object? GetDefault(Type type)
-        {
-            if (type.IsValueType)
-            {
-                return Activator.CreateInstance(type);
-            }
-            return null;
+            Arrangements.ApplyTo(invocation);
+            return true;
         }
 
         #endregion
