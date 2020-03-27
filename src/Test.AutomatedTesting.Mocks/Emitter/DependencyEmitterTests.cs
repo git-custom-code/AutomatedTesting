@@ -12,7 +12,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     /// </summary>
     public sealed class DependencyEmitterTests
     {
-        [Fact(DisplayName = "Emit a dynamic type with an interceptor dependency")]
+        [Fact(DisplayName = "DependencyEmitter: Dynamic type with interceptor")]
         public void EmitDynamicTypeWithInterceptorDependency()
         {
             // Given
@@ -32,5 +32,41 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.NotNull(actualInterceptor);
             Assert.Equal(expectedInterceptor, actualInterceptor);
         }
+
+        [Fact(DisplayName = "DependencyEmitter: Dynamic type with decoratee and interceptor")]
+        public void EmitDynamicDecoratorTypeWithDecorateeAndInterceptorDependency()
+        {
+            // Given
+            using var iocContainer = new ServiceContainer();
+            iocContainer.RegisterAssembly(typeof(IDynamicProxyFactory).Assembly);
+            var proxyFactory = iocContainer.GetInstance<IDynamicProxyFactory>();
+            var expectedInterceptor = new LooseMockInterceptor(new ArrangementCollection());
+            var expectedDecoratee = new Foo();
+
+            // When
+            var instance = proxyFactory.CreateDecorator<IFoo>(expectedDecoratee, expectedInterceptor);
+
+            // Then
+            Assert.NotNull(instance);
+
+            var decorateeField = instance?.GetType().GetField("_decoratee", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(decorateeField);
+            var actualDecoratee = decorateeField?.GetValue(instance);
+            Assert.NotNull(actualDecoratee);
+            Assert.Equal(expectedDecoratee, actualDecoratee);
+
+            var interceptorField = instance?.GetType().GetField("_interceptor", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(interceptorField);
+            var actualInterceptor = interceptorField?.GetValue(instance);
+            Assert.NotNull(actualInterceptor);
+            Assert.Equal(expectedInterceptor, actualInterceptor);
+        }
+
+        #region Test Domain
+
+        private sealed class Foo : IFoo
+        { }
+
+        #endregion
     }
 }

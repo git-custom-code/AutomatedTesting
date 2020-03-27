@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
     using Interception;
+    using System;
     using System.Reflection.Emit;
 
     /// <summary>
@@ -11,20 +12,43 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     public interface IDependencyEmitter
     {
         /// <summary>
-        /// Creates a readonly field for the <see cref="IInterceptor"/> dependency:
-        ///
-        /// <![CDATA[
-        /// private readonly IInterceptor _interceptor;
-        /// ]]>
+        /// Creates a readonly field for the <see cref="IInterceptor"/> dependency.
         /// </summary>
         /// <param name="type"> The dynamic type that should be extended. </param>
         /// <returns> A <see cref="FieldBuilder"/> that represents the created field. </returns>
+        /// <remarks>
+        /// Emits the following source code:
+        /// 
+        /// <![CDATA[
+        /// private readonly IInterceptor _interceptor;
+        /// ]]>
+        /// </remarks>
         FieldBuilder CreateInterceptorDependency(TypeBuilder type);
+
+        /// <summary>
+        /// Creates a readonly field for the decoratee of type <see cref="T"/>.
+        /// </summary>
+        /// <param name="type"> The dynamic type that should be extended. </param>
+        /// <param name="decorateeType"> The type of the decoratee. </param>
+        /// <returns> A <see cref="FieldBuilder"/> that represents the created field. </returns>
+        /// <remarks>
+        /// Emits the following source code:
+        /// 
+        /// <![CDATA[
+        /// private readonly DecorateeType _decoratee;
+        /// ]]>
+        /// </remarks>
+        FieldBuilder CreateDecorateeDependency(TypeBuilder type, Type decorateeType);
 
         /// <summary>
         /// Creates a constructor that contains a parameter for each requested dependency and
         /// assigns the dependecy to the previously created backing field.
-        /// 
+        /// </summary>
+        /// <param name="type"> The dynamic type that should be extended. </param>
+        /// <param name="dependencies"> The dependencies that should be injected and stored in backing fields. </param>
+        /// <remarks>
+        /// Emits the following source code:
+        ///
         /// <![CDATA[
         /// public .ctor(Type1 dependency1, Type2 dependency2, ...)
         /// {
@@ -33,9 +57,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         ///     ...
         /// }
         /// ]]>
-        /// </summary>
-        /// <param name="type"> The dynamic type that should be extended. </param>
-        /// <param name="dependencies"> The dependencies that should be injected and stored in backing fields. </param>
+        /// </remarks>
         void CreateConstructor(TypeBuilder type, params FieldBuilder[] dependencies);
     }
 }

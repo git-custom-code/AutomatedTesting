@@ -24,6 +24,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         }
 
         /// <inheritdoc />
+        public FieldBuilder CreateDecorateeDependency(TypeBuilder type, Type decorateeType)
+        {
+            var field = type.DefineField(
+                "_decoratee",
+                decorateeType,
+                FieldAttributes.Private | FieldAttributes.InitOnly);
+            return field;
+        }
+
+        /// <inheritdoc />
         public void CreateConstructor(TypeBuilder type, params FieldBuilder[] dependencies)
         {
             var constructor = type.DefineConstructor(
