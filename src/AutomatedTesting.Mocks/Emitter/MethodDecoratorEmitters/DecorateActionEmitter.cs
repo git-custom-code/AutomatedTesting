@@ -11,7 +11,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     /// <summary>
     /// Implementation of the <see cref="IMethodEmitter"/> interface for emitting dynamic methods with
     /// return type <see cref="void"/> and without any out or ref input parameters that will forward any calls
-    /// to an injected <see cref="IInterceptor.Intercept(IInvocation)"/> instance.
+    /// to either an injected <see cref="IInterceptor.Intercept(IInvocation)"/> instance or to the original
+    /// implementation of a decoratee instance.
     /// </summary>
     /// <remarks>
     /// Emits the following source code:
