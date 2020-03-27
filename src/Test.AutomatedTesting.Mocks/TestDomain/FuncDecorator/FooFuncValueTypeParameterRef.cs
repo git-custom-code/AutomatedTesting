@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
 namespace CustomCode.AutomatedTesting.Mocks.TestDomain
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Test domain implementation of the <see cref="IFooFuncValueTypeParameterRef{T}"/> interface.
     /// </summary>
