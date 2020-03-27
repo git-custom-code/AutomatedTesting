@@ -11,6 +11,12 @@ namespace CustomCode.AutomatedTesting.Mocks
         /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
         /// return the default value (see <see cref="LooseMockInterceptor"/> for more details).
         /// </summary>
-        Loose = 0
+        Loose = 0,
+
+        /// <summary>
+        /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
+        /// call to the concrete implementation (see <see cref="PartialMockInterceptor"/> for more details).
+        /// </summary>
+        Partial = 1
     }
 }
