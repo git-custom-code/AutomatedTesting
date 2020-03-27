@@ -48,5 +48,26 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Equal("My.Namespace", type.Namespace);
             Assert.Equal("MyType", type.Name);
         }
+
+        [Fact(DisplayName = "Emit a dynamic type as decorator proxy")]
+        public void EmitDynamicTypeAsDecoratorProxy()
+        {
+            // Given
+            var iocContainer = new ServiceContainer();
+            iocContainer.RegisterAssembly(typeof(ITypeEmitter).Assembly);
+            var asmEmitter = iocContainer.GetInstance<IAssemblyEmitter>();
+
+            // When
+            var emitter = asmEmitter.EmitType("My.Namespace.MyType");
+            emitter.ImplementDecorator<IFoo>();
+            var type = emitter.ToType();
+
+            // Then
+            Assert.NotNull(emitter);
+            Assert.NotNull(type);
+            Assert.Equal("My.Namespace", type.Namespace);
+            Assert.Equal("MyType", type.Name);
+            Assert.Equal(typeof(IFoo), type.GetInterface(nameof(IFoo)));
+        }
     }
 }

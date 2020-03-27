@@ -10,6 +10,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     {
         /// <summary>
         /// Implement the public contract of the specified interface with signature of type <typeparamref name="T"/>,
+        /// i.e. the dynamic decorator type will implement each property and/or method of the interface.
+        /// </summary>
+        /// <typeparam name="T"> The signature of the interface that should be implemented. </typeparam>
+        void ImplementDecorator<T>() where T : class;
+
+        /// <summary>
+        /// Implement the public contract of the specified interface with the given <paramref name="signature"/>,
+        /// i.e. the dynamic decorator type will implement each property and/or method of the interface.
+        /// </summary>
+        /// <param name="signature"> The signature of the interface that should be implemented. </param>
+        void ImplementDecorator(Type signature);
+
+        /// <summary>
+        /// Implement the public contract of the specified interface with signature of type <typeparamref name="T"/>,
         /// i.e. the dynamic proxy type will implement each property and/or method of the interface.
         /// </summary>
         /// <typeparam name="T"> The signature of the interface that should be implemented. </typeparam>

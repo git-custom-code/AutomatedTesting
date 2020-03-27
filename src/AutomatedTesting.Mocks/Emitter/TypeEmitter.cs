@@ -58,6 +58,40 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
+
+        /// <inheritdoc />
+        public void ImplementDecorator<T>() where T : class
+        {
+            var @interface = typeof(T);
+            ImplementDecorator(@interface);
+        }
+
+        /// <inheritdoc />
+        public void ImplementDecorator(Type signature)
+        {
+            if (!signature.IsInterface)
+            {
+                throw new ArgumentException($"Invalid non-interface type '{signature.FullName}'");
+            }
+
+            var decorateeField = Dependencies.CreateDecorateeDependency(Type, signature);
+            var interceptorField = Dependencies.CreateInterceptorDependency(Type);
+            Dependencies.CreateConstructor(Type, decorateeField, interceptorField);
+            Type.AddInterfaceImplementation(signature);
+
+            foreach (var property in signature.GetProperties())
+            {
+                //    var emitter = PropertyEmitterFactory.CreatePropertyEmitterFor(property, Type, interceptorField);
+                //    emitter.EmitPropertyImplementation();
+            }
+
+            foreach (var method in signature.GetMethods().Where(m => !m.IsSpecialName))
+            {
+                //    var emitter = MethodEmitterFactory.CreateMethodEmitterFor(method, Type, interceptorField);
+                //    emitter.EmitMethodImplementation();
+            }
+        }
+
         /// <inheritdoc />
         public void ImplementInterface<T>() where T : class
         {
