@@ -62,7 +62,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         #region Dependencies
 
         /// <summary>
-        /// Creates a new instance of the <see cref="InterceptSetterEmitter"/> type.
+        /// Creates a new instance of the <see cref="DecorateSetterEmitter"/> type.
         /// </summary>
         /// <param name="type"> The dynamic proxy type. </param>
         /// <param name="signature"> The signature of the property to be created. </param>
