@@ -19,9 +19,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <param name="methodEmitterFactory">
         /// A factory that can create <see cref="IMethodEmitter"/> instance based on a method's signature.
         /// </param>
-        /// <param name="methodDecoratorEmitterFactory">
-        /// A factory that can create <see cref="IMethodEmitter"/> instance based on a method's signature.
-        /// </param>
         /// <param name="propertyEmitterFactory">
         /// A factory that can create <see cref="IPropertyEmitter"/> instance based on a property's signature.
         /// </param>
@@ -29,13 +26,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             TypeBuilder typeBuilder,
             IDependencyEmitter dependencyEmitter,
             IMethodEmitterFactory methodEmitterFactory,
-            IMethodDecoratorEmitterFactory methodDecoratorEmitterFactory,
             IPropertyEmitterFactory propertyEmitterFactory)
         {
             Type = typeBuilder;
             Dependencies = dependencyEmitter;
             MethodEmitterFactory = methodEmitterFactory;
-            MethodDecoratorEmitterFactory = methodDecoratorEmitterFactory;
             PropertyEmitterFactory = propertyEmitterFactory;
         }
 
@@ -50,11 +45,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         private IMethodEmitterFactory MethodEmitterFactory { get; }
 
         /// <summary>
-        /// Get a factory that can create <see cref="IMethodEmitter"/> instance based on a method's signature.
-        /// </summary>
-        private IMethodDecoratorEmitterFactory MethodDecoratorEmitterFactory { get; }
-
-        /// <summary>
         /// Get a factory that can create <see cref="IPropertyEmitter"/> instance based on a property's signature.
         /// </summary>
         private IPropertyEmitterFactory PropertyEmitterFactory { get; }
@@ -67,40 +57,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         #endregion
 
         #region Logic
-
-        /// <inheritdoc />
-        public void ImplementDecorator<T>() where T : class
-        {
-            var @interface = typeof(T);
-            ImplementDecorator(@interface);
-        }
-
-        /// <inheritdoc />
-        public void ImplementDecorator(Type signature)
-        {
-            if (!signature.IsInterface)
-            {
-                throw new ArgumentException($"Invalid non-interface type '{signature.FullName}'");
-            }
-
-            var decorateeField = Dependencies.CreateDecorateeDependency(Type, signature);
-            var interceptorField = Dependencies.CreateInterceptorDependency(Type);
-            Dependencies.CreateConstructor(Type, decorateeField, interceptorField);
-            Type.AddInterfaceImplementation(signature);
-
-            foreach (var property in signature.GetProperties())
-            {
-                //    var emitter = PropertyEmitterFactory.CreatePropertyEmitterFor(property, Type, interceptorField);
-                //    emitter.EmitPropertyImplementation();
-            }
-
-            foreach (var method in signature.GetMethods().Where(m => !m.IsSpecialName))
-            {
-                var emitter = MethodDecoratorEmitterFactory.CreateMethodDecoratorEmitterFor(
-                    method, Type, decorateeField, interceptorField);
-                emitter.EmitMethodImplementation();
-            }
-        }
 
         /// <inheritdoc />
         public void ImplementInterface<T>() where T : class
