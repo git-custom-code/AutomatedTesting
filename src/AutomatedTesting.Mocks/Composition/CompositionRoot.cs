@@ -23,17 +23,27 @@ namespace CustomCode.AutomatedTesting.Mocks.Composition
             serviceRegistry.Register<IMethodEmitterFactory, MethodEmitterFactory>();
             serviceRegistry.Register<IMethodDecoratorEmitterFactory, MethodDecoratorEmitterFactory>();
             serviceRegistry.Register<IPropertyEmitterFactory, PropertyEmitterFactory>();
+            serviceRegistry.Register<IPropertyDecoratorEmitterFactory, PropertyDecoratorEmitterFactory>();
             serviceRegistry.Register<TypeBuilder, ITypeEmitter>((factory, typeBuilder) =>
                 {
                     var dependencyEmitter = factory.GetInstance<IDependencyEmitter>();
                     var methodEmitterFactory = factory.GetInstance<IMethodEmitterFactory>();
-                    var methodDecoratorEmitterFactory = factory.GetInstance<IMethodDecoratorEmitterFactory>();
                     var propertyEmitterFactory = factory.GetInstance<IPropertyEmitterFactory>();
                     return new TypeEmitter(
                         typeBuilder,
                         dependencyEmitter,
                         methodEmitterFactory,
-                        methodDecoratorEmitterFactory,
+                        propertyEmitterFactory);
+                });
+            serviceRegistry.Register<TypeBuilder, ITypeDecoratorEmitter>((factory, typeBuilder) =>
+                {
+                    var dependencyEmitter = factory.GetInstance<IDependencyEmitter>();
+                    var methodEmitterFactory = factory.GetInstance<IMethodDecoratorEmitterFactory>();
+                    var propertyEmitterFactory = factory.GetInstance<IPropertyDecoratorEmitterFactory>();
+                    return new TypeDecoratorEmitter(
+                        typeBuilder,
+                        dependencyEmitter,
+                        methodEmitterFactory,
                         propertyEmitterFactory);
                 });
             serviceRegistry.Register<IInterceptorFactory, InterceptorFactory>();

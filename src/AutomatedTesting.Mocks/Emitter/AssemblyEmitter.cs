@@ -18,12 +18,19 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <param name="typeEmitterFactory">
         /// A factory that can be used to create a new <see cref="ITypeEmitter"/> from an existing <see cref="TypeBuilder"/>.
         /// </param>
-        public AssemblyEmitter(Func<TypeBuilder, ITypeEmitter> typeEmitterFactory)
+        /// <param name="typeDecoratorEmitterFactory">
+        /// A factory that can be used to create a new <see cref="ITypeDecoratorEmitter"/>
+        /// from an existing <see cref="TypeBuilder"/>.
+        /// </param>
+        public AssemblyEmitter(
+            Func<TypeBuilder, ITypeEmitter> typeEmitterFactory,
+            Func<TypeBuilder, ITypeDecoratorEmitter> typeDecoratorEmitterFactory)
         {
             Module = new Lazy<ModuleBuilder>(
                 CreateDynamicAssembly,
                 LazyThreadSafetyMode.ExecutionAndPublication);
             CreateTypeEmitter = typeEmitterFactory;
+            CreateTypeDecoratorEmitter = typeDecoratorEmitterFactory;
         }
 
         /// <summary>
@@ -35,6 +42,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// Gets a factory that can be used to create a new <see cref="ITypeEmitter"/> from an existing <see cref="TypeBuilder"/>.
         /// </summary>
         private Func<TypeBuilder, ITypeEmitter> CreateTypeEmitter { get; }
+
+        /// <summary>
+        /// Gets a factory that can be used to create a new <see cref="ITypeDecoratorEmitter"/>
+        /// from an existing <see cref="TypeBuilder"/>.
+        /// </summary>
+        private Func<TypeBuilder, ITypeDecoratorEmitter> CreateTypeDecoratorEmitter { get; }
 
         #endregion
 
@@ -59,6 +72,16 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                 typeFullName,
                 TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class);
             var emitter = CreateTypeEmitter(builder);
+            return emitter;
+        }
+
+        /// <inheritdoc />
+        public ITypeDecoratorEmitter EmitDecoratorType(string typeFullName)
+        {
+            var builder = Module.Value.DefineType(
+                typeFullName,
+                TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class);
+            var emitter = CreateTypeDecoratorEmitter(builder);
             return emitter;
         }
 
