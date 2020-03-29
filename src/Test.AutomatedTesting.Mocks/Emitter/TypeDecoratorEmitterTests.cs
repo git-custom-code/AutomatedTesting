@@ -5,12 +5,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     using Xunit;
 
     /// <summary>
-    /// Automated tests for the <see cref="TypeEmitter"/> type.
+    /// Automated tests for the <see cref="TypeDecoratorEmitter"/> type.
     /// </summary>
-    public sealed class TypeEmitterTests
+    public sealed class TypeDecoratorEmitterTests
     {
-        [Fact(DisplayName = "TypeEmitter: Emit interface implementation for dynamic proxy")]
-        public void EmitDynamicTypeAsInterfaceProxy()
+        [Fact(DisplayName = "TypeDecoratorEmitter: Emit decorator implementation for dynamic proxy")]
+        public void EmitDynamicTypeAsDecoratorProxy()
         {
             // Given
             var iocContainer = new ServiceContainer();
@@ -18,8 +18,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var asmEmitter = iocContainer.GetInstance<IAssemblyEmitter>();
 
             // When
-            var emitter = asmEmitter.EmitType("My.Namespace.MyType");
-            emitter.ImplementInterface<IFoo>();
+            var emitter = asmEmitter.EmitDecoratorType("My.Namespace.MyType");
+            emitter.ImplementDecorator<IFoo>();
             var type = emitter.ToType();
 
             // Then
@@ -30,7 +30,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             Assert.Equal(typeof(IFoo), type.GetInterface(nameof(IFoo)));
         }
 
-        [Fact(DisplayName = "TypeEmitter: Emit a dynamic proxy")]
+        [Fact(DisplayName = "TypeDecoratorEmitter: Emit a dynamic proxy")]
         public void EmitDynamicTypeAtRuntime()
         {
             // Given
@@ -39,7 +39,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             var asmEmitter = iocContainer.GetInstance<IAssemblyEmitter>();
 
             // When
-            var emitter = asmEmitter.EmitType("My.Namespace.MyType");
+            var emitter = asmEmitter.EmitDecoratorType("My.Namespace.MyType");
             var type = emitter.ToType();
 
             // Then

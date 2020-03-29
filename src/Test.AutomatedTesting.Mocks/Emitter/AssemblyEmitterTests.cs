@@ -9,11 +9,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
     /// </summary>
     public sealed class AssemblyEmitterTests
     {
-        [Fact(DisplayName = "Create a new dynamic in-memory assembly at runtime")]
-        public void EmitDynamicAssemlyAtRuntime()
+        [Fact(DisplayName = "AssemblyEmitter: Emit type")]
+        public void EmitDynamicProxy()
         {
             // Given
-            var emitter = new AssemblyEmitter(builder => new MockEmitter(builder));
+            var emitter = new AssemblyEmitter(
+                builder => new MockEmitter(builder),
+                builder => new MockDecoratorEmitter(builder));
 
             // When
             var typeEmitter = emitter.EmitType("My.Namespace.MyType");
@@ -21,6 +23,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
             // Then
             Assert.NotNull(typeEmitter);
             Assert.IsType<MockEmitter>(typeEmitter);
+        }
+
+        [Fact(DisplayName = "AssemblyEmitter: Emit decorator type")]
+        public void EmitDynamicDecorator()
+        {
+            // Given
+            var emitter = new AssemblyEmitter(
+                builder => new MockEmitter(builder),
+                builder => new MockDecoratorEmitter(builder));
+
+            // When
+            var typeEmitter = emitter.EmitDecoratorType("My.Namespace.MyType");
+
+            // Then
+            Assert.NotNull(typeEmitter);
+            Assert.IsType<MockDecoratorEmitter>(typeEmitter);
         }
 
         #region Mocks
@@ -34,22 +52,37 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 
             public TypeBuilder Builder { get; }
 
-            public void ImplementDecorator<T>() where T : class
-            {
-                throw new NotImplementedException();
-            }
-
-            public void ImplementDecorator(Type signature)
-            {
-                throw new NotImplementedException();
-            }
-
             public void ImplementInterface<T>() where T : class
             {
                 throw new NotImplementedException();
             }
 
             public void ImplementInterface(Type @interface)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Type ToType()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private sealed class MockDecoratorEmitter : ITypeDecoratorEmitter
+        {
+            public MockDecoratorEmitter(TypeBuilder builder)
+            {
+                Builder = builder;
+            }
+
+            public TypeBuilder Builder { get; }
+
+            public void ImplementDecorator<T>() where T : class
+            {
+                throw new NotImplementedException();
+            }
+
+            public void ImplementDecorator(Type signature)
             {
                 throw new NotImplementedException();
             }
