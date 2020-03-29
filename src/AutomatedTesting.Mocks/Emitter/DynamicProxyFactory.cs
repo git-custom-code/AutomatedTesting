@@ -123,7 +123,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         private Type EmitPartialProxyTypeFor(Type signature)
         {
             var proxyName = $"{signature.FullName}PartialMock";
-            var dynamicType = AssemblyEmitter.EmitType(proxyName);
+            var dynamicType = AssemblyEmitter.EmitDecoratorType(proxyName);
             dynamicType.ImplementDecorator(signature);
             var proxyType = dynamicType.ToType();
             return proxyType;
