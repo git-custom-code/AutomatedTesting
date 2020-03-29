@@ -4,7 +4,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     using Extensions;
     using Interception;
     using Interception.Parameters;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -28,7 +27,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     ///
     ///     var incovation = new Invocation(methodSignature, propertySetterValueFeature);
     ///     _interceptor.Intercept(incovation);
-    ///     return returnValueFeature.ReturnValue;
+    ///     return;
     /// ]]>
     ///
     /// or
@@ -45,7 +44,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     ///
     ///     var incovation = new Invocation(methodSignature, propertySetterValueFeature, parameterInFeature);
     ///     _interceptor.Intercept(incovation);
-    ///     return returnValueFeature.ReturnValue;
+    ///     return;
     /// ]]>
     /// </remarks>
     public sealed class InterceptSetterEmitter : PropertyEmitterBase
