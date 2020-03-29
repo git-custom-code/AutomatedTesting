@@ -11,7 +11,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
     /// <summary>
     /// Implementation of the <see cref="IPropertyEmitter"/> interface for emitting dynamic property setters
-    /// that will forward any calls to an injected <see cref="IInterceptor.Intercept(IInvocation)"/> instance.
+    /// that will forward any calls to either an injected <see cref="IInterceptor.Intercept(IInvocation)"/>
+    /// instance or to the original implementation of a decoratee instance.
     /// </summary>
     /// <remarks>
     /// Emits the following source code:
@@ -31,7 +32,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     ///         _decoratee.Property = value;
     ///         return;
     ///     }
-    ///     
+    ///
     ///     return;
     /// ]]>
     ///
@@ -53,7 +54,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     ///         _decoratee.Property = value;
     ///         return;
     ///     }
-    ///     
+    ///
     ///     return;
     /// ]]>
     /// </remarks>
