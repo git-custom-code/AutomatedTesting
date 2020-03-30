@@ -21,6 +21,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         private static ConcurrentDictionary<Type, PropertyEmitterDelegate> GetterEmitterCache { get; }
             = new ConcurrentDictionary<Type, PropertyEmitterDelegate>();
 
+        /// <summary>
+        /// Gets a thread-safe cache that is used to store factories for creating strongly typed
+        /// <see cref="IPropertyEmitter"/> instances for getter/setter properties.
+        /// </summary>
+        private static ConcurrentDictionary<Type, PropertyEmitterDelegate> GetterSetterEmitterCache { get; }
+            = new ConcurrentDictionary<Type, PropertyEmitterDelegate>();
+
         #endregion
 
         #region Logic
@@ -34,11 +41,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         {
             if (signature.CanRead)
             {
-
-                var factory = GetterEmitterCache.GetOrAdd(
+                if (signature.CanWrite)
+                {
+                    var factory = GetterSetterEmitterCache.GetOrAdd(
+                        signature.PropertyType,
+                        CreateEmitterFactoryFor(signature.PropertyType, typeof(DecorateGetterSetterEmitter<>)));
+                    return factory(type, signature, decoratee, interceptor);
+                }
+                else
+                {
+                    var factory = GetterEmitterCache.GetOrAdd(
                         signature.PropertyType,
                         CreateEmitterFactoryFor(signature.PropertyType, typeof(DecorateGetterEmitter<>)));
-                return factory(type, signature, decoratee, interceptor);
+                    return factory(type, signature, decoratee, interceptor);
+                }
             }
             else if (signature.CanWrite)
             {
