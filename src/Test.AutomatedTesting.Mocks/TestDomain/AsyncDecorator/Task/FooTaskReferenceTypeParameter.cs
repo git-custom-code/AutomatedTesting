@@ -10,7 +10,7 @@ namespace CustomCode.AutomatedTesting.Mocks.TestDomain
         #region Data
 
         /// <summary>
-        /// Gets the number of times the <see cref="MethodWithOneParameterAsync(int)"/> was called.
+        /// Gets the number of times the <see cref="MethodWithOneParameterAsync(object?)"/> was called.
         /// </summary>
         public uint CallCount { get; private set; } = 0;
 
