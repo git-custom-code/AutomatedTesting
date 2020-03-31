@@ -2,9 +2,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
     #region Usings
 
+    using Core.Context;
     using Core.Extensions;
-    using CustomCode.AutomatedTesting.Mocks.Core.Context;
-    using CustomCode.AutomatedTesting.Mocks.Interception;
+    using Interception;
     using Interception.Async;
     using System.Collections.Generic;
     using System.Linq;
