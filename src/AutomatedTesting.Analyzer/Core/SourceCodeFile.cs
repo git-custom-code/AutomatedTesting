@@ -1,4 +1,4 @@
-namespace CustomCode.AutomatedTesting.Analyzer
+namespace CustomCode.AutomatedTesting.Analyzer.Core
 {
     /// <summary>
     /// Type that encapsulates the name and code of an in-memory source code file.

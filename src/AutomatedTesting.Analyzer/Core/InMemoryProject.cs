@@ -1,4 +1,4 @@
-namespace CustomCode.AutomatedTesting.Analyzer
+namespace CustomCode.AutomatedTesting.Analyzer.Core
 {
     using ExceptionHandling;
     using Microsoft.CodeAnalysis;

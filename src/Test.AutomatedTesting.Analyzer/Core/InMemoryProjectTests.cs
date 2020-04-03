@@ -1,9 +1,11 @@
-namespace CustomCode.AutomatedTesting.Analyzer.Tests
+namespace CustomCode.AutomatedTesting.Analyzer.Core.Tests
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using Xunit;
 
+    /// <summary>
+    /// Automated tests for the <see cref="InMemoryProject"/> type.
+    /// </summary>
     public sealed class InMemoryProjectTests
     {
         [Fact(DisplayName = "InMemoryProject: add class")]
