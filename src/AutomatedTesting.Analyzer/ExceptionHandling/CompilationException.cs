@@ -3,7 +3,7 @@ namespace CustomCode.AutomatedTesting.Analyzer.ExceptionHandling
     using System;
 
     /// <summary>
-    /// Exception that is thrown when an <see cref="InMemoryProject"/> could not be compiled.
+    /// Exception that is thrown when an <see cref="Core.InMemoryProject"/> could not be compiled.
     /// </summary>
     public sealed class CompilationException : Exception
     {

@@ -26,7 +26,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         FieldBuilder CreateInterceptorDependency(TypeBuilder type);
 
         /// <summary>
-        /// Creates a readonly field for the decoratee of type <see cref="T"/>.
+        /// Creates a readonly field for the decoratee of type <paramref name="decorateeType"/>.
         /// </summary>
         /// <param name="type"> The dynamic type that should be extended. </param>
         /// <param name="decorateeType"> The type of the decoratee. </param>

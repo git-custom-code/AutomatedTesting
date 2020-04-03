@@ -5,7 +5,7 @@ namespace CustomCode.AutomatedTesting.Analyzer.ExceptionHandling
     using System.Linq;
 
     /// <summary>
-    /// Exception that is thrown when an <see cref="InMemoryProject"/> was compiled with errors.
+    /// Exception that is thrown when an <see cref="Core.InMemoryProject"/> was compiled with errors.
     /// </summary>
     public sealed class CompilationErrorsException : Exception
     {
