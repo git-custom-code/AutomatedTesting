@@ -33,7 +33,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C1E03AD6
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutomatedTesting.Mocks", "AutomatedTesting.Mocks\AutomatedTesting.Mocks.csproj", "{14FC3554-7C37-4B3A-8011-1641907F062C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.AutomatedTesting.Mocks", "Test.AutomatedTesting.Mocks\Test.AutomatedTesting.Mocks.csproj", "{56FA5895-163B-4ABC-89F4-C062D29E89A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.AutomatedTesting.Mocks", "Test.AutomatedTesting.Mocks\Test.AutomatedTesting.Mocks.csproj", "{56FA5895-163B-4ABC-89F4-C062D29E89A0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutomatedTesting.Analyzer", "AutomatedTesting.Analyzer\AutomatedTesting.Analyzer.csproj", "{FBC0834E-561A-436C-A36B-B96B707D374F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.AutomatedTesting.Analyzer", "Test.AutomatedTesting.Analyzer\Test.AutomatedTesting.Analyzer.csproj", "{A6C12338-5C4C-4C1A-A441-96C423FC107D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +58,18 @@ Global
 		{56FA5895-163B-4ABC-89F4-C062D29E89A0}.GitHub|Any CPU.Build.0 = GitHub|Any CPU
 		{56FA5895-163B-4ABC-89F4-C062D29E89A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56FA5895-163B-4ABC-89F4-C062D29E89A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBC0834E-561A-436C-A36B-B96B707D374F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBC0834E-561A-436C-A36B-B96B707D374F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBC0834E-561A-436C-A36B-B96B707D374F}.GitHub|Any CPU.ActiveCfg = GitHub|Any CPU
+		{FBC0834E-561A-436C-A36B-B96B707D374F}.GitHub|Any CPU.Build.0 = GitHub|Any CPU
+		{FBC0834E-561A-436C-A36B-B96B707D374F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBC0834E-561A-436C-A36B-B96B707D374F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6C12338-5C4C-4C1A-A441-96C423FC107D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6C12338-5C4C-4C1A-A441-96C423FC107D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6C12338-5C4C-4C1A-A441-96C423FC107D}.GitHub|Any CPU.ActiveCfg = GitHub|Any CPU
+		{A6C12338-5C4C-4C1A-A441-96C423FC107D}.GitHub|Any CPU.Build.0 = GitHub|Any CPU
+		{A6C12338-5C4C-4C1A-A441-96C423FC107D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6C12338-5C4C-4C1A-A441-96C423FC107D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
