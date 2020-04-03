@@ -42,7 +42,7 @@ namespace CustomCode.AutomatedTesting.Analyzer.Core
         void AddReferenceFor<T>();
 
         /// <summary>
-        /// Asynchronously compile the in-memory project (using the roslyn compiler). 
+        /// Asynchronously compile the in-memory project (using the roslyn compiler).
         /// </summary>
         /// <param name="token"> A token that can be used to cancel the compilation process. </param>
         /// <returns> The compiled project. </returns>
