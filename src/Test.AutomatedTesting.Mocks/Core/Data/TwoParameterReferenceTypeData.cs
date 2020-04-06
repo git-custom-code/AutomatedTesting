@@ -3,7 +3,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Core.Data
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using TestDomain;
     using Xunit;
 
     /// <summary>

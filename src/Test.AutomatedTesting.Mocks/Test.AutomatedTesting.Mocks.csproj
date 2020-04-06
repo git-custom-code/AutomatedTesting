@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AutomatedTesting.Mocks\AutomatedTesting.Mocks.csproj" />
+    <ProjectReference Include="..\Test.AutomatedTesting.TestDomain\Test.AutomatedTesting.TestDomain.csproj" />
   </ItemGroup>
 
 </Project>

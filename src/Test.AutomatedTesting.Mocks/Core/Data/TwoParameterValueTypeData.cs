@@ -1,4 +1,4 @@
-namespace CustomCode.AutomatedTesting.Mocks.TestDomain
+namespace CustomCode.AutomatedTesting.Mocks.Core.Data
 {
     using System;
     using System.Collections;

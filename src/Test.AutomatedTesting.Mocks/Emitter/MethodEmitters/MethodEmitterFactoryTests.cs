@@ -1,7 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
     using Interception.Async;
-    using Mocks.TestDomain;
+    using TestDomain;
     using Xunit;
 
     /// <summary>
