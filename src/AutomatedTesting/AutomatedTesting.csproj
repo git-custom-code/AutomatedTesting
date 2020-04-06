@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Title> Automated testing nuget metapackage. </Title>
+    <Description> Nuget metapackage that contains all CustomCode.AutomatedTesting.xyz packages.</Description>
+    <RootNamespace>CustomCode.AutomatedTesting</RootNamespace>
+    <Configurations>Debug;Release;GitHub</Configurations>
+    <IncludeSymbols>False</IncludeSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include=".nuget\.nuspec" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Analyzer.AutomatedTesting.Mocks\Analyzer.AutomatedTesting.Mocks.csproj" />
+    <ProjectReference Include="..\AutomatedTesting.Analyzer\AutomatedTesting.Analyzer.csproj" />
+    <ProjectReference Include="..\AutomatedTesting.Mocks\AutomatedTesting.Mocks.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <BeforePack>$(BeforePack);SetNuspecProperties</BeforePack>
+    <NuspecFile>.nuget\.nuspec</NuspecFile>
+  </PropertyGroup>
+
+  <Target Name="SetNuspecProperties">
+    <PropertyGroup>
+      <NuspecProperties>$(NuspecProperties);version=$(SemVer)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);title=$(AssemblyTitle)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);author=$(Authors)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);copyright=$(Copyright)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);description=$(Description)</NuspecProperties>
+      <NuspecBasePath>$(OutDir)</NuspecBasePath>
+    </PropertyGroup>
+  </Target>
+
+</Project>

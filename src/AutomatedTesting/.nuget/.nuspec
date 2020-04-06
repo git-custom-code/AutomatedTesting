@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <authors>$author$</authors>
+    <copyright>$copyright$</copyright>
+    <description>$description$</description>
+    <developmentDependency>true</developmentDependency>
+    <id>CustomCode.AutomatedTesting</id>
+    <license type="expression">MIT</license>
+    <owners>$author$</owners>
+    <projectUrl>https://github.com/git-custom-code/AutomatedTesting</projectUrl>
+    <repository type="git" url="https://github.com/git-custom-code/AutomatedTesting" />
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>C#, test, testing, tdd, unittest, roslyn, analyzers</tags>
+    <title>$title$</title>
+    <version>$version$</version>
+    <dependencies>
+        <group targetFramework=".netcoreapp3.1">
+            <dependency id="CustomCode.AutomatedTesting.Mocks" version="$version$" />
+            <dependency id="CustomCode.Analyzer.AutomatedTesting.Mocks" version="$version$" />
+            <dependency id="CustomCode.AutomatedTesting.Analyzer" version="$version$" />
+        </group>
+    </dependencies>
+  </metadata>
+    <files />
+</package>
