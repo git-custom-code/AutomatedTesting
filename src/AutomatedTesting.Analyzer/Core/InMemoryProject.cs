@@ -7,6 +7,7 @@ namespace CustomCode.AutomatedTesting.Analyzer.Core
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
@@ -157,13 +158,15 @@ namespace CustomCode.AutomatedTesting.Analyzer.Core
             var solution = workspace.CurrentSolution;
 
             var testProjectName = "TestProject";
+            var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location) ?? throw new FileNotFoundException();
             var project = solution.AddProject(testProjectName, testProjectName, LanguageNames.CSharp);
             project = project.AddMetadataReferences(new[]
                 {
                     MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(CSharpCompilation).GetTypeInfo().Assembly.Location),
-                    MetadataReference.CreateFromFile(typeof(Compilation).GetTypeInfo().Assembly.Location)
+                    MetadataReference.CreateFromFile(typeof(Compilation).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Runtime.dll"))
                 });
 
             foreach (var reference in References)
