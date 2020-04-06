@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>CustomCode.AutomatedTesting.Mocks.Tests</RootNamespace>
+    <Configurations>Debug;Release;GitHub</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Analyzer.AutomatedTesting.Mocks\Analyzer.AutomatedTesting.Mocks.csproj" />
+    <ProjectReference Include="..\AutomatedTesting.Mocks\AutomatedTesting.Mocks.csproj" />
+    <ProjectReference Include="..\Test.AutomatedTesting.Analyzer\Test.AutomatedTesting.Analyzer.csproj" />
+  </ItemGroup>
+
+</Project>

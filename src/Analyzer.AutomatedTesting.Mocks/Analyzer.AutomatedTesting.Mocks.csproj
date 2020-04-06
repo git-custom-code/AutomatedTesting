@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Title>Roslyn analyzers for the CustomCode.AutomatedTesting.Mocks assembly.</Title>
+    <Description>Roslyn analyzers for the CustomCode.AutomatedTesting.Mocks assembly.</Description>
+    <RootNamespace>CustomCode.Analyzer.AutomatedTesting.Mocks</RootNamespace>
+    <Configurations>Debug;Release;GitHub</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include=".nuget\.nuspec" />
+    <None Include=".nuget\install.ps1" CopyToOutputDirectory="PreserveNewest" />
+    <None Include=".nuget\uninstall.ps1" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.5.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <BeforePack>$(BeforePack);SetNuspecProperties</BeforePack>
+    <NuspecFile>.nuget\.nuspec</NuspecFile>
+  </PropertyGroup>
+
+  <Target Name="SetNuspecProperties">
+    <PropertyGroup>
+      <NuspecProperties>$(NuspecProperties);version=$(SemVer)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);title=$(AssemblyTitle)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);author=$(Authors)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);copyright=$(Copyright)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);description=$(Description)</NuspecProperties>
+      <NuspecBasePath>$(OutDir)</NuspecBasePath>
+    </PropertyGroup>
+  </Target>
+</Project>
