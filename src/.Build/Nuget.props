@@ -11,7 +11,7 @@
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageIcon>CustomCode.png</PackageIcon>
-    <PackageIconPath>$(SolutionDir).build\$(PackageIcon)</PackageIconPath>
+    <PackageIconPath>$(SolutionDir).Build\$(PackageIcon)</PackageIconPath>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(IsPackable)' == 'true' ">
