@@ -20,7 +20,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.ReturnValue
         object? IReturnValue.ReturnValue
         {
             get { return (object?)ReturnValue; }
+#nullable disable
             set { ReturnValue = (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture); }
+#nullable restore
         }
 
         #endregion
