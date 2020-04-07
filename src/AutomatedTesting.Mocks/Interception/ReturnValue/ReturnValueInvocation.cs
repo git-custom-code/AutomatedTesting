@@ -14,13 +14,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.ReturnValue
 
         /// <inheritdoc />
         [AllowNull, MaybeNull]
+#nullable disable // needed for build server builds only
         public T ReturnValue { get; set; } = default;
+#nullable restore
 
         /// <inheritdoc />
         object? IReturnValue.ReturnValue
         {
             get { return (object?)ReturnValue; }
-#nullable disable
+#nullable disable // needed for build server builds only
             set { ReturnValue = (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture); }
 #nullable restore
         }

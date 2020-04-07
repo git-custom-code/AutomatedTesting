@@ -57,7 +57,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         {
             var parameter = RefParameterCollection
                 .Single(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
+#nullable disable // needed for build server builds only
             return (T)parameter.Value;
+#nullable restore
         }
 
         /// <inheritdoc />

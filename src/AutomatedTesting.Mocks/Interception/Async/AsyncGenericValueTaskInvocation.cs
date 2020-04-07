@@ -27,7 +27,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
         object? IReturnValue.ReturnValue
         {
             get { return (object?)((IReturnValue<TResult>)this).ReturnValue; }
+#nullable disable // needed for build server builds only
             set { ((IReturnValue<TResult>)this).ReturnValue = (TResult)value; }
+#nullable restore
         }
 
         /// <inheritdoc />
