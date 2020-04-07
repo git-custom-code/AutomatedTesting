@@ -23,3 +23,27 @@ public sealed class FooTests
     }
 }
 ```
+
+## Mocks (Integration Test)
+If you want to test the interaction of multiple classes (testing as much of the productive source code as possible) you can do so by creating a partial mock (via calling "Mock.CreatePartialMock<ClassToTest>"). Any dependencies are resolved by calls to the specified service container and therefore will invoke the "original" source code. Only if you setup any arrangements (by calling the fluent api) those arrangements will be inovked instead.
+
+```csharp
+public sealed class FooTests
+{
+    [Fact]
+    void IntegrationTest()
+    {
+        // Given
+        var container = new ServiceContainer();
+        ... // setup container
+        var mocked = Mock.CreatePartialMocked<Foo>(container);
+        mocked.ArrangeFor<IFooDependency>().That(m => m.ReturnSomething()).Returns(42);
+
+        // When
+        var result = mocked.Instance.MethodToBeTested();
+
+        // Then
+        Assert.Equal(42, result);
+    }
+}
+```
