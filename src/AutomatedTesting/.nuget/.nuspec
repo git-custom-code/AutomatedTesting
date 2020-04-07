@@ -14,6 +14,7 @@
     <tags>C#, test, testing, tdd, unittest, roslyn, analyzers</tags>
     <title>$title$</title>
     <version>$version$</version>
+    <icon>$icon$</icon>
     <dependencies>
         <group targetFramework=".netcoreapp3.1">
             <dependency id="CustomCode.AutomatedTesting.Mocks" version="$version$" />
@@ -22,5 +23,7 @@
         </group>
     </dependencies>
   </metadata>
-    <files />
+  <files>
+    <file src="$iconPath$" target="" />      
+  </files>
 </package>

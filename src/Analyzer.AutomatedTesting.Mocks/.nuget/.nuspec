@@ -14,10 +14,12 @@
     <tags>C#, test, testing, tdd, unittest, roslyn, analyzers</tags>
     <title>$title$</title>
     <version>$version$</version>
+    <icon>$icon$</icon>
   </metadata>
   <files>
     <file src="$outdir$Analyzer.*.dll" target="analyzers\dotnet\cs"/>
     <file src="$outdir$Analyzer.*.pdb" target="analyzers\dotnet\cs" />
     <file src=".nuget\*.ps1" target="tools"/>
+    <file src="$iconPath$" target="" />
   </files>
 </package>

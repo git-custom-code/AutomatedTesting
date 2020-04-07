@@ -31,6 +31,8 @@
       <NuspecProperties>$(NuspecProperties);author=$(Authors)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);copyright=$(Copyright)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);description=$(Description)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);icon=$(PackageIcon)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);iconPath=$(PackageIconPath)</NuspecProperties>
       <NuspecBasePath>$(OutDir)</NuspecBasePath>
     </PropertyGroup>
   </Target>
