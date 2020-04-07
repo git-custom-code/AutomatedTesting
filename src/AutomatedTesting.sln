@@ -22,6 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C1E03AD6-2C87-48EC-AF3B-706A77B21309}"
 	ProjectSection(SolutionItems) = preProject
 		.Build\Copyright.props = .Build\Copyright.props
+		.Build\CustomCode.png = .Build\CustomCode.png
 		.Build\CustomCode.snk = .Build\CustomCode.snk
 		.Build\Documentation.props = .Build\Documentation.props
 		.Build\NonNullableReferenceTypes.props = .Build\NonNullableReferenceTypes.props
