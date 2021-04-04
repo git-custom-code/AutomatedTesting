@@ -20,8 +20,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <param name="exceptionFactory"> A factory that will create the exception instance to be thrown. </param>
         public ExceptionArrangement(MethodInfo signature, Func<Exception> exceptionFactory)
         {
-            Signature = signature;
-            ExceptionFactory = exceptionFactory;
+            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
+            ExceptionFactory = exceptionFactory ?? throw new ArgumentNullException(nameof(exceptionFactory));
         }
 
         #endregion
@@ -43,28 +43,38 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangement" />
         public void ApplyTo(IInvocation invocation)
         {
             TryApplyTo(invocation);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangement" />
         public bool CanApplyTo(IInvocation invocation)
         {
-           return invocation.Signature == Signature;
+            if (invocation == null)
+            {
+                return false;
+            }
+
+            return invocation.Signature == Signature;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public override string ToString()
         {
             var exception = ExceptionFactory();
             return $"Calls to '{Signature.Name}' should throw an '{exception.GetType().Name}'";
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangement" />
         public bool TryApplyTo(IInvocation invocation)
         {
+            if (invocation == null)
+            {
+                return false;
+            }
+
             if (invocation.Signature == Signature)
             {
                 throw ExceptionFactory();

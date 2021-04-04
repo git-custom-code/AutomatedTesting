@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 {
     using Interception;
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -26,7 +27,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// </param>
         public ArrangementCollection(IEnumerable<IArrangement> arrangements)
         {
-            Arrangements.AddRange(arrangements);
+            if (arrangements != null)
+            {
+                Arrangements.AddRange(arrangements);
+            }
         }
 
         /// <summary>
@@ -37,7 +41,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// </param>
         public ArrangementCollection(params IArrangement[] arrangements)
         {
-            Arrangements.AddRange(arrangements);
+            if (arrangements != null)
+            {
+                Arrangements.AddRange(arrangements);
+            }
         }
 
         #endregion
@@ -49,7 +56,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// </summary>
         private List<IArrangement> Arrangements { get; } = new List<IArrangement>();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangementCollection" />
         public uint Count
         {
             get { return (uint)Arrangements.Count; }
@@ -59,13 +66,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangementCollection" />
         public void Add(IArrangement arrangement)
         {
+            if (arrangement == null)
+            {
+                throw new ArgumentNullException(nameof(arrangement));
+            }
+
             Arrangements.Add(arrangement);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangementCollection" />
         public void ApplyTo(IInvocation invocation)
         {
             foreach(var arrangement in Arrangements)
@@ -74,13 +86,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangementCollection" />
         public bool CanApplyAtLeasOneArrangmentTo(IInvocation invocation)
         {
             return Arrangements.Any(a => a.CanApplyTo(invocation));
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEnumerable{T}" />
         public IEnumerator<IArrangement> GetEnumerator()
         {
             foreach (var arrangement in Arrangements)
@@ -89,13 +101,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEnumerable" />
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public override string ToString()
         {
             if (Arrangements.Count == 1)
@@ -106,7 +118,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
             return $"{Arrangements.Count} Arrangements";
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangementCollection" />
         public bool TryApplyTo(IInvocation invocation)
         {
             var wasOneArrangementApplied = false;

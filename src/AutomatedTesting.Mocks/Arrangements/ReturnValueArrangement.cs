@@ -3,6 +3,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
     using Interception;
     using Interception.Async;
     using Interception.ReturnValue;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -25,7 +26,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <param name="returnValue"> The arranged return value. </param>
         public ReturnValueArrangement(MethodInfo signature, T returnValue)
         {
-            Signature = signature;
+            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
             ReturnValue = returnValue;
         }
 
@@ -47,15 +48,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangement" />
         public void ApplyTo(IInvocation invocation)
         {
             TryApplyTo(invocation);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangement" />
         public bool CanApplyTo(IInvocation invocation)
         {
+            if (invocation == null)
+            {
+                return false;
+            }
+
             if (invocation.HasFeature<IReturnValue<T>>())
             {
                 return invocation.Signature == Signature;
@@ -64,15 +70,20 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
             return false;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public override string ToString()
         {
             return $"Calls to '{Signature.Name}' should return '{ReturnValue}'";
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IArrangement" />
         public bool TryApplyTo(IInvocation invocation)
         {
+            if (invocation == null)
+            {
+                return false;
+            }
+
             if (invocation.Signature == Signature)
             {
                 if (invocation.HasFeature<IAsyncInvocation>())
