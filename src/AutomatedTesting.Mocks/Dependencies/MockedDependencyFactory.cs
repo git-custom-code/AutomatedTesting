@@ -19,8 +19,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         /// <param name="interceptorFactory"> A factory that can create an interceptor for a given dependency. </param>
         public MockedDependencyFactory(IDynamicProxyFactory dynamicProxyFactory, IInterceptorFactory interceptorFactory)
         {
-            DynamicProxyFactory = dynamicProxyFactory;
-            InterceptorFactory = interceptorFactory;
+            DynamicProxyFactory = dynamicProxyFactory ?? throw new ArgumentNullException(nameof(dynamicProxyFactory));
+            InterceptorFactory = interceptorFactory ?? throw new ArgumentNullException(nameof(interceptorFactory));
         }
 
         /// <summary>
@@ -37,10 +37,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockedDependencyFactory" />
         public IMockedDependency CreateDecoratedDependency(Type dependency, object decoratee)
         {
-            if (!dependency.IsInterface)
+            if (dependency == null)
+            {
+                throw new ArgumentNullException(nameof(dependency));
+            }
+            else if (!dependency.IsInterface)
             {
                 throw new ArgumentException($"Invalid non-interface type '{dependency.FullName}'");
             }
@@ -55,10 +59,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
                 return mockedDependency;
             }
 
-            throw new Exception();
+            throw new InvalidOperationException("Invalid mocked dependency instance");
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockedDependencyFactory" />
         public IMockedDependency<T> CreateDecoratedDependency<T>(T decoratee)
             where T : notnull
         {
@@ -73,10 +77,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
             return new MockedDependency<T>(arrangements, interceptor, proxy);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockedDependencyFactory" />
         public IMockedDependency CreateMockedDependency(Type dependency, MockBehavior behavior)
         {
-            if (!dependency.IsInterface)
+            if (dependency == null)
+            {
+                throw new ArgumentNullException(nameof(dependency));
+            }
+            else if (!dependency.IsInterface)
             {
                 throw new ArgumentException($"Invalid non-interface type '{dependency.FullName}'");
             }
@@ -91,10 +99,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
                 return mockedDependency;
             }
 
-            throw new Exception();
+            throw new InvalidOperationException("Invalid mocked dependency instance");
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockedDependencyFactory" />
         public IMockedDependency<T> CreateMockedDependency<T>(MockBehavior behavior)
             where T : notnull
         {

@@ -28,9 +28,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         /// </param>
         public MockedDependency(IArrangementCollection arrangements, IInterceptor interceptor, T instance)
         {
-            Arrangements = arrangements;
-            Interceptor = interceptor;
-            Instance = instance;
+            Arrangements = arrangements ?? throw new ArgumentNullException(nameof(arrangements));
+            Interceptor = interceptor ?? throw new ArgumentNullException(nameof(interceptor));
+            Instance = instance ?? throw new ArgumentNullException(nameof(instance));
             Signature = typeof(T);
         }
 
@@ -38,22 +38,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
 
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockedDependency" />
         public IArrangementCollection Arrangements { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockedDependency" />
         public IInterceptor Interceptor { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockedDependency{T}" />
         public T Instance { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockedDependency" />
         object IMockedDependency.Instance
         {
             get { return Instance; }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockedDependency" />
         public Type Signature { get; }
 
         #endregion
