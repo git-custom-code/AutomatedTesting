@@ -28,10 +28,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             IMethodEmitterFactory methodEmitterFactory,
             IPropertyEmitterFactory propertyEmitterFactory)
         {
-            Type = typeBuilder;
-            Dependencies = dependencyEmitter;
-            MethodEmitterFactory = methodEmitterFactory;
-            PropertyEmitterFactory = propertyEmitterFactory;
+            Type = typeBuilder ?? throw new ArgumentNullException(nameof(typeBuilder));
+            Dependencies = dependencyEmitter ?? throw new ArgumentNullException(nameof(dependencyEmitter));
+            MethodEmitterFactory = methodEmitterFactory ?? throw new ArgumentNullException(nameof(methodEmitterFactory));
+            PropertyEmitterFactory = propertyEmitterFactory ?? throw new ArgumentNullException(nameof(propertyEmitterFactory));
         }
 
         /// <summary>
@@ -58,17 +58,21 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITypeEmitter" />
         public void ImplementInterface<T>() where T : class
         {
             var @interface = typeof(T);
             ImplementInterface(@interface);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITypeEmitter" />
         public void ImplementInterface(Type signature)
         {
-            if (!signature.IsInterface)
+            if (signature == null)
+            {
+                throw new ArgumentNullException(nameof(signature));
+            }
+            else if (!signature.IsInterface)
             {
                 throw new ArgumentException($"Invalid non-interface type '{signature.FullName}'");
             }
@@ -90,7 +94,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITypeEmitter" />
         public Type ToType()
         {
             try

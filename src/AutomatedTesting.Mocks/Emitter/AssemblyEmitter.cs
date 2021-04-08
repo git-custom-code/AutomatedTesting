@@ -29,8 +29,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             Module = new Lazy<ModuleBuilder>(
                 CreateDynamicAssembly,
                 LazyThreadSafetyMode.ExecutionAndPublication);
-            CreateTypeEmitter = typeEmitterFactory;
-            CreateTypeDecoratorEmitter = typeDecoratorEmitterFactory;
+            CreateTypeEmitter = typeEmitterFactory ?? throw new ArgumentNullException(nameof(typeEmitterFactory));
+            CreateTypeDecoratorEmitter = typeDecoratorEmitterFactory ?? throw new ArgumentNullException(nameof(typeDecoratorEmitterFactory));
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             return module;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IAssemblyEmitter" />
         public ITypeEmitter EmitType(string typeFullName)
         {
             var builder = Module.Value.DefineType(
@@ -75,7 +75,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             return emitter;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IAssemblyEmitter" />
         public ITypeDecoratorEmitter EmitDecoratorType(string typeFullName)
         {
             var builder = Module.Value.DefineType(

@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
     using Interception;
+    using System;
     using System.Reflection;
     using System.Reflection.Emit;
 
@@ -20,9 +21,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <param name="interceptorField"> The <paramref name="type"/>'s <see cref="IInterceptor"/> backing field. </param>
         protected PropertyEmitterBase(TypeBuilder type, PropertyInfo signature, FieldBuilder interceptorField)
         {
-            Type = type;
-            Signature = signature;
-            InterceptorField = interceptorField;
+            Type = type ?? throw new ArgumentNullException(nameof(type));
+            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
+            InterceptorField = interceptorField ?? throw new ArgumentNullException(nameof(interceptorField));
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPropertyEmitter" />
         public abstract void EmitPropertyImplementation();
 
         #endregion

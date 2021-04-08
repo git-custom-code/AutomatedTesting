@@ -13,9 +13,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
     {
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDependencyEmitter" />
         public FieldBuilder CreateInterceptorDependency(TypeBuilder type)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             var field = type.DefineField(
                 "_interceptor",
                 typeof(IInterceptor),
@@ -23,9 +28,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             return field;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDependencyEmitter" />
         public FieldBuilder CreateDecorateeDependency(TypeBuilder type, Type decorateeType)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+            if (decorateeType == null)
+            {
+                throw new ArgumentNullException(nameof(decorateeType));
+            }
+
             var field = type.DefineField(
                 "_decoratee",
                 decorateeType,
@@ -33,9 +47,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             return field;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDependencyEmitter" />
         public void CreateConstructor(TypeBuilder type, params FieldBuilder[] dependencies)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             var constructor = type.DefineConstructor(
                 MethodAttributes.Public,
                 CallingConventions.Standard,
@@ -51,11 +70,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
                 body.Emit(OpCodes.Nop);
             }
 
-            for (var i = 0u; i < dependencies.Length; ++i)
+            if (dependencies != null)
             {
-                body.Emit(OpCodes.Ldarg_0);
-                body.Emit(OpCodes.Ldarg_S, i + 1);
-                body.Emit(OpCodes.Stfld, dependencies[i]);
+                for (var i = 0u; i < dependencies.Length; ++i)
+                {
+                    body.Emit(OpCodes.Ldarg_0);
+                    body.Emit(OpCodes.Ldarg_S, i + 1);
+                    body.Emit(OpCodes.Stfld, dependencies[i]);
+                }
             }
 
             body.Emit(OpCodes.Ret);

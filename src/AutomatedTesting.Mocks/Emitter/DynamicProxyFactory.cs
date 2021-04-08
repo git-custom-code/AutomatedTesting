@@ -20,7 +20,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// </param>
         public DynamicProxyFactory(IAssemblyEmitter assemblyEmitter)
         {
-            AssemblyEmitter = assemblyEmitter;
+            AssemblyEmitter = assemblyEmitter ?? throw new ArgumentNullException(nameof(assemblyEmitter));
         }
 
         /// <summary>
@@ -47,9 +47,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDynamicProxyFactory" />
         public T CreateDecorator<T>(T decoratee, IInterceptor interceptor) where T : notnull
         {
+            if (decoratee == null)
+            {
+                throw new ArgumentNullException(nameof(decoratee));
+            }
+            if (interceptor == null)
+            {
+                throw new ArgumentNullException(nameof(interceptor));
+            }
+
             var signature = typeof(T);
             var decorator = CreateDecorator(signature, decoratee, interceptor);
             if (decorator is T typedDecorator)
@@ -60,9 +69,22 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             throw new Exception($"Unable to create a decorator for interface {signature.Name}");
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDynamicProxyFactory" />
         public object CreateDecorator(Type signature, object decoratee, IInterceptor interceptor)
         {
+            if (signature == null)
+            {
+                throw new ArgumentNullException(nameof(signature));
+            }
+            if (decoratee == null)
+            {
+                throw new ArgumentNullException(nameof(decoratee));
+            }
+            if (interceptor == null)
+            {
+                throw new ArgumentNullException(nameof(interceptor));
+            }
+
             try
             {
                 var decoratorType = PartialProxyTypeCache.GetOrAdd(signature, EmitPartialProxyTypeFor);
@@ -80,9 +102,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             throw new Exception($"Unable to create a decorator for interface {signature.Name}");
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDynamicProxyFactory" />
         public T CreateForInterface<T>(IInterceptor interceptor) where T : notnull
         {
+            if (interceptor == null)
+            {
+                throw new ArgumentNullException(nameof(interceptor));
+            }
+
             var signature = typeof(T);
             var proxy = CreateForInterface(signature, interceptor);
             if (proxy is T typedProxy)
@@ -93,9 +120,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             throw new Exception($"Unable to create a proxy for interface {signature.Name}");
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IDynamicProxyFactory" />
         public object CreateForInterface(Type signature, IInterceptor interceptor)
         {
+            if (signature == null)
+            {
+                throw new ArgumentNullException(nameof(signature));
+            }
+            if (interceptor == null)
+            {
+                throw new ArgumentNullException(nameof(interceptor));
+            }
+
             try
             {
                 var proxyType = ProxyTypeCache.GetOrAdd(signature, EmitProxyTypeFor);
