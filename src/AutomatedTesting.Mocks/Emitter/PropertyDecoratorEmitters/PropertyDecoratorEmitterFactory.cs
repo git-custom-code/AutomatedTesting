@@ -32,13 +32,30 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPropertyDecoratorEmitterFactory" />
         public IPropertyEmitter CreatePropertyEmitterFor(
             PropertyInfo signature,
             TypeBuilder type,
             FieldBuilder decoratee,
             FieldBuilder interceptor)
         {
+            if (signature == null)
+            {
+                throw new ArgumentNullException(nameof(signature));
+            }
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+            if (decoratee == null)
+            {
+                throw new ArgumentNullException(nameof(decoratee));
+            }
+            if (interceptor == null)
+            {
+                throw new ArgumentNullException(nameof(interceptor));
+            }
+
             if (signature.CanRead)
             {
                 if (signature.CanWrite)

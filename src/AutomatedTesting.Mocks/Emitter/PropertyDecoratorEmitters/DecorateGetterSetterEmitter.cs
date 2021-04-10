@@ -119,7 +119,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="PropertyDecoratorEmitterBase" />
         public override void EmitPropertyImplementation()
         {
             var features = new List<LocalBuilder>();
