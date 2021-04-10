@@ -110,6 +110,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
         void Records<T1, T2, T3, T4, T5, T6, T7, T8, T9>(out IEnumerable<(T1, T2, T3, T4, T5, T6, T7, T8, T9)> recordedCalls);
 
         /// <summary>
+        /// Setup the given <paramref name="outParameterValue"/> for the out parameter with the name
+        /// <paramref name="outParameterName"/> after the mocked method is called.
+        /// </summary>
+        /// <typeparam name="T"> The type of the mocked out parameter. </typeparam>
+        /// <param name="outParameterName"> The name of the mocked out parameter. </param>
+        /// <param name="outParameterValue"> The value of the mocked out parameter after the method is called. </param>
+        void ReturnsOutParameterValue<T>(string outParameterName, T outParameterValue);
+
+        /// <summary>
         /// Setup an exception that should be thrown every time the mocked method or property setter is called.
         /// </summary>
         /// <typeparam name="T"> The type of the exception to be thrown. </typeparam>

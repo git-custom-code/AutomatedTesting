@@ -47,15 +47,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         #region Logic
 
         /// <inheritdoc cref="object" />
-        public static bool operator ==(Parameter left, Parameter right)
+        public static bool operator ==(Parameter? left, Parameter? right)
         {
-            return string.Equals(left.Name, right.Name, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(left?.Name, right?.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <inheritdoc cref="object" />
-        public static bool operator !=(Parameter left, Parameter right)
+        public static bool operator !=(Parameter? left, Parameter? right)
         {
-            return !string.Equals(left.Name, right.Name, StringComparison.OrdinalIgnoreCase);
+            return !string.Equals(left?.Name, right?.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <inheritdoc cref="object" />

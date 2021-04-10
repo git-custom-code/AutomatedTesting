@@ -337,6 +337,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
+        /// <inheritdoc cref="ICallBehavior{TResult}" />
+        public void ReturnsOutParameterValue<T>(string outParameterName, T outParameterValue)
+        {
+            var arrangement = new OutParameterArrangement<T>(Signature, outParameterName, outParameterValue);
+            Arrangements.Add(arrangement);
+        }
+
         /// <inheritdoc cref="ICallBehavior" />
         public void Throws<T>() where T : Exception, new()
         {
