@@ -17,6 +17,12 @@ namespace CustomCode.AutomatedTesting.Mocks
         /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
         /// call to the concrete implementation (see <see cref="PartialMockInterceptor"/> for more details).
         /// </summary>
-        Partial = 1
+        Partial = 1,
+
+        /// <summary>
+        /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
+        /// throw an exception (see <see cref="StrictMockInterceptor"/> for more details).
+        /// </summary>
+        Strict = 2
     }
 }

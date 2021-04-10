@@ -21,6 +21,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
                 return new LooseMockInterceptor(arrangements);
             }
 
+            if (behavior == MockBehavior.Strict)
+            {
+                return new StrictMockInterceptor(arrangements);
+            }
+
             if (behavior == MockBehavior.Partial)
             {
                 return new PartialMockInterceptor(arrangements);

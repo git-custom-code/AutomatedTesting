@@ -1,8 +1,8 @@
-using System;
-using System.Diagnostics;
-
 namespace CustomCode.AutomatedTesting.Mocks.ExceptionHandling
 {
+    using System;
+    using System.Diagnostics;
+
     /// <summary>
     /// Syntactic sugar for input parameter validation.
     /// </summary>
