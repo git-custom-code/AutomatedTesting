@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Dependencies
 {
     using Arrangements;
+    using ExceptionHandling;
     using Emitter;
     using Interception;
     using System;
@@ -40,14 +41,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         /// <inheritdoc cref="IMockedDependencyFactory" />
         public IMockedDependency CreateDecoratedDependency(Type dependency, object decoratee)
         {
-            if (dependency == null)
-            {
-                throw new ArgumentNullException(nameof(dependency));
-            }
-            else if (!dependency.IsInterface)
-            {
-                throw new ArgumentException($"Invalid non-interface type '{dependency.FullName}'");
-            }
+            Ensures.NotNull(dependency, nameof(dependency));
+            Ensures.IsInterface(dependency);
 
             var arrangements = new ArrangementCollection();
             var interceptor = InterceptorFactory.CreateInterceptorFor(MockBehavior.Partial, arrangements);
@@ -66,10 +61,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         public IMockedDependency<T> CreateDecoratedDependency<T>(T decoratee)
             where T : notnull
         {
-            if (!typeof(T).IsInterface)
-            {
-                throw new ArgumentException($"Invalid non-interface type '{typeof(T).FullName}'");
-            }
+            Ensures.IsInterface<T>();
 
             var arrangements = new ArrangementCollection();
             var interceptor = InterceptorFactory.CreateInterceptorFor(MockBehavior.Partial, arrangements);
@@ -80,14 +72,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         /// <inheritdoc cref="IMockedDependencyFactory" />
         public IMockedDependency CreateMockedDependency(Type dependency, MockBehavior behavior)
         {
-            if (dependency == null)
-            {
-                throw new ArgumentNullException(nameof(dependency));
-            }
-            else if (!dependency.IsInterface)
-            {
-                throw new ArgumentException($"Invalid non-interface type '{dependency.FullName}'");
-            }
+            Ensures.NotNull(dependency, nameof(dependency));
+            Ensures.IsInterface(dependency);
 
             var arrangements = new ArrangementCollection();
             var interceptor = InterceptorFactory.CreateInterceptorFor(behavior, arrangements);
@@ -106,10 +92,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Dependencies
         public IMockedDependency<T> CreateMockedDependency<T>(MockBehavior behavior)
             where T : notnull
         {
-            if (!typeof(T).IsInterface)
-            {
-                throw new ArgumentException($"Invalid non-interface type '{typeof(T).FullName}'");
-            }
+            Ensures.IsInterface<T>();
 
             var arrangements = new ArrangementCollection();
             var interceptor = InterceptorFactory.CreateInterceptorFor(behavior, arrangements);

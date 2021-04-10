@@ -78,7 +78,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             ParameterInfo[] parameterSignatures,
             LocalBuilder parameterFeatureVariable)
         {
-            // methodSignature,
+            Ensures.NotNull(methodSignatureVariable, nameof(methodSignatureVariable));
+            Ensures.NotNull(parameterSignatures, nameof(parameterSignatures));
+            Ensures.NotNull(parameterFeatureVariable, nameof(parameterFeatureVariable));
+
+            // methodSignature
             body.Emit(OpCodes.Ldloc, methodSignatureVariable.LocalIndex);
 
             if (typeof(T) != typeof(ParameterOut))
@@ -138,6 +142,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             ParameterInfo[] parameterSignatures,
             LocalBuilder parameterRefFeatureVariable)
         {
+            Ensures.NotNull(parameterSignatures, nameof(parameterSignatures));
+            Ensures.NotNull(parameterRefFeatureVariable, nameof(parameterRefFeatureVariable));
+
             foreach (var parameterSignature in parameterSignatures)
             {
                 body.Emit(OpCodes.Ldarg, parameterSignature.Position + 1);

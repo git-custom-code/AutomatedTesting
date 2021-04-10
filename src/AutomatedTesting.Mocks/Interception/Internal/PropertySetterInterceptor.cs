@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception.Internal
 {
+    using ExceptionHandling;
     using Fluent;
     using Properties;
     using System;
@@ -25,9 +26,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Internal
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInterceptor" />
         public bool Intercept(IInvocation invocation)
         {
+            Ensures.NotNull(invocation, nameof(invocation));
+
             if (invocation.TryGetFeature<IPropertySetterValue>(out var setter))
             {
                 if (DiscoveredSetter == null)

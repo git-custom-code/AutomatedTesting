@@ -10,10 +10,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
     {
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IAsyncInvocation{T}" />
         public Task AsyncReturnValue { get; set; } = Task.CompletedTask;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IAsyncInvocation" />
         public AsyncInvocationType Type { get; } = AsyncInvocationType.Task;
 
         #endregion

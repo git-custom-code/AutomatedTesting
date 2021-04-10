@@ -65,7 +65,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             LocalBuilder methodSignatureVariable,
             IReadOnlyList<LocalBuilder> invocationFeatureVariables)
         {
-            // methodSignature,
+            Ensures.NotNull(invocationVariable, nameof(invocationVariable));
+            Ensures.NotNull(methodSignatureVariable, nameof(methodSignatureVariable));
+            Ensures.NotNull(invocationFeatureVariables, nameof(invocationFeatureVariables));
+
+            // methodSignature
             body.Emit(OpCodes.Ldloc, methodSignatureVariable.LocalIndex);
 
             if (invocationFeatureVariables == null || invocationFeatureVariables.Count == 0)

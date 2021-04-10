@@ -61,6 +61,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         /// </remarks>
         public static void EmitNewReturnValueFeature<T>(this ILGenerator body, LocalBuilder returnValueFeatureVariable)
         {
+            Ensures.NotNull(returnValueFeatureVariable, nameof(returnValueFeatureVariable));
+
             var returnValueFeature = ReturnValueFeatureCache.GetOrAdd(typeof(T), GetReturnValueFeatureConstructor<T>());
             body.Emit(OpCodes.Newobj, returnValueFeature);
             body.Emit(OpCodes.Stloc, returnValueFeatureVariable.LocalIndex);
@@ -97,6 +99,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             this ILGenerator body,
             LocalBuilder returnValueFeatureVariable)
         {
+            Ensures.NotNull(returnValueFeatureVariable, nameof(returnValueFeatureVariable));
+
             body.Emit(OpCodes.Ldloc, returnValueFeatureVariable.LocalIndex);
             var returnValueSignature = ReturnValueFeaturePropertyCache.GetOrAdd(typeof(T), GetReturnValue<T>());
             body.Emit(OpCodes.Callvirt, returnValueSignature);

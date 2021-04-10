@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 {
+    using ExceptionHandling;
     using Interception;
     using Interception.Async;
     using Interception.ReturnValue;
@@ -51,16 +52,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc cref="IArrangement" />
         public void ApplyTo(IInvocation invocation)
         {
+            Ensures.NotNull(invocation, nameof(invocation));
+
             TryApplyTo(invocation);
         }
 
         /// <inheritdoc cref="IArrangement" />
         public bool CanApplyTo(IInvocation invocation)
         {
-            if (invocation == null)
-            {
-                return false;
-            }
+            Ensures.NotNull(invocation, nameof(invocation));
 
             if (invocation.HasFeature<IReturnValue<T>>())
             {
@@ -79,10 +79,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc cref="IArrangement" />
         public bool TryApplyTo(IInvocation invocation)
         {
-            if (invocation == null)
-            {
-                return false;
-            }
+            Ensures.NotNull(invocation, nameof(invocation));
 
             if (invocation.Signature == Signature)
             {

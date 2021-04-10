@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using ExceptionHandling;
     using System;
     using System.Reflection;
     using System.Reflection.Emit;
@@ -53,21 +54,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
-        /// <summary>
-        /// Creates a new dynamic in-memory assembly (named "DynamicMockAssembly") along with a single module.
-        /// </summary>
-        /// <returns> A <see cref="ModuleBuilder"/> that can be used to dynamically create types. </returns>
-        private ModuleBuilder CreateDynamicAssembly()
-        {
-            var name = new AssemblyName("DynamicMockAssembly");
-            var assembly = AssemblyBuilder.DefineDynamicAssembly(name, AssemblyBuilderAccess.RunAndCollect);
-            var module = assembly.DefineDynamicModule("DynamicMockModule");
-            return module;
-        }
-
         /// <inheritdoc cref="IAssemblyEmitter" />
         public ITypeEmitter EmitType(string typeFullName)
         {
+            Ensures.NotNull(typeFullName, nameof(typeFullName));
+
             var builder = Module.Value.DefineType(
                 typeFullName,
                 TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class);
@@ -78,11 +69,25 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="IAssemblyEmitter" />
         public ITypeDecoratorEmitter EmitDecoratorType(string typeFullName)
         {
+            Ensures.NotNull(typeFullName, nameof(typeFullName));
+
             var builder = Module.Value.DefineType(
                 typeFullName,
                 TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class);
             var emitter = CreateTypeDecoratorEmitter(builder);
             return emitter;
+        }
+
+        /// <summary>
+        /// Creates a new dynamic in-memory assembly (named "DynamicMockAssembly") along with a single module.
+        /// </summary>
+        /// <returns> A <see cref="ModuleBuilder"/> that can be used to dynamically create types. </returns>
+        private ModuleBuilder CreateDynamicAssembly()
+        {
+            var name = new AssemblyName("DynamicMockAssembly");
+            var assembly = AssemblyBuilder.DefineDynamicAssembly(name, AssemblyBuilderAccess.RunAndCollect);
+            var module = assembly.DefineDynamicModule("DynamicMockModule");
+            return module;
         }
 
         #endregion

@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using ExceptionHandling;
     using Interception;
     using System;
     using System.Collections.Concurrent;
@@ -50,14 +51,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="IDynamicProxyFactory" />
         public T CreateDecorator<T>(T decoratee, IInterceptor interceptor) where T : notnull
         {
-            if (decoratee == null)
-            {
-                throw new ArgumentNullException(nameof(decoratee));
-            }
-            if (interceptor == null)
-            {
-                throw new ArgumentNullException(nameof(interceptor));
-            }
+            Ensures.NotNull(interceptor, nameof(interceptor));
 
             var signature = typeof(T);
             var decorator = CreateDecorator(signature, decoratee, interceptor);
@@ -72,18 +66,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="IDynamicProxyFactory" />
         public object CreateDecorator(Type signature, object decoratee, IInterceptor interceptor)
         {
-            if (signature == null)
-            {
-                throw new ArgumentNullException(nameof(signature));
-            }
-            if (decoratee == null)
-            {
-                throw new ArgumentNullException(nameof(decoratee));
-            }
-            if (interceptor == null)
-            {
-                throw new ArgumentNullException(nameof(interceptor));
-            }
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(decoratee, nameof(decoratee));
+            Ensures.NotNull(interceptor, nameof(interceptor));
 
             try
             {
@@ -105,11 +90,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="IDynamicProxyFactory" />
         public T CreateForInterface<T>(IInterceptor interceptor) where T : notnull
         {
-            if (interceptor == null)
-            {
-                throw new ArgumentNullException(nameof(interceptor));
-            }
-
             var signature = typeof(T);
             var proxy = CreateForInterface(signature, interceptor);
             if (proxy is T typedProxy)
@@ -123,14 +103,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="IDynamicProxyFactory" />
         public object CreateForInterface(Type signature, IInterceptor interceptor)
         {
-            if (signature == null)
-            {
-                throw new ArgumentNullException(nameof(signature));
-            }
-            if (interceptor == null)
-            {
-                throw new ArgumentNullException(nameof(interceptor));
-            }
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(interceptor, nameof(interceptor));
 
             try
             {

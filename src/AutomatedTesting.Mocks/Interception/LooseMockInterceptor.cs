@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
     using Arrangements;
+    using System;
 
     /// <summary>
     /// Implementation of the <see cref="IInterceptor"/> interface for mocked dependency instances that will return
@@ -16,7 +17,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// <param name="arrangements"> A collection of <see cref="IArrangement"/>s for the intercepted calls. </param>
         public LooseMockInterceptor(IArrangementCollection arrangements)
         {
-            Arrangements = arrangements;
+            Arrangements = arrangements ?? throw new ArgumentNullException(nameof(arrangements));
         }
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInterceptor" />
         public bool Intercept(IInvocation invocation)
         {
             Arrangements.ApplyTo(invocation);

@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Fluent
 {
     using Arrangements;
+    using ExceptionHandling;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -20,8 +21,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
         /// <param name="signature"> The mocked method or property setter call. </param>
         public CallBehavior(IArrangementCollection arrangements, MethodInfo signature)
         {
-            Arrangements = arrangements;
-            Signature = signature;
+            Arrangements = arrangements ?? throw new ArgumentNullException(nameof(arrangements));
+            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
         }
 
         #endregion
@@ -42,7 +43,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Records<T1>(out IEnumerable<T1> recordedCalls)
         {
             static (bool, T1) TryRecord((Type type, object? value)[] parameter)
@@ -52,11 +53,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                 {
 #nullable disable
                     var value = (T1)parameter[0].value;
-#nullable restore
                     return (true, value);
                 }
 
                 return (false, default);
+#nullable restore
             }
 
             var queue = new ConcurrentQueue<T1>();
@@ -64,7 +65,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Records<T1, T2>(out IEnumerable<(T1, T2)> recordedCalls)
         {
             static (bool, (T1, T2)) TryRecord((Type type, object? value)[] parameter)
@@ -78,9 +79,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
 #nullable disable
                             (T1)parameter[0].value,
                             (T2)parameter[1].value
-#nullable restore
                         );
                     return (true, values);
+#nullable restore
                 }
 
                 return (false, default);
@@ -91,7 +92,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Records<T1, T2, T3>(out IEnumerable<(T1, T2, T3)> recordedCalls)
         {
             static (bool, (T1, T2, T3)) TryRecord((Type type, object? value)[] parameter)
@@ -107,9 +108,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T1)parameter[0].value,
                             (T2)parameter[1].value,
                             (T3)parameter[2].value
-#nullable restore
                         );
                     return (true, values);
+#nullable restore
                 }
 
                 return (false, default);
@@ -120,7 +121,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Records<T1, T2, T3, T4>(out IEnumerable<(T1, T2, T3, T4)> recordedCalls)
         {
             static (bool, (T1, T2, T3, T4)) TryRecord((Type type, object? value)[] parameter)
@@ -138,9 +139,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T2)parameter[1].value,
                             (T3)parameter[2].value,
                             (T4)parameter[3].value
-#nullable restore
                         );
                     return (true, values);
+#nullable restore
                 }
 
                 return (false, default);
@@ -151,7 +152,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Records<T1, T2, T3, T4, T5>(out IEnumerable<(T1, T2, T3, T4, T5)> recordedCalls)
         {
             static (bool, (T1, T2, T3, T4, T5)) TryRecord((Type type, object? value)[] parameter)
@@ -171,9 +172,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T3)parameter[2].value,
                             (T4)parameter[3].value,
                             (T5)parameter[4].value
-#nullable restore
                         );
                     return (true, values);
+#nullable restore
                 }
 
                 return (false, default);
@@ -184,7 +185,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Records<T1, T2, T3, T4, T5, T6>(out IEnumerable<(T1, T2, T3, T4, T5, T6)> recordedCalls)
         {
             static (bool, (T1, T2, T3, T4, T5, T6)) TryRecord((Type type, object? value)[] parameter)
@@ -206,9 +207,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T4)parameter[3].value,
                             (T5)parameter[4].value,
                             (T6)parameter[5].value
-#nullable restore
                         );
                     return (true, values);
+#nullable restore
                 }
 
                 return (false, default);
@@ -219,7 +220,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Records<T1, T2, T3, T4, T5, T6, T7>(out IEnumerable<(T1, T2, T3, T4, T5, T6, T7)> recordedCalls)
         {
             static (bool, (T1, T2, T3, T4, T5, T6, T7)) TryRecord((Type type, object? value)[] parameter)
@@ -243,9 +244,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T5)parameter[4].value,
                             (T6)parameter[5].value,
                             (T7)parameter[6].value
-#nullable restore
                         );
                     return (true, values);
+#nullable restore
                 }
 
                 return (false, default);
@@ -256,7 +257,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Records<T1, T2, T3, T4, T5, T6, T7, T8>(out IEnumerable<(T1, T2, T3, T4, T5, T6, T7, T8)> recordedCalls)
         {
             static (bool, (T1, T2, T3, T4, T5, T6, T7, T8)) TryRecord((Type type, object? value)[] parameter)
@@ -282,9 +283,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T6)parameter[5].value,
                             (T7)parameter[6].value,
                             (T8)parameter[7].value
-#nullable restore
                         );
                     return (true, values);
+#nullable restore
                 }
 
                 return (false, default);
@@ -295,7 +296,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Records<T1, T2, T3, T4, T5, T6, T7, T8, T9>(out IEnumerable<(T1, T2, T3, T4, T5, T6, T7, T8, T9)> recordedCalls)
         {
             static (bool, (T1, T2, T3, T4, T5, T6, T7, T8, T9)) TryRecord((Type type, object? value)[] parameter)
@@ -323,9 +324,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
                             (T7)parameter[6].value,
                             (T8)parameter[7].value,
                             (T9)parameter[8].value
-#nullable restore
                         );
                     return (true, values);
+#nullable restore
                 }
 
                 return (false, default);
@@ -336,16 +337,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             recordedCalls = queue;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Throws<T>() where T : Exception, new()
         {
             var arrangement = new ExceptionArrangement(Signature, () => new T());
             Arrangements.Add(arrangement);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior" />
         public void Throws(Exception exception)
         {
+            Ensures.NotNull(exception, nameof(exception));
+
             var arrangement = new ExceptionArrangement(Signature, () => exception);
             Arrangements.Add(arrangement);
         }

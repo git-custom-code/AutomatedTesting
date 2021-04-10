@@ -39,22 +39,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             FieldBuilder decoratee,
             FieldBuilder interceptor)
         {
-            if (signature == null)
-            {
-                throw new ArgumentNullException(nameof(signature));
-            }
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-            if (decoratee == null)
-            {
-                throw new ArgumentNullException(nameof(decoratee));
-            }
-            if (interceptor == null)
-            {
-                throw new ArgumentNullException(nameof(interceptor));
-            }
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(type, nameof(type));
+            Ensures.NotNull(decoratee, nameof(decoratee));
+            Ensures.NotNull(interceptor, nameof(interceptor));
 
             if (signature.CanRead)
             {

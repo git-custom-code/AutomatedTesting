@@ -84,8 +84,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="PropertyDecoratorEmitterBase" />
         public override void EmitPropertyImplementation()
         {
-            var
-                features = new List<LocalBuilder>();
+            var features = new List<LocalBuilder>();
             var parameters = Signature.GetIndexParameters();
             var types = parameters.Select(p => p.ParameterType).ToArray();
             var typesAndValue = types.Concat(new[] { Signature.PropertyType }).ToArray();

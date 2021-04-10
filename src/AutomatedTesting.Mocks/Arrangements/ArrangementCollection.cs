@@ -1,7 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 {
+    using ExceptionHandling;
     using Interception;
-    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -25,7 +25,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <param name="arrangements">
         /// An array of initial <see cref="IArrangement"/>s that should be stored within the collection.
         /// </param>
-        public ArrangementCollection(IEnumerable<IArrangement> arrangements)
+        public ArrangementCollection(IEnumerable<IArrangement>? arrangements)
         {
             if (arrangements != null)
             {
@@ -69,10 +69,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc cref="IArrangementCollection" />
         public void Add(IArrangement arrangement)
         {
-            if (arrangement == null)
-            {
-                throw new ArgumentNullException(nameof(arrangement));
-            }
+            Ensures.NotNull(arrangement, nameof(arrangement));
 
             Arrangements.Add(arrangement);
         }
@@ -80,7 +77,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc cref="IArrangementCollection" />
         public void ApplyTo(IInvocation invocation)
         {
-            foreach(var arrangement in Arrangements)
+            Ensures.NotNull(invocation, nameof(invocation));
+
+            foreach (var arrangement in Arrangements)
             {
                 arrangement.ApplyTo(invocation);
             }
@@ -89,6 +88,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc cref="IArrangementCollection" />
         public bool CanApplyAtLeasOneArrangmentTo(IInvocation invocation)
         {
+            Ensures.NotNull(invocation, nameof(invocation));
+
             return Arrangements.Any(a => a.CanApplyTo(invocation));
         }
 
@@ -121,6 +122,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc cref="IArrangementCollection" />
         public bool TryApplyTo(IInvocation invocation)
         {
+            Ensures.NotNull(invocation, nameof(invocation));
+
             var wasOneArrangementApplied = false;
             foreach (var arrangement in Arrangements)
             {

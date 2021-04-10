@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
     using Interception;
+    using System;
     using System.Reflection;
     using System.Reflection.Emit;
 
@@ -25,10 +26,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
             FieldBuilder decorateeField,
             FieldBuilder interceptorField)
         {
-            Type = type;
-            Signature = signature;
-            DecorateeField = decorateeField;
-            InterceptorField = interceptorField;
+            Type = type ?? throw new ArgumentNullException(nameof(type));
+            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
+            DecorateeField = decorateeField ?? throw new ArgumentNullException(nameof(decorateeField));
+            InterceptorField = interceptorField ?? throw new ArgumentNullException(nameof(interceptorField));
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMethodEmitter" />
         public abstract void EmitMethodImplementation();
 
         #endregion

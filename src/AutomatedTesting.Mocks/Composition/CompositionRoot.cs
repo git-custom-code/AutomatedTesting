@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Composition
 {
+    using ExceptionHandling;
     using Dependencies;
     using Emitter;
     using Interception;
@@ -14,9 +15,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Composition
     {
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICompositionRoot" />
         public void Compose(IServiceRegistry serviceRegistry)
         {
+            Ensures.NotNull(serviceRegistry, nameof(serviceRegistry));
+
             serviceRegistry.Register<IDynamicProxyFactory, DynamicProxyFactory>();
             serviceRegistry.Register<IAssemblyEmitter, AssemblyEmitter>();
             serviceRegistry.Register<IDependencyEmitter, DependencyEmitter>();

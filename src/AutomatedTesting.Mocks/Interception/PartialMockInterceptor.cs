@@ -1,10 +1,12 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
     using Arrangements;
+    using System;
 
     /// <summary>
     /// Implementation of the <see cref="IInterceptor"/> interface for mocked dependency instances that will return
-    /// default values for each intercepted method and property.
+    /// default values for each intercepted method and property or call the original method if no arrangements have
+    /// been made.
     /// </summary>
     public sealed class PartialMockInterceptor : IInterceptor
     {
@@ -16,7 +18,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// <param name="arrangements"> A collection of <see cref="IArrangement"/>s for the intercepted calls. </param>
         public PartialMockInterceptor(IArrangementCollection arrangements)
         {
-            Arrangements = arrangements;
+            Arrangements = arrangements ?? throw new ArgumentNullException(nameof(arrangements));
         }
 
         /// <summary>
@@ -28,7 +30,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInterceptor" />
         public bool Intercept(IInvocation invocation)
         {
             if (Arrangements.TryApplyTo(invocation))

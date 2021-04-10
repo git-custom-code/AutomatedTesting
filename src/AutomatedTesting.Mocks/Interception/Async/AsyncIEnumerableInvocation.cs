@@ -15,13 +15,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
     {
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IAsyncInvocation{T}" />
         public IAsyncEnumerable<T> AsyncReturnValue { get; set; } = AsyncEnumerable.Empty<T>();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValue{T}" />
         IEnumerable<T> IReturnValue<IEnumerable<T>>.ReturnValue
         {
             get { return AsyncEnumerable.ToEnumerable(AsyncReturnValue); }
+#nullable disable
             set
             {
                 if (value == null)
@@ -46,16 +47,17 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
                                 }));
                 }
             }
+#nullable restore
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValue" />
         object? IReturnValue.ReturnValue
         {
             get { return (object?)((IReturnValue<IEnumerable<T>>)this).ReturnValue; }
             set { ((IReturnValue<IEnumerable<T>>)this).ReturnValue = value as IEnumerable<T>; }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IAsyncInvocation" />
         public AsyncInvocationType Type { get; } = AsyncInvocationType.AsyncEnumerable;
 
         #endregion

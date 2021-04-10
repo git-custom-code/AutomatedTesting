@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using ExceptionHandling;
     using System;
     using System.Linq;
     using System.Reflection.Emit;
@@ -68,14 +69,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="ITypeEmitter" />
         public void ImplementInterface(Type signature)
         {
-            if (signature == null)
-            {
-                throw new ArgumentNullException(nameof(signature));
-            }
-            else if (!signature.IsInterface)
-            {
-                throw new ArgumentException($"Invalid non-interface type '{signature.FullName}'");
-            }
+            Ensures.NotNull(signature);
+            Ensures.IsInterface(signature);
 
             var interceptorField = Dependencies.CreateInterceptorDependency(Type);
             Dependencies.CreateConstructor(Type, interceptorField);

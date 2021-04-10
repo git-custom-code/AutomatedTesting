@@ -36,13 +36,18 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMethodDecoratorEmitterFactory" />
         public IMethodEmitter CreateMethodDecoratorEmitterFor(
             MethodInfo signature,
             TypeBuilder type,
             FieldBuilder decoratee,
             FieldBuilder interceptor)
         {
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(type, nameof(type));
+            Ensures.NotNull(decoratee, nameof(decoratee));
+            Ensures.NotNull(interceptor, nameof(interceptor));
+
             if (signature.ReturnType == typeof(void))
             {
                 return new DecorateActionEmitter(type, signature, decoratee, interceptor);

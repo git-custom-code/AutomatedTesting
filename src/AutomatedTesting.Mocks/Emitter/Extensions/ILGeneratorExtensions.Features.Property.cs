@@ -82,7 +82,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             LocalBuilder propertySignatureVariable,
             LocalBuilder propertyFeatureVariable)
         {
-            // propertySignature,
+            Ensures.NotNull(propertySignatureVariable, nameof(propertySignatureVariable));
+            Ensures.NotNull(propertyFeatureVariable, nameof(propertyFeatureVariable));
+
+            // propertySignature
             body.Emit(OpCodes.Ldloc, propertySignatureVariable.LocalIndex);
 
             // propertyFeature = new PropertyInvocation(...)
@@ -111,7 +114,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             LocalBuilder propertySetterValueFeatureVariable,
             int valueParameterIndex = 1)
         {
-            // propertySignature,
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(propertySignatureVariable, nameof(propertySignatureVariable));
+            Ensures.NotNull(propertySetterValueFeatureVariable, nameof(propertySetterValueFeatureVariable));
+
+            // propertySignature
             body.Emit(OpCodes.Ldloc, propertySignatureVariable.LocalIndex);
 
             // value

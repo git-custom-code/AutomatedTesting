@@ -63,6 +63,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         public static void EmitNewAsyncFeature<T>(this ILGenerator body, LocalBuilder asyncFeatureVariable)
             where T : IAsyncInvocation
         {
+            Ensures.NotNull(asyncFeatureVariable, nameof(asyncFeatureVariable));
+
             var asyncFeature = AsyncFeatureCache.GetOrAdd(typeof(T), GetAsyncFeatureConstructor<T>());
             body.Emit(OpCodes.Newobj, asyncFeature);
             body.Emit(OpCodes.Stloc, asyncFeatureVariable.LocalIndex);
@@ -85,6 +87,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             LocalBuilder asyncFeatureVariable)
             where T : IAsyncInvocation
         {
+            Ensures.NotNull(asyncFeatureVariable, nameof(asyncFeatureVariable));
+
             body.Emit(OpCodes.Ldloc, asyncFeatureVariable.LocalIndex);
             var asyncReturnValueSignature = AsyncFeatureReturnValueCache.GetOrAdd(typeof(T), GetAsyncFeatureReturnValue<T>());
             body.Emit(OpCodes.Callvirt, asyncReturnValueSignature);

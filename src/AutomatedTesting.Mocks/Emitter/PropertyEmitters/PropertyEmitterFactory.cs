@@ -35,18 +35,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="IPropertyEmitterFactory" />
         public IPropertyEmitter CreatePropertyEmitterFor(PropertyInfo signature, TypeBuilder type, FieldBuilder interceptor)
         {
-            if (signature == null)
-            {
-                throw new ArgumentNullException(nameof(signature));
-            }
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-            if (interceptor == null)
-            {
-                throw new ArgumentNullException(nameof(interceptor));
-            }
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(type, nameof(type));
+            Ensures.NotNull(interceptor, nameof(interceptor));
 
             if (signature.CanRead)
             {

@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
 {
+    using ExceptionHandling;
     using System.Reflection;
     using System.Reflection.Emit;
 
@@ -31,6 +32,10 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             FieldBuilder decorateeField,
             bool passSetterValue = false)
         {
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(parameterSignatures, nameof(parameterSignatures));
+            Ensures.NotNull(decorateeField, nameof(decorateeField));
+
             body.Emit(OpCodes.Ldarg_0);
             body.Emit(OpCodes.Ldfld, decorateeField);
 

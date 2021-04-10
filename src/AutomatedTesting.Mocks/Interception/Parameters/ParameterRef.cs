@@ -21,6 +21,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         /// <param name="values"> The intercepted method's ref parameters. </param>
         public ParameterRef(MethodInfo signature, object?[] values)
         {
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(values, nameof(values));
+
             var refParameter = new List<Parameter>();
             var methodParameter = signature.GetParameters();
             for (var i=0; i<methodParameter.Length; ++i)
@@ -44,25 +47,25 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
 
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IParameterRef" />
         public IEnumerable<Parameter> RefParameterCollection { get; }
 
         #endregion
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IParameterRefOrOut" />
         [return: MaybeNull]
         public T GetValue<T>(string name)
         {
             var parameter = RefParameterCollection
                 .Single(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
-#nullable disable // needed for build server builds only
+#nullable disable
             return (T)parameter.Value;
 #nullable restore
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public override string ToString()
         {
             return $"{RefParameterCollection.Count()} ref parameter";

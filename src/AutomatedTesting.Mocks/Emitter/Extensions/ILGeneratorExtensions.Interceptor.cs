@@ -38,6 +38,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
         public static void EmitInterceptCall(
             this ILGenerator body, FieldBuilder interceptorField, LocalBuilder invocationVariable)
         {
+            Ensures.NotNull(interceptorField, nameof(interceptorField));
+            Ensures.NotNull(invocationVariable, nameof(invocationVariable));
+
             body.Emit(OpCodes.Ldarg_0);
             body.Emit(OpCodes.Ldfld, interceptorField);
             body.Emit(OpCodes.Ldloc, invocationVariable.LocalIndex);
@@ -65,6 +68,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             LocalBuilder invocationVariable,
             out Label elseLabel)
         {
+            Ensures.NotNull(interceptorField, nameof(interceptorField));
+            Ensures.NotNull(invocationVariable, nameof(invocationVariable));
+
             body.Emit(OpCodes.Ldarg_0);
             body.Emit(OpCodes.Ldfld, interceptorField);
             body.Emit(OpCodes.Ldloc, invocationVariable.LocalIndex);

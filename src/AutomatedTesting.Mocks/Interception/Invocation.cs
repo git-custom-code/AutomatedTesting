@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
     using ExceptionHandling;
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -20,8 +21,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// <param name="features"> A collection of present invocation features. </param>
         public Invocation(MethodInfo signature, params IInvocationFeature[] features)
         {
-            Signature = signature;
-            Features = new HashSet<IInvocationFeature>(features);
+            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
+            Features = features == null ? new HashSet<IInvocationFeature>() : new HashSet<IInvocationFeature>(features);
         }
 
         #endregion
@@ -33,14 +34,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
         /// </summary>
         private HashSet<IInvocationFeature> Features { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInvocation" />
         public MethodInfo Signature { get; }
 
         #endregion
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInvocation" />
         public T GetFeature<T>() where T : class, IInvocationFeature
         {
             var feature = (T?)Features.SingleOrDefault(f => f is T);
@@ -51,13 +52,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
             return feature;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInvocation" />
         public bool HasFeature<T>() where T : class, IInvocationFeature
         {
             return Features.Any(feature => feature is T);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInvocation" />
         public bool TryGetFeature<T>([NotNullWhen(true)] out T? feature) where T : class, IInvocationFeature
         {
             feature = Features.Where(f => f is T).SingleOrDefault() as T;

@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Fluent
 {
     using Arrangements;
+    using ExceptionHandling;
     using System;
     using System.Collections.Generic;
     using System.Reflection;
@@ -22,8 +23,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
         /// <param name="signature"> The signature of the mocked method or property getter call. </param>
         public CallBehavior(IArrangementCollection arrangements, MethodInfo signature)
         {
-            Arrangements = arrangements;
-            Signature = signature;
+            Arrangements = arrangements ?? throw new ArgumentNullException(nameof(arrangements));
+            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
         }
 
         #endregion
@@ -44,31 +45,35 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior{TResult}" />
         public void Returns(TResult returnValue)
         {
             var arrangement = new ReturnValueArrangement<TResult>(Signature, returnValue);
             Arrangements.Add(arrangement);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior{TResult}" />
         public void ReturnsSequence(params TResult[] returnValueSequence)
         {
+            Ensures.NotNull(returnValueSequence, nameof(returnValueSequence));
+
             var sequence = new List<TResult>(returnValueSequence);
             var arrangement = new ReturnValueSequenceArrangement<TResult>(Signature, sequence);
             Arrangements.Add(arrangement);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior{TResult}" />
         public void Throws<T>() where T : Exception, new()
         {
             var arrangement = new ExceptionArrangement(Signature, () => new T());
             Arrangements.Add(arrangement);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ICallBehavior{TResult}" />
         public void Throws(Exception exception)
         {
+            Ensures.NotNull(exception, nameof(exception));
+
             var arrangement = new ExceptionArrangement(Signature, () => exception);
             Arrangements.Add(arrangement);
         }

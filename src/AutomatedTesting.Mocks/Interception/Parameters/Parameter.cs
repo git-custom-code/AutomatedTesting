@@ -18,8 +18,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         /// <param name="value"> The parameter's value. </param>
         public Parameter(string name, Type type, object? value)
         {
-            Name = name;
-            Type = type;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Type = type ?? throw new ArgumentNullException(nameof(type));
             Value = value;
         }
 
@@ -46,19 +46,19 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public static bool operator ==(Parameter left, Parameter right)
         {
             return string.Equals(left.Name, right.Name, StringComparison.OrdinalIgnoreCase);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public static bool operator !=(Parameter left, Parameter right)
         {
             return !string.Equals(left.Name, right.Name, StringComparison.OrdinalIgnoreCase);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public override bool Equals(object? other)
         {
             if (other is Parameter parameter)
@@ -69,19 +69,19 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
             return false;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IEquatable{T}" />
         public bool Equals([AllowNull] Parameter other)
         {
             return string.Equals(Name, other?.Name, StringComparison.OrdinalIgnoreCase);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public override int GetHashCode()
         {
             return string.GetHashCode(Name, StringComparison.InvariantCulture);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public override string ToString()
         {
             return $"{Name}: {Value} ({Type.Name})";

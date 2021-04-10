@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception
 {
     using Arrangements;
+    using ExceptionHandling;
     using System;
 
     /// <summary>
@@ -10,9 +11,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception
     {
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IInterceptorFactory" />
         public IInterceptor CreateInterceptorFor(MockBehavior behavior, IArrangementCollection arrangements)
         {
+            Ensures.NotNull(arrangements);
+
             if (behavior == MockBehavior.Loose)
             {
                 return new LooseMockInterceptor(arrangements);

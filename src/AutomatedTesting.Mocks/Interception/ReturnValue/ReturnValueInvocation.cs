@@ -12,17 +12,17 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.ReturnValue
     {
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValue{T}" />
         [AllowNull, MaybeNull]
-#nullable disable // needed for build server builds only
+#nullable disable
         public T ReturnValue { get; set; } = default;
 #nullable restore
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValue" />
         object? IReturnValue.ReturnValue
         {
             get { return (object?)ReturnValue; }
-#nullable disable // needed for build server builds only
+#nullable disable
             set { ReturnValue = (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture); }
 #nullable restore
         }

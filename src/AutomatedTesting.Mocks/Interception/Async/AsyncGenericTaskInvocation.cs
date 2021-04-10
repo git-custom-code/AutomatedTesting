@@ -13,28 +13,30 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Async
     {
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IAsyncInvocation{T}" />
 #nullable disable
         public Task<TResult> AsyncReturnValue { get; set; } = Task.FromResult<TResult>(default);
 #nullable restore
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValue{T}" />
         TResult IReturnValue<TResult>.ReturnValue
         {
             get { return AsyncReturnValue.ConfigureAwait(false).GetAwaiter().GetResult(); }
+#nullable disable
             set { AsyncReturnValue = Task.FromResult(value); }
+#nullable restore
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IReturnValue" />
         object? IReturnValue.ReturnValue
         {
             get { return (object?)((IReturnValue<TResult>)this).ReturnValue; }
-#nullable disable // needed for build server builds only
+#nullable disable
             set { ((IReturnValue<TResult>)this).ReturnValue = (TResult)value; }
 #nullable restore
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IAsyncInvocation" />
         public AsyncInvocationType Type { get; } = AsyncInvocationType.GenericTask;
 
         #endregion

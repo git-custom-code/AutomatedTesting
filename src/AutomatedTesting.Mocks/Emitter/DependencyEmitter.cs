@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter
 {
+    using ExceptionHandling;
     using Interception;
     using System;
     using System.Linq;
@@ -16,10 +17,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="IDependencyEmitter" />
         public FieldBuilder CreateInterceptorDependency(TypeBuilder type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            Ensures.NotNull(type, nameof(type));
 
             var field = type.DefineField(
                 "_interceptor",
@@ -31,14 +29,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="IDependencyEmitter" />
         public FieldBuilder CreateDecorateeDependency(TypeBuilder type, Type decorateeType)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-            if (decorateeType == null)
-            {
-                throw new ArgumentNullException(nameof(decorateeType));
-            }
+            Ensures.NotNull(type, nameof(type));
+            Ensures.NotNull(decorateeType, nameof(decorateeType));
 
             var field = type.DefineField(
                 "_decoratee",
@@ -50,10 +42,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
         /// <inheritdoc cref="IDependencyEmitter" />
         public void CreateConstructor(TypeBuilder type, params FieldBuilder[] dependencies)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            Ensures.NotNull(type, nameof(type));
 
             var constructor = type.DefineConstructor(
                 MethodAttributes.Public,

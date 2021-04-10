@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 {
+    using ExceptionHandling;
     using Interception;
     using System;
     using System.Reflection;
@@ -31,7 +32,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <summary>
         /// Gets a factory that will create the exception instance to be thrown.
         /// </summary>
-
         private Func<Exception> ExceptionFactory { get; }
 
         /// <summary>
@@ -46,16 +46,15 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc cref="IArrangement" />
         public void ApplyTo(IInvocation invocation)
         {
+            Ensures.NotNull(invocation, nameof(invocation));
+
             TryApplyTo(invocation);
         }
 
         /// <inheritdoc cref="IArrangement" />
         public bool CanApplyTo(IInvocation invocation)
         {
-            if (invocation == null)
-            {
-                return false;
-            }
+            Ensures.NotNull(invocation, nameof(invocation));
 
             return invocation.Signature == Signature;
         }
@@ -70,10 +69,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <inheritdoc cref="IArrangement" />
         public bool TryApplyTo(IInvocation invocation)
         {
-            if (invocation == null)
-            {
-                return false;
-            }
+            Ensures.NotNull(invocation, nameof(invocation));
 
             if (invocation.Signature == Signature)
             {

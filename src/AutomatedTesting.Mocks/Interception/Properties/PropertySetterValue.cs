@@ -17,7 +17,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Properties
         /// <param name="value"> The value of the property's setter. </param>
         public PropertySetterValue(PropertyInfo signature, object? value)
         {
-            Signature = signature;
+            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
             Type = signature.PropertyType;
             Value = value;
         }
@@ -26,13 +26,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Properties
 
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPropertyInvocation" />
         public PropertyInfo Signature { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPropertySetterValue" />
         public Type Type { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPropertySetterValue" />
         public object? Value { get; }
 
         #endregion

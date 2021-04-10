@@ -87,6 +87,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             MethodInfo signature,
             LocalBuilder methodSignatureVariable)
         {
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(methodSignatureVariable, nameof(methodSignatureVariable));
+
             // nameof(Method)
 #nullable disable
             body.Emit(OpCodes.Ldtoken, signature.DeclaringType);
@@ -153,6 +156,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Extensions
             PropertyInfo signature,
             LocalBuilder propertySignatureVariable)
         {
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(propertySignatureVariable, nameof(propertySignatureVariable));
+
             // nameof(Property)
 #nullable disable
             body.Emit(OpCodes.Ldtoken, signature.DeclaringType);

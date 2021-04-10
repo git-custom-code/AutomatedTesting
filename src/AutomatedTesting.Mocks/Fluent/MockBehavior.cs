@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Mocks.Fluent
 {
     using Arrangements;
+    using ExceptionHandling;
     using Emitter;
     using Interception.Internal;
     using LightInject;
@@ -25,7 +26,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
         /// </param>
         public MockBehavior(IArrangementCollection arrangements)
         {
-            Arrangements = arrangements;
+            Arrangements = arrangements ?? throw new ArgumentNullException(nameof(arrangements));
         }
 
         #endregion
@@ -46,9 +47,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockBehavior{TMock}" />
         public ICallBehavior That(Expression<Action<TMock>> mockedCall)
         {
+            Ensures.NotNull(mockedCall, nameof(mockedCall));
+
             if (mockedCall.Body is MethodCallExpression methodCall)
             {
                 return new CallBehavior(Arrangements, methodCall.Method);
@@ -57,9 +60,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             throw new NotImplementedException();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockBehavior{TMock}" />
         public ICallBehavior<TResult> That<TResult>(Expression<Func<TMock, TResult>> mockedCall)
         {
+            Ensures.NotNull(mockedCall, nameof(mockedCall));
+
             if (mockedCall.Body is MethodCallExpression methodCall)
             {
                 return new CallBehavior<TResult>(Arrangements, methodCall.Method);
@@ -76,11 +81,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
             throw new NotImplementedException();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMockBehavior{TMock}" />
         public ICallBehavior ThatAssigning(Action<TMock> mockedSetterCall)
         {
-            var interceptor = new PropertySetterInterceptor();
+            Ensures.NotNull(mockedSetterCall, nameof(mockedSetterCall));
 
+            var interceptor = new PropertySetterInterceptor();
             try
             {
                 var proxy = ProxyFactory.Value.CreateForInterface<TMock>(interceptor);

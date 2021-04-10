@@ -35,9 +35,13 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMethodEmitterFactory" />
         public IMethodEmitter CreateMethodEmitterFor(MethodInfo signature, TypeBuilder type, FieldBuilder interceptor)
         {
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(type, nameof(type));
+            Ensures.NotNull(interceptor, nameof(interceptor));
+
             if (signature.ReturnType == typeof(void))
             {
                 return new InterceptActionEmitter(type, signature, interceptor);

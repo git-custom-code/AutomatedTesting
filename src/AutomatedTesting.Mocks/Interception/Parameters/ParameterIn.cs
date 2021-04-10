@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
 {
+    using ExceptionHandling;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -18,6 +19,9 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         /// <param name="values"> The intercepted method's in(put) parameters. </param>
         public ParameterIn(MethodInfo signature, object?[] values)
         {
+            Ensures.NotNull(signature, nameof(signature));
+            Ensures.NotNull(values, nameof(values));
+
             var inputParameter = new List<Parameter>();
             var methodParameter = signature.GetParameters();
             for (var i=0; i<values.Length; ++i)
@@ -39,14 +43,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
 
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IParameterIn" />
         public IEnumerable<Parameter> InputParameterCollection { get; }
 
         #endregion
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public override string ToString()
         {
             return $"{InputParameterCollection.Count()} input parameter";

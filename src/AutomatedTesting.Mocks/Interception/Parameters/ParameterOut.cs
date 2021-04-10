@@ -20,6 +20,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
         /// <param name="signature"> The intercepted method's signature. </param>
         public ParameterOut(MethodInfo signature)
         {
+            Ensures.NotNull(signature, nameof(signature));
+
             var outParameter = new List<Parameter>();
             var methodParameter = signature.GetParameters();
             for (var i=0; i<methodParameter.Length; ++i)
@@ -54,25 +56,25 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Parameters
 
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IParameterOut" />
         public IEnumerable<Parameter> OutParameterCollection { get; }
 
         #endregion
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IParameterRefOrOut" />
         [return: MaybeNull]
         public T GetValue<T>(string name)
         {
             var parameter = OutParameterCollection
                 .Single(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
-#nullable disable // needed for build server builds only
+#nullable disable
             return (T)parameter.Value;
 #nullable restore
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="object" />
         public override string ToString()
         {
             return $"{OutParameterCollection.Count()} out parameter";

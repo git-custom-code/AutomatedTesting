@@ -1,5 +1,6 @@
 namespace CustomCode.AutomatedTesting.Mocks.Interception.Properties
 {
+    using System;
     using System.Reflection;
 
     /// <summary>
@@ -15,14 +16,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Interception.Properties
         /// <param name="signature"> The signature of the invoked property. </param>
         public PropertyInvocation(PropertyInfo signature)
         {
-            Signature = signature;
+            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
         }
 
         #endregion
 
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPropertyInvocation" />
         public PropertyInfo Signature { get; }
 
         #endregion

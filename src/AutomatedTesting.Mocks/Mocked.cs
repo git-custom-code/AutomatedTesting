@@ -41,7 +41,7 @@ namespace CustomCode.AutomatedTesting.Mocks
 
         #region Data
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMocked{T}" />
         public T Instance { get; }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace CustomCode.AutomatedTesting.Mocks
         private IEnumerable<IMockedDependency> Dependencies { get; }
 
         /// <summary>
-        /// Gets a lookup table of arrangements for each mocked dependency.
+        /// Gets a lookup table that contains arrangements for each mocked dependency.
         /// </summary>
         private ConcurrentDictionary<Type, IArrangementCollection> Arrangements { get; }
 
@@ -58,7 +58,7 @@ namespace CustomCode.AutomatedTesting.Mocks
 
         #region Logic
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IMocked{T}" />
         public IMockBehavior<TMock> ArrangeFor<TMock>() where TMock : class
         {
             if (Arrangements.TryGetValue(typeof(TMock), out var mockArrangements))
