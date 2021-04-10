@@ -1,6 +1,10 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
+    using CustomCode.AutomatedTesting.Mocks.ExceptionHandling;
+    using Interception;
     using Interception.Async;
+    using System.Reflection;
+    using System.Reflection.Emit;
     using TestDomain;
     using Xunit;
 
@@ -13,14 +17,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptActionEmitter()
         {
             // Given
+            var @params = CreateParameter<IFooActionValueTypeParameterIn<int>>(
+                nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter));
             var factory = new MethodEmitterFactory();
-            var methodInfo = typeof(IFooActionValueTypeParameterIn<int>)
-                .GetMethod(nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter));
-
+        
             // When
-#nullable disable
-            var emitter = factory.CreateMethodEmitterFor(methodInfo, null, null);
-#nullable restore
+            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -31,14 +33,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptFuncEmitter()
         {
             // Given
+            var @params = CreateParameter<IFooFuncValueTypeParameterIn<int>>(
+                nameof(IFooFuncValueTypeParameterIn<int>.MethodWithOneParameter));
             var factory = new MethodEmitterFactory();
-            var methodInfo = typeof(IFooFuncValueTypeParameterIn<int>)
-                .GetMethod(nameof(IFooFuncValueTypeParameterIn<int>.MethodWithOneParameter));
 
             // When
-#nullable disable
-            var emitter = factory.CreateMethodEmitterFor(methodInfo, null, null);
-#nullable restore
+            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -49,14 +49,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsyncTaskEmitter()
         {
             // Given
+            var @params = CreateParameter<IFooTaskValueTypeParameter>(
+                nameof(IFooTaskValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
-            var methodInfo = typeof(IFooTaskValueTypeParameter)
-                .GetMethod(nameof(IFooTaskValueTypeParameter.MethodWithOneParameterAsync));
-
+            
             // When
-#nullable disable
-            var emitter = factory.CreateMethodEmitterFor(methodInfo, null, null);
-#nullable restore
+            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -67,14 +65,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsyncValueTaskEmitter()
         {
             // Given
+            var @params = CreateParameter<IFooValueTaskValueTypeParameter>(
+                nameof(IFooValueTaskValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
-            var methodInfo = typeof(IFooValueTaskValueTypeParameter)
-                .GetMethod(nameof(IFooValueTaskValueTypeParameter.MethodWithOneParameterAsync));
-
+            
             // When
-#nullable disable
-            var emitter = factory.CreateMethodEmitterFor(methodInfo, null, null);
-#nullable restore
+            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -85,14 +81,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsyncGenericTaskEmitter()
         {
             // Given
+            var @params = CreateParameter<IFooGenericTaskValueTypeParameter>(
+                nameof(IFooGenericTaskValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
-            var methodInfo = typeof(IFooGenericTaskValueTypeParameter)
-                .GetMethod(nameof(IFooGenericTaskValueTypeParameter.MethodWithOneParameterAsync));
-
+            
             // When
-#nullable disable
-            var emitter = factory.CreateMethodEmitterFor(methodInfo, null, null);
-#nullable restore
+            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -103,14 +97,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsyncGenericValueTaskEmitter()
         {
             // Given
+            var @params = CreateParameter<IFooGenericValueTaskValueTypeParameter>(
+                nameof(IFooGenericValueTaskValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
-            var methodInfo = typeof(IFooGenericValueTaskValueTypeParameter)
-                .GetMethod(nameof(IFooGenericValueTaskValueTypeParameter.MethodWithOneParameterAsync));
-
+            
             // When
-#nullable disable
-            var emitter = factory.CreateMethodEmitterFor(methodInfo, null, null);
-#nullable restore
+            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -121,18 +113,34 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsynEnumerableEmitter()
         {
             // Given
+            var @params = CreateParameter<IFooAsyncEnumerableValueTypeParameter>(
+                nameof(IFooAsyncEnumerableValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
-            var methodInfo = typeof(IFooAsyncEnumerableValueTypeParameter)
-                .GetMethod(nameof(IFooAsyncEnumerableValueTypeParameter.MethodWithOneParameterAsync));
-
+            
             // When
-#nullable disable
-            var emitter = factory.CreateMethodEmitterFor(methodInfo, null, null);
-#nullable restore
+            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
             Assert.IsType<InterceptAsyncMethodEmitter<AsyncIEnumerableInvocation<int>>>(emitter);
         }
+
+        #region Mocks
+
+        private (MethodInfo signature, TypeBuilder type, FieldBuilder interceptor) CreateParameter<T>(string methodName)
+        {
+            var name = new AssemblyName("DynamicMockAssembly");
+            var assembly = AssemblyBuilder.DefineDynamicAssembly(name, AssemblyBuilderAccess.RunAndCollect);
+            var module = assembly.DefineDynamicModule("DynamicMockModule");
+
+            var typeBuilder = module.DefineType("DynamicType");
+            var interceptor = typeBuilder.DefineField("_interceptor", typeof(IInterceptor), FieldAttributes.Private);
+
+            var type = typeof(T);
+            var methodInfo = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
+            return (methodInfo, typeBuilder, interceptor);
+        }
+
+        #endregion
     }
 }

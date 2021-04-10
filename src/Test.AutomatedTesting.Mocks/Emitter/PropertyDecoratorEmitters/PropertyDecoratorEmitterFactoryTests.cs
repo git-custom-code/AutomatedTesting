@@ -1,6 +1,8 @@
 namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
 {
+    using CustomCode.AutomatedTesting.Mocks.Interception;
     using ExceptionHandling;
+    using System.Reflection;
     using System.Reflection.Emit;
     using TestDomain;
     using Xunit;
@@ -14,18 +16,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateEmitterForPropertyGetter()
         {
             // Given
-            TypeBuilder? typeBuilder = null;
-            FieldBuilder? decoratee = null;
-            FieldBuilder? interceptor = null;
-            var type = typeof(IFooValueTypeGetter<int>);
-            var propertyName = nameof(IFooValueTypeGetter<int>.Getter);
-            var property = type.GetProperty(propertyName) ?? throw new PropertyInfoException(type, propertyName);
+            var @params = CreateParameter<IFooValueTypeGetter<int>>(nameof(IFooValueTypeGetter<int>.Getter));
             var factory = new PropertyDecoratorEmitterFactory();
 
             // When
-#nullable disable
-            var emitter = factory.CreatePropertyEmitterFor(property, typeBuilder, decoratee, interceptor);
-#nullable restore
+            var emitter = factory.CreatePropertyEmitterFor(@params.property, @params.type, @params.decoratee, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -36,18 +31,11 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateEmitterForPropertySetter()
         {
             // Given
-            TypeBuilder? typeBuilder = null;
-            FieldBuilder? decoratee = null;
-            FieldBuilder? interceptor = null;
-            var type = typeof(IFooValueTypeSetter<int>);
-            var propertyName = nameof(IFooValueTypeSetter<int>.Setter);
-            var property = type.GetProperty(propertyName) ?? throw new PropertyInfoException(type, propertyName);
+            var @params = CreateParameter<IFooValueTypeSetter<int>>(nameof(IFooValueTypeSetter<int>.Setter));
             var factory = new PropertyDecoratorEmitterFactory();
 
             // When
-#nullable disable
-            var emitter = factory.CreatePropertyEmitterFor(property, typeBuilder, decoratee, interceptor);
-#nullable restore
+            var emitter = factory.CreatePropertyEmitterFor(@params.property, @params.type, @params.decoratee, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -58,22 +46,35 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateEmitterForPropertyGetterSetter()
         {
             // Given
-            TypeBuilder? typeBuilder = null;
-            FieldBuilder? decoratee = null;
-            FieldBuilder? interceptor = null;
-            var type = typeof(IFooValueTypeProperty<int>);
-            var propertyName = nameof(IFooValueTypeProperty<int>.GetterSetter);
-            var property = type.GetProperty(propertyName) ?? throw new PropertyInfoException(type, propertyName);
+            var @params = CreateParameter<IFooValueTypeProperty<int>>(nameof(IFooValueTypeProperty<int>.GetterSetter));
             var factory = new PropertyDecoratorEmitterFactory();
 
             // When
-#nullable disable
-            var emitter = factory.CreatePropertyEmitterFor(property, typeBuilder, decoratee, interceptor);
-#nullable restore
+            var emitter = factory.CreatePropertyEmitterFor(@params.property, @params.type, @params.decoratee, @params.interceptor);
 
             // Then
             Assert.NotNull(emitter);
             Assert.IsType<DecorateGetterSetterEmitter<int>>(emitter);
         }
+
+        #region Mocks
+
+        private (PropertyInfo property, TypeBuilder type, FieldBuilder interceptor, FieldBuilder decoratee)
+            CreateParameter<T>(string propertyName)
+        {
+            var name = new AssemblyName("DynamicMockAssembly");
+            var assembly = AssemblyBuilder.DefineDynamicAssembly(name, AssemblyBuilderAccess.RunAndCollect);
+            var module = assembly.DefineDynamicModule("DynamicMockModule");
+
+            var typeBuilder = module.DefineType("DynamicType");
+            var interceptor = typeBuilder.DefineField("_interceptor", typeof(IInterceptor), FieldAttributes.Private);
+            var decoratee = typeBuilder.DefineField("_decoratee", typeof(T), FieldAttributes.Private);
+
+            var type = typeof(T);
+            var property = type.GetProperty(propertyName) ?? throw new PropertyInfoException(type, propertyName);
+            return (property, typeBuilder, interceptor, decoratee);
+        }
+
+        #endregion
     }
 }
