@@ -1,5 +1,6 @@
-namespace CustomCode.AutomatedTesting.Mocks.Fluent
+namespace CustomCode.AutomatedTesting.Mocks
 {
+    using Fluent;
     using System;
     using System.Linq.Expressions;
 

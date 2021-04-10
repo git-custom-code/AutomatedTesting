@@ -1,4 +1,4 @@
-namespace CustomCode.AutomatedTesting.Mocks.Fluent
+namespace CustomCode.AutomatedTesting.Mocks
 {
     using Arrangements;
     using ExceptionHandling;

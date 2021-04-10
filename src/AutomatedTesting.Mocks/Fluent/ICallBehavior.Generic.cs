@@ -1,4 +1,4 @@
-namespace CustomCode.AutomatedTesting.Mocks.Fluent
+namespace CustomCode.AutomatedTesting.Mocks
 {
     using System;
     using System.Linq.Expressions;
@@ -10,7 +10,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
     /// <typeparam name="TResult">
     /// The type of the result value that is returned by the mocked method or property getter.
     /// </typeparam>
-    public interface ICallBehavior<TResult> : IFluentInterface
+    public interface ICallBehavior<TResult> : ICallBehaviorBase
     {
         /// <summary>
         /// Setup a constant value that should be returned every time the mocked method or property is called.
@@ -27,17 +27,5 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
         /// Additional calls will always return the last value of the sequence.
         /// </remarks>
         void ReturnsSequence(params TResult[] returnValueSequence);
-
-        /// <summary>
-        /// Setup an exception that should be thrown every time the mocked method or property is called.
-        /// </summary>
-        /// <typeparam name="T"> The type of the exception to be thrown. </typeparam>
-        void Throws<T>() where T : Exception, new();
-
-        /// <summary>
-        /// Setup an exception that should be thrown every time the mocked method or property is called.
-        /// </summary>
-        /// <param name="exception"> The exception that should be thrown. </param>
-        void Throws(Exception exception);
     }
 }

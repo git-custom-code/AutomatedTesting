@@ -1,8 +1,7 @@
-namespace CustomCode.AutomatedTesting.Mocks.Fluent
+namespace CustomCode.AutomatedTesting.Mocks
 {
     using Arrangements;
     using ExceptionHandling;
-    using System;
     using System.Collections.Generic;
     using System.Reflection;
 
@@ -12,7 +11,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
     /// <typeparam name="TResult">
     /// The type of the result value that is returned by the mocked method or property getter.
     /// </typeparam>
-    public sealed class CallBehavior<TResult> : ICallBehavior<TResult>
+    public sealed class CallBehavior<TResult> : CallBehaviorBase, ICallBehavior<TResult>
     {
         #region Dependencies
 
@@ -22,24 +21,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
         /// <param name="arrangements"> The collection of arrangements that have been made for the associated mock. </param>
         /// <param name="signature"> The signature of the mocked method or property getter call. </param>
         public CallBehavior(IArrangementCollection arrangements, MethodInfo signature)
-        {
-            Arrangements = arrangements ?? throw new ArgumentNullException(nameof(arrangements));
-            Signature = signature ?? throw new ArgumentNullException(nameof(signature));
-        }
-
-        #endregion
-
-        #region Data
-
-        /// <summary>
-        /// Gets the collection of arrangements that have been made for the associated mock.
-        /// </summary>
-        private IArrangementCollection Arrangements { get; }
-
-        /// <summary>
-        /// Gets the signature of the mocked method or property getter call.
-        /// </summary>
-        private MethodInfo Signature { get; }
+            : base(arrangements, signature)
+        { }
 
         #endregion
 
@@ -59,22 +42,6 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent
 
             var sequence = new List<TResult>(returnValueSequence);
             var arrangement = new ReturnValueSequenceArrangement<TResult>(Signature, sequence);
-            Arrangements.Add(arrangement);
-        }
-
-        /// <inheritdoc cref="ICallBehavior{TResult}" />
-        public void Throws<T>() where T : Exception, new()
-        {
-            var arrangement = new ExceptionArrangement(Signature, () => new T());
-            Arrangements.Add(arrangement);
-        }
-
-        /// <inheritdoc cref="ICallBehavior{TResult}" />
-        public void Throws(Exception exception)
-        {
-            Ensures.NotNull(exception, nameof(exception));
-
-            var arrangement = new ExceptionArrangement(Signature, () => exception);
             Arrangements.Add(arrangement);
         }
 
