@@ -1,15 +1,12 @@
 namespace CustomCode.AutomatedTesting.Mocks.Arrangements
 {
-    using CustomCode.AutomatedTesting.Mocks.Interception.Parameters;
     using ExceptionHandling;
     using Interception;
-    using Interception.Async;
-    using Interception.ReturnValue;
+    using Interception.Parameters;
     using System;
-    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Arrange a custom out parameter value for an intercepted method call.
@@ -27,7 +24,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// </param>
         /// <param name="outParameterName"> The name of the out parameter. </param>
         /// <param name="outParameterValue"> The arranged out parameter value. </param>
-        public OutParameterArrangement(MethodInfo signature, string outParameterName, T outParameterValue)
+        public OutParameterArrangement(MethodInfo signature, string outParameterName, [MaybeNull] T outParameterValue)
         {
             Signature = signature ?? throw new ArgumentNullException(nameof(signature));
             OutParameterName = outParameterName ?? throw new ArgumentNullException(nameof(outParameterName));
@@ -46,6 +43,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         /// <summary>
         /// Gets the arranged out parameter value.
         /// </summary>
+        [MaybeNull]
         private T OutParameterValue { get; }
 
         /// <summary>
@@ -70,9 +68,14 @@ namespace CustomCode.AutomatedTesting.Mocks.Arrangements
         {
             Ensures.NotNull(invocation, nameof(invocation));
 
-            if (invocation.HasFeature<IReturnValue<T>>())
+            if (invocation.TryGetFeature<IParameterOut>(out var outParameterFeature))
             {
-                return invocation.Signature == Signature;
+                if (invocation.Signature == Signature)
+                {
+                    return outParameterFeature
+                        .OutParameterCollection
+                        .Any(p => p.Name == OutParameterName && p.Type == typeof(T));
+                }
             }
 
             return false;
