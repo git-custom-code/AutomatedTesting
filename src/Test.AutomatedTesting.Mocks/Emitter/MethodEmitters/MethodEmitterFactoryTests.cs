@@ -17,12 +17,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptActionEmitter()
         {
             // Given
-            var @params = CreateParameter<IFooActionValueTypeParameterIn<int>>(
-                nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter));
+            var (signature, type, interceptor) = CreateParameter<IFooActionValueTypeParameterIn<int>>(
+                methodName: nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter));
             var factory = new MethodEmitterFactory();
         
             // When
-            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
+            var emitter = factory.CreateMethodEmitterFor(signature, type, interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -33,12 +33,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptFuncEmitter()
         {
             // Given
-            var @params = CreateParameter<IFooFuncValueTypeParameterIn<int>>(
-                nameof(IFooFuncValueTypeParameterIn<int>.MethodWithOneParameter));
+            var (signature, type, interceptor) = CreateParameter<IFooFuncValueTypeParameterIn<int>>(
+                methodName: nameof(IFooFuncValueTypeParameterIn<int>.MethodWithOneParameter));
             var factory = new MethodEmitterFactory();
 
             // When
-            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
+            var emitter = factory.CreateMethodEmitterFor(signature, type, interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -49,12 +49,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsyncTaskEmitter()
         {
             // Given
-            var @params = CreateParameter<IFooTaskValueTypeParameter>(
-                nameof(IFooTaskValueTypeParameter.MethodWithOneParameterAsync));
+            var (signature, type, interceptor) = CreateParameter<IFooTaskValueTypeParameter>(
+                methodName: nameof(IFooTaskValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
             
             // When
-            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
+            var emitter = factory.CreateMethodEmitterFor(signature, type, interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -65,12 +65,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsyncValueTaskEmitter()
         {
             // Given
-            var @params = CreateParameter<IFooValueTaskValueTypeParameter>(
-                nameof(IFooValueTaskValueTypeParameter.MethodWithOneParameterAsync));
+            var (signature, type, interceptor) = CreateParameter<IFooValueTaskValueTypeParameter>(
+                methodName: nameof(IFooValueTaskValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
             
             // When
-            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
+            var emitter = factory.CreateMethodEmitterFor(signature, type, interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -81,12 +81,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsyncGenericTaskEmitter()
         {
             // Given
-            var @params = CreateParameter<IFooGenericTaskValueTypeParameter>(
-                nameof(IFooGenericTaskValueTypeParameter.MethodWithOneParameterAsync));
+            var (signature, type, interceptor) = CreateParameter<IFooGenericTaskValueTypeParameter>(
+                methodName: nameof(IFooGenericTaskValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
             
             // When
-            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
+            var emitter = factory.CreateMethodEmitterFor(signature, type, interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -97,12 +97,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsyncGenericValueTaskEmitter()
         {
             // Given
-            var @params = CreateParameter<IFooGenericValueTaskValueTypeParameter>(
-                nameof(IFooGenericValueTaskValueTypeParameter.MethodWithOneParameterAsync));
+            var (signature, type, interceptor) = CreateParameter<IFooGenericValueTaskValueTypeParameter>(
+                methodName: nameof(IFooGenericValueTaskValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
             
             // When
-            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
+            var emitter = factory.CreateMethodEmitterFor(signature, type, interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -113,12 +113,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateInterceptAsynEnumerableEmitter()
         {
             // Given
-            var @params = CreateParameter<IFooAsyncEnumerableValueTypeParameter>(
-                nameof(IFooAsyncEnumerableValueTypeParameter.MethodWithOneParameterAsync));
+            var (signature, type, interceptor) = CreateParameter<IFooAsyncEnumerableValueTypeParameter>(
+                methodName: nameof(IFooAsyncEnumerableValueTypeParameter.MethodWithOneParameterAsync));
             var factory = new MethodEmitterFactory();
             
             // When
-            var emitter = factory.CreateMethodEmitterFor(@params.signature, @params.type, @params.interceptor);
+            var emitter = factory.CreateMethodEmitterFor(signature, type, interceptor);
 
             // Then
             Assert.NotNull(emitter);

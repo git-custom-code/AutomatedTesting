@@ -16,11 +16,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateEmitterForPropertyGetter()
         {
             // Given
-            var @params = CreateParameter<IFooValueTypeGetter<int>>(nameof(IFooValueTypeGetter<int>.Getter));
+            var (property, type, interceptor, decoratee) = CreateParameter<IFooValueTypeGetter<int>>(
+                propertyName: nameof(IFooValueTypeGetter<int>.Getter));
             var factory = new PropertyDecoratorEmitterFactory();
 
             // When
-            var emitter = factory.CreatePropertyEmitterFor(@params.property, @params.type, @params.decoratee, @params.interceptor);
+            var emitter = factory.CreatePropertyEmitterFor(property, type, decoratee, interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -31,11 +32,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateEmitterForPropertySetter()
         {
             // Given
-            var @params = CreateParameter<IFooValueTypeSetter<int>>(nameof(IFooValueTypeSetter<int>.Setter));
+            var (property, type, interceptor, decoratee) = CreateParameter<IFooValueTypeSetter<int>>(
+                propertyName: nameof(IFooValueTypeSetter<int>.Setter));
             var factory = new PropertyDecoratorEmitterFactory();
 
             // When
-            var emitter = factory.CreatePropertyEmitterFor(@params.property, @params.type, @params.decoratee, @params.interceptor);
+            var emitter = factory.CreatePropertyEmitterFor(property, type, decoratee, interceptor);
 
             // Then
             Assert.NotNull(emitter);
@@ -46,11 +48,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
         public void CreateEmitterForPropertyGetterSetter()
         {
             // Given
-            var @params = CreateParameter<IFooValueTypeProperty<int>>(nameof(IFooValueTypeProperty<int>.GetterSetter));
+            var (property, type, interceptor, decoratee) = CreateParameter<IFooValueTypeProperty<int>>(
+                propertyName: nameof(IFooValueTypeProperty<int>.GetterSetter));
             var factory = new PropertyDecoratorEmitterFactory();
 
             // When
-            var emitter = factory.CreatePropertyEmitterFor(@params.property, @params.type, @params.decoratee, @params.interceptor);
+            var emitter = factory.CreatePropertyEmitterFor(property, type, decoratee, interceptor);
 
             // Then
             Assert.NotNull(emitter);
