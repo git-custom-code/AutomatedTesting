@@ -122,6 +122,24 @@ namespace CustomCode.AutomatedTesting.Mocks
         ICallBehavior<TMock, TResult> Returns(TResult returnValue);
 
         /// <summary>
+        /// Setup the given <paramref name="outParameterValue"/> for the out parameter with the name
+        /// <paramref name="outParameterName"/> after the mocked method is called.
+        /// </summary>
+        /// <typeparam name="T"> The type of the mocked out parameter. </typeparam>
+        /// <param name="outParameterName"> The name of the mocked out parameter. </param>
+        /// <param name="outParameterValue"> The value of the mocked out parameter after the method is called. </param>
+        ICallBehavior<TMock, TResult> ReturnsOutParameterValue<T>(string outParameterName, T outParameterValue);
+
+        /// <summary>
+        /// Setup the given <paramref name="refParameterValue"/> for the ref parameter with the name
+        /// <paramref name="refParameterName"/> after the mocked method is called.
+        /// </summary>
+        /// <typeparam name="T"> The type of the mocked ref parameter. </typeparam>
+        /// <param name="refParameterName"> The name of the mocked ref parameter. </param>
+        /// <param name="refParameterValue"> The value of the mocked ref parameter after the method is called. </param>
+        ICallBehavior<TMock, TResult> ReturnsRefParameterValue<T>(string refParameterName, T refParameterValue);
+
+        /// <summary>
         /// Setup a sequence of constant values. Each subsequent mocked method or property call will return
         /// the next value in the specified <paramref name="returnValueSequence"/>.
         /// </summary>
@@ -130,15 +148,6 @@ namespace CustomCode.AutomatedTesting.Mocks
         /// Additional calls will always return the last value of the sequence.
         /// </remarks>
         ICallBehavior<TMock, TResult> ReturnsSequence(params TResult[] returnValueSequence);
-
-        /// <summary>
-        /// Setup the given <paramref name="outParameterValue"/> for the out parameter with the name
-        /// <paramref name="outParameterName"/> after the mocked method is called.
-        /// </summary>
-        /// <typeparam name="T"> The type of the mocked out parameter. </typeparam>
-        /// <param name="outParameterName"> The name of the mocked out parameter. </param>
-        /// <param name="outParameterValue"> The value of the mocked out parameter after the method is called. </param>
-        ICallBehavior<TMock, TResult> ReturnsOutParameterValue<T>(string outParameterName, T outParameterValue);
 
         /// <summary>
         /// Setup an exception that should be thrown every time the mocked method or property setter is called.

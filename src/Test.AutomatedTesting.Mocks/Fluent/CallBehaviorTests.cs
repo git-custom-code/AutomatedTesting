@@ -221,6 +221,26 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             Assert.NotNull(arrangement);
         }
 
+        [Fact(DisplayName = "Setup a behavior to return a ref parameter when a method is called")]
+        public void SetupReturnRefParameterArrangement()
+        {
+            // Given
+            var type = typeof(IFooActionValueTypeParameterRef<int>);
+            var methodName = nameof(IFooActionValueTypeParameterRef<int>.MethodWithOneParameter);
+            var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
+            var arrangements = new ArrangementCollection();
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterRef<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterRef<int>>(arrangements, signature, mockBehavior);
+
+            // When
+            callBehavior.ReturnsRefParameterValue("first", 42);
+
+            // Then
+            Assert.Single(arrangements);
+            var arrangement = arrangements.First() as RefParameterArrangement<int>;
+            Assert.NotNull(arrangement);
+        }
+
         [Fact(DisplayName = "Setup a behavior to throw an exception when a method is called")]
         public void SetupThrowExceptionArrangement()
         {

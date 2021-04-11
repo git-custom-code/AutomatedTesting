@@ -368,20 +368,28 @@ namespace CustomCode.AutomatedTesting.Mocks
         }
 
         /// <inheritdoc cref="ICallBehavior{TMock, TResult}" />
+        public ICallBehavior<TMock, TResult> ReturnsOutParameterValue<T>(string outParameterName, T outParameterValue)
+        {
+            var arrangement = new OutParameterArrangement<T>(Signature, outParameterName, outParameterValue);
+            Arrangements.Add(arrangement);
+            return this;
+        }
+
+        /// <inheritdoc cref="ICallBehavior{TMock, TResult}" />
+        public ICallBehavior<TMock, TResult> ReturnsRefParameterValue<T>(string refParameterName, T refParameterValue)
+        {
+            var arrangement = new RefParameterArrangement<T>(Signature, refParameterName, refParameterValue);
+            Arrangements.Add(arrangement);
+            return this;
+        }
+
+        /// <inheritdoc cref="ICallBehavior{TMock, TResult}" />
         public ICallBehavior<TMock, TResult> ReturnsSequence(params TResult[] returnValueSequence)
         {
             Ensures.NotNull(returnValueSequence, nameof(returnValueSequence));
 
             var sequence = new List<TResult>(returnValueSequence);
             var arrangement = new ReturnValueSequenceArrangement<TResult>(Signature, sequence);
-            Arrangements.Add(arrangement);
-            return this;
-        }
-
-        /// <inheritdoc cref="ICallBehavior{TMock, TResult}" />
-        public ICallBehavior<TMock, TResult> ReturnsOutParameterValue<T>(string outParameterName, T outParameterValue)
-        {
-            var arrangement = new OutParameterArrangement<T>(Signature, outParameterName, outParameterValue);
             Arrangements.Add(arrangement);
             return this;
         }

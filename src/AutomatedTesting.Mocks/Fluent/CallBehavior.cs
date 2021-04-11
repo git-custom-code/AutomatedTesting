@@ -364,6 +364,14 @@ namespace CustomCode.AutomatedTesting.Mocks
             return this;
         }
 
+        /// <inheritdoc cref="ICallBehavior{TMock}" />
+        public ICallBehavior<TMock> ReturnsRefParameterValue<T>(string refParameterName, T refParameterValue)
+        {
+            var arrangement = new RefParameterArrangement<T>(Signature, refParameterName, refParameterValue);
+            Arrangements.Add(arrangement);
+            return this;
+        }
+
         /// <inheritdoc cref="IMockBehavior{TMock}"/>
         public ICallBehavior<TMock> That(Expression<Action<TMock>> mockedCall)
         {

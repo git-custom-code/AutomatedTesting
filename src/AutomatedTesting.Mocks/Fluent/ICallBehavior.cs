@@ -122,6 +122,15 @@ namespace CustomCode.AutomatedTesting.Mocks
         ICallBehavior<TMock> ReturnsOutParameterValue<T>(string outParameterName, T outParameterValue);
 
         /// <summary>
+        /// Setup the given <paramref name="refParameterValue"/> for the ref parameter with the name
+        /// <paramref name="refParameterName"/> after the mocked method is called.
+        /// </summary>
+        /// <typeparam name="T"> The type of the mocked ref parameter. </typeparam>
+        /// <param name="refParameterName"> The name of the mocked ref parameter. </param>
+        /// <param name="refParameterValue"> The value of the mocked ref parameter after the method is called. </param>
+        ICallBehavior<TMock> ReturnsRefParameterValue<T>(string refParameterName, T refParameterValue);
+
+        /// <summary>
         /// Setup an exception that should be thrown every time the mocked method or property setter is called.
         /// </summary>
         /// <typeparam name="T"> The type of the exception to be thrown. </typeparam>
