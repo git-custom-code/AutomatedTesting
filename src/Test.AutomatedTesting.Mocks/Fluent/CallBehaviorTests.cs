@@ -20,7 +20,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             var methodName = nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterIn<int>>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Records<int>(out var recordedCalls);
@@ -40,7 +41,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             var methodName = nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterIn<int>>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Records<int, string?>(out var recordedCalls);
@@ -60,7 +62,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             var methodName = nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterIn<int>>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Records<int, string?, bool>(out var recordedCalls);
@@ -80,7 +83,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             var methodName = nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterIn<int>>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Records<int, int, int, int>(out var recordedCalls);
@@ -100,7 +104,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             var methodName = nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterIn<int>>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Records<int, int, int, int, int>(out var recordedCalls);
@@ -120,7 +125,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             var methodName = nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterIn<int>>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Records<int, int, int, int, int, int>(out var recordedCalls);
@@ -140,7 +146,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             var methodName = nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterIn<int>>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Records<int, int, int, int, int, int, int>(out var recordedCalls);
@@ -160,7 +167,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             var methodName = nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterIn<int>>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Records<int, int, int, int, int, int, int, int>(out var recordedCalls);
@@ -180,7 +188,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             var methodName = nameof(IFooActionValueTypeParameterIn<int>.MethodWithOneParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterIn<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterIn<int>>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Records<int, int, int, int, int, int, int, int, int>(out var recordedCalls);
@@ -192,15 +201,36 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             Assert.NotNull(arrangement);
         }
 
+        [Fact(DisplayName = "Setup a behavior to return an out parameter when a method is called")]
+        public void SetupReturnOutParameterArrangement()
+        {
+            // Given
+            var type = typeof(IFooActionValueTypeParameterOut<int>);
+            var methodName = nameof(IFooActionValueTypeParameterOut<int>.MethodWithOneParameter);
+            var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
+            var arrangements = new ArrangementCollection();
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterOut<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterOut<int>>(arrangements, signature, mockBehavior);
+
+            // When
+            callBehavior.ReturnsOutParameterValue("first", 42);
+
+            // Then
+            Assert.Single(arrangements);
+            var arrangement = arrangements.First() as OutParameterArrangement<int>;
+            Assert.NotNull(arrangement);
+        }
+
         [Fact(DisplayName = "Setup a behavior to throw an exception when a method is called")]
         public void SetupThrowExceptionArrangement()
         {
             // Given
-            var type = typeof(IFooFuncValueTypeParameterless<int>);
-            var methodName = nameof(IFooFuncValueTypeParameterless<int>.MethodWithoutParameter);
+            var type = typeof(IFooActionParameterless);
+            var methodName = nameof(IFooActionParameterless.MethodWithoutParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionParameterless>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionParameterless>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Throws<ArgumentException>();
@@ -215,11 +245,12 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         public void SetupRethrowExceptionInstanceArrangement()
         {
             // Given
-            var type = typeof(IFooFuncValueTypeParameterless<int>);
-            var methodName = nameof(IFooFuncValueTypeParameterless<int>.MethodWithoutParameter);
+            var type = typeof(IFooActionParameterless);
+            var methodName = nameof(IFooActionParameterless.MethodWithoutParameter);
             var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
             var arrangements = new ArrangementCollection();
-            var callBehavior = new CallBehavior(arrangements, signature);
+            var mockBehavior = new MockBehavior<IFooActionParameterless>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionParameterless>(arrangements, signature, mockBehavior);
 
             // When
             callBehavior.Throws(new Exception());

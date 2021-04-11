@@ -48,33 +48,33 @@ namespace CustomCode.AutomatedTesting.Mocks
         #region Logic
 
         /// <inheritdoc cref="IMockBehavior{TMock}" />
-        public ICallBehavior That(Expression<Action<TMock>> mockedCall)
+        public ICallBehavior<TMock> That(Expression<Action<TMock>> mockedCall)
         {
             Ensures.NotNull(mockedCall, nameof(mockedCall));
 
             if (mockedCall.Body is MethodCallExpression methodCall)
             {
-                return new CallBehavior(Arrangements, methodCall.Method);
+                return new CallBehavior<TMock>(Arrangements, methodCall.Method, this);
             }
 
             throw new NotImplementedException();
         }
 
         /// <inheritdoc cref="IMockBehavior{TMock}" />
-        public ICallBehavior<TResult> That<TResult>(Expression<Func<TMock, TResult>> mockedCall)
+        public ICallBehavior<TMock, TResult> That<TResult>(Expression<Func<TMock, TResult>> mockedCall)
         {
             Ensures.NotNull(mockedCall, nameof(mockedCall));
 
             if (mockedCall.Body is MethodCallExpression methodCall)
             {
-                return new CallBehavior<TResult>(Arrangements, methodCall.Method);
+                return new CallBehavior<TMock, TResult>(Arrangements, methodCall.Method, this);
             }
             else if (mockedCall.Body is MemberExpression expression)
             {
                 if (expression.Member is PropertyInfo signature && signature.CanRead)
                 {
                     var getter = signature.GetGetMethod() ?? throw new Exception($"Property {signature.Name} has no getter");
-                    return new CallBehavior<TResult>(Arrangements, getter);
+                    return new CallBehavior<TMock, TResult>(Arrangements, getter, this);
                 }
             }
 
@@ -82,7 +82,7 @@ namespace CustomCode.AutomatedTesting.Mocks
         }
 
         /// <inheritdoc cref="IMockBehavior{TMock}" />
-        public ICallBehavior ThatAssigning(Action<TMock> mockedSetterCall)
+        public ICallBehavior<TMock> ThatAssigning(Action<TMock> mockedSetterCall)
         {
             Ensures.NotNull(mockedSetterCall, nameof(mockedSetterCall));
 
@@ -98,7 +98,7 @@ namespace CustomCode.AutomatedTesting.Mocks
             }
 
             var setter = interceptor.DiscoveredSetter ?? throw new Exception($"Property has no setter");
-            return new CallBehavior(Arrangements, setter);
+            return new CallBehavior<TMock>(Arrangements, setter, this);
         }
 
         /// <summary>

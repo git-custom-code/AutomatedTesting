@@ -23,7 +23,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooActionParameterless>>(callArrangements);
         }
 
         [Fact(DisplayName = "Setup the call behavior of a mocked method with void return type and one parameter")]
@@ -38,7 +38,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooActionValueTypeParameterIn<int>>>(callArrangements);
         }
 
         #endregion
@@ -57,7 +57,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooActionValueTypeParameterIn<int>>>(callArrangements);
         }
 
         #endregion
@@ -76,7 +76,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior<int>>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooFuncValueTypeParameterless<int>, int>>(callArrangements);
         }
 
         [Fact(DisplayName = "Setup the call behavior of a mocked method with value type result value and one parameter")]
@@ -91,7 +91,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior<int>>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooFuncValueTypeParameterIn<int>, int>>(callArrangements);
         }
 
         #endregion
@@ -110,7 +110,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior<object?>>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooFuncReferenceTypeParameterless<object>, object?>>(callArrangements);
         }
 
         [Fact(DisplayName = "Setup the call behavior of a mocked method with reference type result value and one parameter")]
@@ -125,7 +125,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior<object?>>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooFuncReferenceTypeParameterIn<object>, object?>>(callArrangements);
         }
 
         #endregion
@@ -144,7 +144,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior<int>>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooValueTypeGetter<int>, int>>(callArrangements);
         }
 
         [Fact(DisplayName = "Setup the call behavior of a mocked value type property setter")]
@@ -159,7 +159,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooValueTypeSetter<int>>>(callArrangements);
         }
 
         [Fact(DisplayName = "Setup the call behavior of a mocked value type property")]
@@ -176,8 +176,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             // Then
             Assert.NotNull(getterArrangements);
             Assert.NotNull(setterArrangements);
-            Assert.IsAssignableFrom<ICallBehavior<int>>(getterArrangements);
-            Assert.IsAssignableFrom<ICallBehavior>(setterArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooValueTypeProperty<int>, int>>(getterArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooValueTypeProperty<int>>>(setterArrangements);
         }
 
         #endregion
@@ -196,7 +196,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior<object?>>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooReferenceTypeGetter<object>, object?>>(callArrangements);
         }
 
         [Fact(DisplayName = "Setup the call behavior of a mocked reference type property setter")]
@@ -211,7 +211,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
 
             // Then
             Assert.NotNull(callArrangements);
-            Assert.IsAssignableFrom<ICallBehavior>(callArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooReferenceTypeSetter<object>>>(callArrangements);
         }
 
         [Fact(DisplayName = "Setup the call behavior of a mocked reference type property")]
@@ -228,8 +228,8 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             // Then
             Assert.NotNull(getterArrangements);
             Assert.NotNull(setterArrangements);
-            Assert.IsAssignableFrom<ICallBehavior<object?>>(getterArrangements);
-            Assert.IsAssignableFrom<ICallBehavior>(setterArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooReferenceTypeProperty<object>, object?>>(getterArrangements);
+            Assert.IsAssignableFrom<ICallBehavior<IFooReferenceTypeProperty<object>>>(setterArrangements);
         }
 
         #endregion
