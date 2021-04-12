@@ -202,7 +202,7 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
         }
 
         [Fact(DisplayName = "Setup a behavior to return an out parameter when a method is called")]
-        public void SetupReturnOutParameterArrangement()
+        public void SetupReturnsOutParameterArrangement()
         {
             // Given
             var type = typeof(IFooFuncValueTypeParameterOut<int>);
@@ -221,8 +221,28 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             Assert.NotNull(arrangement);
         }
 
+        [Fact(DisplayName = "Setup a behavior to return a sequence of out parameter values when a method is called")]
+        public void SetupReturnsOutParameterSequenceArrangement()
+        {
+            // Given
+            var type = typeof(IFooActionValueTypeParameterOut<int>);
+            var methodName = nameof(IFooActionValueTypeParameterOut<int>.MethodWithOneParameter);
+            var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
+            var arrangements = new ArrangementCollection();
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterOut<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterOut<int>>(arrangements, signature, mockBehavior);
+
+            // When
+            callBehavior.ReturnsOutParameterSequence("first", 13, 42, 65);
+
+            // Then
+            Assert.Single(arrangements);
+            var arrangement = arrangements.First() as OutParameterSequenceArrangement<int>;
+            Assert.NotNull(arrangement);
+        }
+
         [Fact(DisplayName = "Setup a behavior to return a ref parameter when a method is called")]
-        public void SetupReturnRefParameterArrangement()
+        public void SetupReturnsRefParameterArrangement()
         {
             // Given
             var type = typeof(IFooFuncValueTypeParameterRef<int>);
@@ -238,6 +258,26 @@ namespace CustomCode.AutomatedTesting.Mocks.Fluent.Tests
             // Then
             Assert.Single(arrangements);
             var arrangement = arrangements.First() as RefParameterArrangement<int>;
+            Assert.NotNull(arrangement);
+        }
+
+        [Fact(DisplayName = "Setup a behavior to return a sequence of ref parameter values when a method is called")]
+        public void SetupReturnsRefParameterSequenceArrangement()
+        {
+            // Given
+            var type = typeof(IFooActionValueTypeParameterRef<int>);
+            var methodName = nameof(IFooActionValueTypeParameterRef<int>.MethodWithOneParameter);
+            var signature = type.GetMethod(methodName) ?? throw new MethodInfoException(type, methodName);
+            var arrangements = new ArrangementCollection();
+            var mockBehavior = new MockBehavior<IFooActionValueTypeParameterRef<int>>(arrangements);
+            var callBehavior = new CallBehavior<IFooActionValueTypeParameterRef<int>>(arrangements, signature, mockBehavior);
+
+            // When
+            callBehavior.ReturnsRefParameterSequence("first", 13, 42, 65);
+
+            // Then
+            Assert.Single(arrangements);
+            var arrangement = arrangements.First() as RefParameterSequenceArrangement<int>;
             Assert.NotNull(arrangement);
         }
 

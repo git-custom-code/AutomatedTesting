@@ -131,6 +131,17 @@ namespace CustomCode.AutomatedTesting.Mocks
         ICallBehavior<TMock, TResult> ReturnsOutParameterValue<T>(string outParameterName, T outParameterValue);
 
         /// <summary>
+        /// Setup a sequence of constant values. Each subsequent mocked method or property call will return
+        /// the next value in the specified <paramref name="outParameterSequence"/>.
+        /// </summary>
+        /// <param name="outParameterName"> The name of the mocked out parameter. </param>
+        /// <param name="outParameterSequence"> A sequence of constant values for the mocked out parameter. </param>
+        /// <remarks>
+        /// Additional calls will always return the last value of the sequence.
+        /// </remarks>
+        ICallBehavior<TMock, TResult> ReturnsOutParameterSequence<T>(string outParameterName, params T[] outParameterSequence);
+
+        /// <summary>
         /// Setup the given <paramref name="refParameterValue"/> for the ref parameter with the name
         /// <paramref name="refParameterName"/> after the mocked method is called.
         /// </summary>
@@ -138,6 +149,17 @@ namespace CustomCode.AutomatedTesting.Mocks
         /// <param name="refParameterName"> The name of the mocked ref parameter. </param>
         /// <param name="refParameterValue"> The value of the mocked ref parameter after the method is called. </param>
         ICallBehavior<TMock, TResult> ReturnsRefParameterValue<T>(string refParameterName, T refParameterValue);
+
+        /// <summary>
+        /// Setup a sequence of constant values. Each subsequent mocked method or property call will return
+        /// the next value in the specified <paramref name="refParameterSequence"/>.
+        /// </summary>
+        /// <param name="refParameterName"> The name of the mocked ref parameter. </param>
+        /// <param name="refParameterSequence"> A sequence of constant values for the mocked ref parameter. </param>
+        /// <remarks>
+        /// Additional calls will always return the last value of the sequence.
+        /// </remarks>
+        ICallBehavior<TMock, TResult> ReturnsRefParameterSequence<T>(string refParameterName, params T[] refParameterSequence);
 
         /// <summary>
         /// Setup a sequence of constant values. Each subsequent mocked method or property call will return

@@ -376,9 +376,31 @@ namespace CustomCode.AutomatedTesting.Mocks
         }
 
         /// <inheritdoc cref="ICallBehavior{TMock, TResult}" />
+        public ICallBehavior<TMock, TResult> ReturnsOutParameterSequence<T>(string outParameterName, params T[] outParameterSequence)
+        {
+            Ensures.NotNull(outParameterSequence, nameof(outParameterSequence));
+
+            var sequence = new List<T>(outParameterSequence);
+            var arrangement = new OutParameterSequenceArrangement<T>(Signature, outParameterName, sequence);
+            Arrangements.Add(arrangement);
+            return this;
+        }
+
+        /// <inheritdoc cref="ICallBehavior{TMock, TResult}" />
         public ICallBehavior<TMock, TResult> ReturnsRefParameterValue<T>(string refParameterName, T refParameterValue)
         {
             var arrangement = new RefParameterArrangement<T>(Signature, refParameterName, refParameterValue);
+            Arrangements.Add(arrangement);
+            return this;
+        }
+
+        /// <inheritdoc cref="ICallBehavior{TMock, TResult}" />
+        public ICallBehavior<TMock, TResult> ReturnsRefParameterSequence<T>(string refParameterName, params T[] refParameterSequence)
+        {
+            Ensures.NotNull(refParameterSequence, nameof(refParameterSequence));
+
+            var sequence = new List<T>(refParameterSequence);
+            var arrangement = new RefParameterSequenceArrangement<T>(Signature, refParameterName, sequence);
             Arrangements.Add(arrangement);
             return this;
         }
