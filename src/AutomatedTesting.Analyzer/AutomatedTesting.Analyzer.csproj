@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6</TargetFramework>
     <Title>Best practices for testing analyzers in C#.</Title>
     <Description>Utilities for writing automated tests for c# analyzers.</Description>
     <RootNamespace>CustomCode.AutomatedTesting.Analyzer</RootNamespace>
