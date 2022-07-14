@@ -1,25 +1,24 @@
-namespace CustomCode.AutomatedTesting.Mocks.Core.Extensions
+namespace CustomCode.AutomatedTesting.Mocks.Core.Extensions;
+
+using Interception;
+using Xunit;
+
+/// <summary>
+/// Extension methods for the <see cref="IInvocation"/> type.
+/// </summary>
+public static partial class IInvocationExtensions
 {
-    using Interception;
-    using Xunit;
+    #region Logic
 
     /// <summary>
-    /// Extension methods for the <see cref="IInvocation"/> type.
+    /// Validates that the invocation intercepts a method with the given <paramref name="name"/>.
     /// </summary>
-    public static partial class IInvocationExtensions
+    /// <param name="invocation"> The extended <see cref="IInvocation"/> instance. </param>
+    /// <param name="name"> The expected method name. </param>
+    public static void ShouldInterceptMethodWithName(this IInvocation invocation, string name)
     {
-        #region Logic
-
-        /// <summary>
-        /// Validates that the invocation intercepts a method with the given <paramref name="name"/>.
-        /// </summary>
-        /// <param name="invocation"> The extended <see cref="IInvocation"/> instance. </param>
-        /// <param name="name"> The expected method name. </param>
-        public static void ShouldInterceptMethodWithName(this IInvocation invocation, string name)
-        {
-            Assert.Equal(name, invocation.Signature.Name);
-        }
-
-        #endregion
+        Assert.Equal(name, invocation.Signature.Name);
     }
+
+    #endregion
 }

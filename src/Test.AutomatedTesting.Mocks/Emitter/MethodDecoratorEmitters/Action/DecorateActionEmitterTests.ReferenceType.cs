@@ -1,190 +1,189 @@
-namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
+namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests;
+
+#region Usings
+
+using Core.Data;
+using Core.Extensions;
+using System.Linq;
+using TestDomain;
+using Xunit;
+
+#endregion
+
+/// <summary>
+/// Automated tests for the <see cref="DecorateActionEmitter"/> type.
+/// </summary>
+public sealed partial class DecorateActionEmitterTests
 {
-    #region Usings
-
-    using Core.Data;
-    using Core.Extensions;
-    using System.Linq;
-    using TestDomain;
-    using Xunit;
-
-    #endregion
-
-    /// <summary>
-    /// Automated tests for the <see cref="DecorateActionEmitter"/> type.
-    /// </summary>
-    public sealed partial class DecorateActionEmitterTests
+    [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single input parameter")]
+    [ClassData(typeof(ReferenceTypeData))]
+    public void ActionReferenceTypeWithSingleParameterIn<T>(T? expectedValue)
+        where T : class
     {
-        [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single input parameter")]
-        [ClassData(typeof(ReferenceTypeData))]
-        public void ActionReferenceTypeWithSingleParameterIn<T>(T? expectedValue)
-            where T : class
-        {
-            // Given
-            var proxyFactory = Context.ProxyFactory;
-            var interceptor = new ActionInterceptor(false);
-            var decoratee = new FooActionReferenceTypeParameterIn<T>();
+        // Given
+        var proxyFactory = Context.ProxyFactory;
+        var interceptor = new ActionInterceptor(false);
+        var decoratee = new FooActionReferenceTypeParameterIn<T>();
 
-            // When
-            var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterIn<T>>(decoratee, interceptor);
-            foo.MethodWithOneParameter(expectedValue);
+        // When
+        var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterIn<T>>(decoratee, interceptor);
+        foo.MethodWithOneParameter(expectedValue);
 
-            // Then
-            Assert.NotNull(foo);
-            Assert.Equal(1u, decoratee.CallCount);
-            Assert.Equal(expectedValue, decoratee.Parameters.SingleOrDefault());
+        // Then
+        Assert.NotNull(foo);
+        Assert.Equal(1u, decoratee.CallCount);
+        Assert.Equal(expectedValue, decoratee.Parameters.SingleOrDefault());
 
-            Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single();
-            invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterIn<T>.MethodWithOneParameter));
-            invocation.ShouldHaveParameterInCountOf(1);
-            invocation.ShouldHaveParameterIn("first", typeof(T), expectedValue);
-            invocation.ShouldHaveNoParameterRef();
-            invocation.ShouldHaveNoParameterOut();
-        }
+        Assert.Single(interceptor.ForwardedInvocations);
+        var invocation = interceptor.ForwardedInvocations.Single();
+        invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterIn<T>.MethodWithOneParameter));
+        invocation.ShouldHaveParameterInCountOf(1);
+        invocation.ShouldHaveParameterIn("first", typeof(T), expectedValue);
+        invocation.ShouldHaveNoParameterRef();
+        invocation.ShouldHaveNoParameterOut();
+    }
 
-        [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single input parameter (intercepted)")]
-        [ClassData(typeof(ReferenceTypeData))]
-        public void ActionReferenceTypeWithSingleParameterInIntercepted<T>(T? expectedValue)
-            where T : class
-        {
-            // Given
-            var proxyFactory = Context.ProxyFactory;
-            var interceptor = new ActionInterceptor(true);
-            var decoratee = new FooActionReferenceTypeParameterIn<T>();
+    [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single input parameter (intercepted)")]
+    [ClassData(typeof(ReferenceTypeData))]
+    public void ActionReferenceTypeWithSingleParameterInIntercepted<T>(T? expectedValue)
+        where T : class
+    {
+        // Given
+        var proxyFactory = Context.ProxyFactory;
+        var interceptor = new ActionInterceptor(true);
+        var decoratee = new FooActionReferenceTypeParameterIn<T>();
 
-            // When
-            var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterIn<T>>(decoratee, interceptor);
-            foo.MethodWithOneParameter(expectedValue);
+        // When
+        var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterIn<T>>(decoratee, interceptor);
+        foo.MethodWithOneParameter(expectedValue);
 
-            // Then
-            Assert.NotNull(foo);
-            Assert.Equal(0u, decoratee.CallCount);
-            Assert.Empty(decoratee.Parameters);
+        // Then
+        Assert.NotNull(foo);
+        Assert.Equal(0u, decoratee.CallCount);
+        Assert.Empty(decoratee.Parameters);
 
-            Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single();
-            invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterIn<T>.MethodWithOneParameter));
-            invocation.ShouldHaveParameterInCountOf(1);
-            invocation.ShouldHaveParameterIn("first", typeof(T), expectedValue);
-            invocation.ShouldHaveNoParameterRef();
-            invocation.ShouldHaveNoParameterOut();
-        }
+        Assert.Single(interceptor.ForwardedInvocations);
+        var invocation = interceptor.ForwardedInvocations.Single();
+        invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterIn<T>.MethodWithOneParameter));
+        invocation.ShouldHaveParameterInCountOf(1);
+        invocation.ShouldHaveParameterIn("first", typeof(T), expectedValue);
+        invocation.ShouldHaveNoParameterRef();
+        invocation.ShouldHaveNoParameterOut();
+    }
 
-        [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single ref parameter")]
-        [ClassData(typeof(ReferenceTypeData))]
-        public void ActionReferenceTypeWithSingleParameterRef<T>(T? expectedValue)
-            where T : class
-        {
-            // Given
-            var proxyFactory = Context.ProxyFactory;
-            var interceptor = new ActionInterceptor(false);
-            var decoratee = new FooActionReferenceTypeParameterRef<T>();
-            var actualValue = expectedValue;
+    [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single ref parameter")]
+    [ClassData(typeof(ReferenceTypeData))]
+    public void ActionReferenceTypeWithSingleParameterRef<T>(T? expectedValue)
+        where T : class
+    {
+        // Given
+        var proxyFactory = Context.ProxyFactory;
+        var interceptor = new ActionInterceptor(false);
+        var decoratee = new FooActionReferenceTypeParameterRef<T>();
+        var actualValue = expectedValue;
 
-            // When
-            var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterRef<T>>(decoratee, interceptor);
-            foo.MethodWithOneParameter(ref actualValue);
+        // When
+        var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterRef<T>>(decoratee, interceptor);
+        foo.MethodWithOneParameter(ref actualValue);
 
-            // Then
-            Assert.NotNull(foo);
-            Assert.Equal(1u, decoratee.CallCount);
-            Assert.Equal(expectedValue, decoratee.Parameters.SingleOrDefault());
-            Assert.Equal(default, actualValue);
+        // Then
+        Assert.NotNull(foo);
+        Assert.Equal(1u, decoratee.CallCount);
+        Assert.Equal(expectedValue, decoratee.Parameters.SingleOrDefault());
+        Assert.Equal(default, actualValue);
 
-            Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single();
-            invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterRef<T>.MethodWithOneParameter));
-            invocation.ShouldHaveNoParameterIn();
-            invocation.ShouldHaveParameterRefCountOf(1);
-            invocation.ShouldHaveParameterRef("first", typeof(T), expectedValue);
-            invocation.ShouldHaveNoParameterOut();
-        }
+        Assert.Single(interceptor.ForwardedInvocations);
+        var invocation = interceptor.ForwardedInvocations.Single();
+        invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterRef<T>.MethodWithOneParameter));
+        invocation.ShouldHaveNoParameterIn();
+        invocation.ShouldHaveParameterRefCountOf(1);
+        invocation.ShouldHaveParameterRef("first", typeof(T), expectedValue);
+        invocation.ShouldHaveNoParameterOut();
+    }
 
-        [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single ref parameter (intercepted)")]
-        [ClassData(typeof(ReferenceTypeData))]
-        public void ActionReferenceTypeWithSingleParameterRefIntercepted<T>(T? expectedValue)
-            where T : class
-        {
-            // Given
-            var proxyFactory = Context.ProxyFactory;
-            var interceptor = new ActionInterceptor(true);
-            var decoratee = new FooActionReferenceTypeParameterRef<T>();
-            var actualValue = expectedValue;
+    [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single ref parameter (intercepted)")]
+    [ClassData(typeof(ReferenceTypeData))]
+    public void ActionReferenceTypeWithSingleParameterRefIntercepted<T>(T? expectedValue)
+        where T : class
+    {
+        // Given
+        var proxyFactory = Context.ProxyFactory;
+        var interceptor = new ActionInterceptor(true);
+        var decoratee = new FooActionReferenceTypeParameterRef<T>();
+        var actualValue = expectedValue;
 
-            // When
-            var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterRef<T>>(decoratee, interceptor);
-            foo.MethodWithOneParameter(ref actualValue);
+        // When
+        var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterRef<T>>(decoratee, interceptor);
+        foo.MethodWithOneParameter(ref actualValue);
 
-            // Then
-            Assert.NotNull(foo);
-            Assert.Equal(0u, decoratee.CallCount);
-            Assert.Empty(decoratee.Parameters);
-            Assert.Equal(expectedValue, actualValue);
+        // Then
+        Assert.NotNull(foo);
+        Assert.Equal(0u, decoratee.CallCount);
+        Assert.Empty(decoratee.Parameters);
+        Assert.Equal(expectedValue, actualValue);
 
-            Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single();
-            invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterRef<T>.MethodWithOneParameter));
-            invocation.ShouldHaveNoParameterIn();
-            invocation.ShouldHaveParameterRefCountOf(1);
-            invocation.ShouldHaveParameterRef("first", typeof(T), expectedValue);
-            invocation.ShouldHaveNoParameterOut();
-        }
+        Assert.Single(interceptor.ForwardedInvocations);
+        var invocation = interceptor.ForwardedInvocations.Single();
+        invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterRef<T>.MethodWithOneParameter));
+        invocation.ShouldHaveNoParameterIn();
+        invocation.ShouldHaveParameterRefCountOf(1);
+        invocation.ShouldHaveParameterRef("first", typeof(T), expectedValue);
+        invocation.ShouldHaveNoParameterOut();
+    }
 
-        [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single out parameter")]
-        [ClassData(typeof(ReferenceTypeData))]
-        public void ActionReferenceTypeWithSingleParameterOut<T>(T? expectedValue)
-            where T : class
-        {
-            // Given
-            var proxyFactory = Context.ProxyFactory;
-            var interceptor = new ActionInterceptor(false);
-            var decoratee = new FooActionReferenceTypeParameterOut<T>(expectedValue);
+    [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single out parameter")]
+    [ClassData(typeof(ReferenceTypeData))]
+    public void ActionReferenceTypeWithSingleParameterOut<T>(T? expectedValue)
+        where T : class
+    {
+        // Given
+        var proxyFactory = Context.ProxyFactory;
+        var interceptor = new ActionInterceptor(false);
+        var decoratee = new FooActionReferenceTypeParameterOut<T>(expectedValue);
 
-            // When
-            var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterOut<T>>(decoratee, interceptor);
-            foo.MethodWithOneParameter(out var outValue);
+        // When
+        var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterOut<T>>(decoratee, interceptor);
+        foo.MethodWithOneParameter(out var outValue);
 
-            // Then
-            Assert.NotNull(foo);
-            Assert.Equal(1u, decoratee.CallCount);
-            Assert.Equal(expectedValue, outValue);
+        // Then
+        Assert.NotNull(foo);
+        Assert.Equal(1u, decoratee.CallCount);
+        Assert.Equal(expectedValue, outValue);
 
-            Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single();
-            invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterOut<T>.MethodWithOneParameter));
-            invocation.ShouldHaveNoParameterIn();
-            invocation.ShouldHaveNoParameterRef();
-            invocation.ShouldHaveParameterOutCountOf(1);
-            invocation.ShouldHaveParameterOut("first", typeof(T), default(T));
-        }
+        Assert.Single(interceptor.ForwardedInvocations);
+        var invocation = interceptor.ForwardedInvocations.Single();
+        invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterOut<T>.MethodWithOneParameter));
+        invocation.ShouldHaveNoParameterIn();
+        invocation.ShouldHaveNoParameterRef();
+        invocation.ShouldHaveParameterOutCountOf(1);
+        invocation.ShouldHaveParameterOut("first", typeof(T), default(T));
+    }
 
-        [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single out parameter (intercepted)")]
-        [ClassData(typeof(ReferenceTypeData))]
-        public void ActionReferenceTypeWithSingleParameterOutIntercepted<T>(T? expectedValue)
-            where T : class
-        {
-            // Given
-            var proxyFactory = Context.ProxyFactory;
-            var interceptor = new ActionInterceptor(true);
-            var decoratee = new FooActionReferenceTypeParameterOut<T>(expectedValue);
+    [Theory(DisplayName = "DecorateActionEmitter: Action (reference type) with single out parameter (intercepted)")]
+    [ClassData(typeof(ReferenceTypeData))]
+    public void ActionReferenceTypeWithSingleParameterOutIntercepted<T>(T? expectedValue)
+        where T : class
+    {
+        // Given
+        var proxyFactory = Context.ProxyFactory;
+        var interceptor = new ActionInterceptor(true);
+        var decoratee = new FooActionReferenceTypeParameterOut<T>(expectedValue);
 
-            // When
-            var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterOut<T>>(decoratee, interceptor);
-            foo.MethodWithOneParameter(out var outValue);
+        // When
+        var foo = proxyFactory.CreateDecorator<IFooActionReferenceTypeParameterOut<T>>(decoratee, interceptor);
+        foo.MethodWithOneParameter(out var outValue);
 
-            // Then
-            Assert.NotNull(foo);
-            Assert.Equal(0u, decoratee.CallCount);
-            Assert.Equal(default, outValue);
+        // Then
+        Assert.NotNull(foo);
+        Assert.Equal(0u, decoratee.CallCount);
+        Assert.Equal(default, outValue);
 
-            Assert.Single(interceptor.ForwardedInvocations);
-            var invocation = interceptor.ForwardedInvocations.Single();
-            invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterOut<T>.MethodWithOneParameter));
-            invocation.ShouldHaveNoParameterIn();
-            invocation.ShouldHaveNoParameterRef();
-            invocation.ShouldHaveParameterOutCountOf(1);
-            invocation.ShouldHaveParameterOut("first", typeof(T), default(T));
-        }
+        Assert.Single(interceptor.ForwardedInvocations);
+        var invocation = interceptor.ForwardedInvocations.Single();
+        invocation.ShouldInterceptMethodWithName(nameof(IFooActionReferenceTypeParameterOut<T>.MethodWithOneParameter));
+        invocation.ShouldHaveNoParameterIn();
+        invocation.ShouldHaveNoParameterRef();
+        invocation.ShouldHaveParameterOutCountOf(1);
+        invocation.ShouldHaveParameterOut("first", typeof(T), default(T));
     }
 }

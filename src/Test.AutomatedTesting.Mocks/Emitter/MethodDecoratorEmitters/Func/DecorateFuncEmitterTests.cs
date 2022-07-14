@@ -1,61 +1,60 @@
-namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests
-{
-    #region Usings
+namespace CustomCode.AutomatedTesting.Mocks.Emitter.Tests;
 
-    using Core.Context;
-    using Interception.ReturnValue;
-    using Interception;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using Xunit;
+#region Usings
+
+using Core.Context;
+using Interception.ReturnValue;
+using Interception;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Xunit;
+
+#endregion
+
+/// <summary>
+/// Automated tests for the <see cref="DecorateFuncEmitter{T}"/> type.
+/// </summary>
+public sealed partial class DecorateFuncEmitterTests : IClassFixture<ProxyFactoryContext>
+{
+    #region Dependencies
+
+    public DecorateFuncEmitterTests(ProxyFactoryContext context)
+    {
+        Context = context;
+    }
+
+    private ProxyFactoryContext Context { get; }
 
     #endregion
 
-    /// <summary>
-    /// Automated tests for the <see cref="DecorateFuncEmitter{T}"/> type.
-    /// </summary>
-    public sealed partial class DecorateFuncEmitterTests : IClassFixture<ProxyFactoryContext>
+    #region Interceptor
+
+    private sealed class FuncInterceptor<T> : IInterceptor
     {
-        #region Dependencies
-
-        public DecorateFuncEmitterTests(ProxyFactoryContext context)
+        public FuncInterceptor([AllowNull] T value, bool wasIntercepted)
         {
-            Context = context;
+            Value = value;
+            WasIntercepted = wasIntercepted;
         }
 
-        private ProxyFactoryContext Context { get; }
+        [AllowNull, MaybeNull]
+        private T Value { get; }
 
-        #endregion
+        private bool WasIntercepted { get; }
 
-        #region Interceptor
+        public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
 
-        private sealed class FuncInterceptor<T> : IInterceptor
+        public bool Intercept(IInvocation invocation)
         {
-            public FuncInterceptor([AllowNull] T value, bool wasIntercepted)
+            ForwardedInvocations.Add(invocation);
+            if (invocation.TryGetFeature<IReturnValue<T>>(out var feature))
             {
-                Value = value;
-                WasIntercepted = wasIntercepted;
+                feature.ReturnValue = Value;
             }
 
-            [AllowNull, MaybeNull]
-            private T Value { get; }
-
-            private bool WasIntercepted { get; }
-
-            public List<IInvocation> ForwardedInvocations { get; } = new List<IInvocation>();
-
-            public bool Intercept(IInvocation invocation)
-            {
-                ForwardedInvocations.Add(invocation);
-                if (invocation.TryGetFeature<IReturnValue<T>>(out var feature))
-                {
-                    feature.ReturnValue = Value;
-                }
-
-                return WasIntercepted;
-            }
+            return WasIntercepted;
         }
-
-        #endregion
     }
+
+    #endregion
 }
