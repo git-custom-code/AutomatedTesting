@@ -1,28 +1,27 @@
-namespace CustomCode.AutomatedTesting.Analyzer
+namespace CustomCode.AutomatedTesting.Analyzer;
+
+using Core;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+/// <summary>
+/// Static entry point that allows the creation of <see cref="IMockedAnalyzer{T}"/> instances.
+/// </summary>
+public static class Analyzer
 {
-    using Core;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    #region Logic
 
     /// <summary>
-    /// Static entry point that allows the creation of <see cref="IMockedAnalyzer{T}"/> instances.
+    /// Create a new mocked <see cref="DiagnosticAnalyzer"/> to be tested.
     /// </summary>
-    public static class Analyzer
+    /// <typeparam name="T"> The type of the analyzer to be tested. </typeparam>
+    /// <returns> The created <see cref="IMockedAnalyzer{T}"/> instance. </returns>
+    public static IMockedAnalyzer<T> CreateMocked<T>()
+        where T : DiagnosticAnalyzer, new()
     {
-        #region Logic
-
-        /// <summary>
-        /// Create a new mocked <see cref="DiagnosticAnalyzer"/> to be tested.
-        /// </summary>
-        /// <typeparam name="T"> The type of the analyzer to be tested. </typeparam>
-        /// <returns> The created <see cref="IMockedAnalyzer{T}"/> instance. </returns>
-        public static IMockedAnalyzer<T> CreateMocked<T>()
-            where T : DiagnosticAnalyzer, new()
-        {
-            var analyzer = new T();
-            var project = new InMemoryProject();
-            return new MockedAnalyzer<T>(analyzer, project);
-        }
-
-        #endregion
+        var analyzer = new T();
+        var project = new InMemoryProject();
+        return new MockedAnalyzer<T>(analyzer, project);
     }
+
+    #endregion
 }
