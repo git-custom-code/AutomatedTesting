@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6</TargetFramework>
     <Title> Automated testing nuget metapackage. </Title>
     <Description> Nuget metapackage that contains all CustomCode.AutomatedTesting.xyz packages.</Description>
     <RootNamespace>CustomCode.AutomatedTesting</RootNamespace>
