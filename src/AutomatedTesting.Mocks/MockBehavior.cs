@@ -1,28 +1,27 @@
-namespace CustomCode.AutomatedTesting.Mocks
+namespace CustomCode.AutomatedTesting.Mocks;
+
+using Interception;
+
+/// <summary>
+/// Enumeration that defines the behavior of a dynamic proxy for a mocked dependency.
+/// </summary>
+public enum MockBehavior : byte
 {
-    using Interception;
+    /// <summary>
+    /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
+    /// return the default value (see <see cref="LooseMockInterceptor"/> for more details).
+    /// </summary>
+    Loose = 0,
 
     /// <summary>
-    /// Enumeration that defines the behavior of a dynamic proxy for a mocked dependency.
+    /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
+    /// call to the concrete implementation (see <see cref="PartialMockInterceptor"/> for more details).
     /// </summary>
-    public enum MockBehavior : byte
-    {
-        /// <summary>
-        /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
-        /// return the default value (see <see cref="LooseMockInterceptor"/> for more details).
-        /// </summary>
-        Loose = 0,
+    Partial = 1,
 
-        /// <summary>
-        /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
-        /// call to the concrete implementation (see <see cref="PartialMockInterceptor"/> for more details).
-        /// </summary>
-        Partial = 1,
-
-        /// <summary>
-        /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
-        /// throw an exception (see <see cref="StrictMockInterceptor"/> for more details).
-        /// </summary>
-        Strict = 2
-    }
+    /// <summary>
+    /// If no <see cref="IArrangement"/> was setup, mocked methods or properties will automatically
+    /// throw an exception (see <see cref="StrictMockInterceptor"/> for more details).
+    /// </summary>
+    Strict = 2
 }

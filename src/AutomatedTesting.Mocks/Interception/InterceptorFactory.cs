@@ -1,39 +1,38 @@
-namespace CustomCode.AutomatedTesting.Mocks.Interception
+namespace CustomCode.AutomatedTesting.Mocks.Interception;
+
+using Arrangements;
+using ExceptionHandling;
+using System;
+
+/// <summary>
+/// Default implementation of the <see cref="IInterceptorFactory"/> interface.
+/// </summary>
+public sealed class InterceptorFactory : IInterceptorFactory
 {
-    using Arrangements;
-    using ExceptionHandling;
-    using System;
+    #region Logic
 
-    /// <summary>
-    /// Default implementation of the <see cref="IInterceptorFactory"/> interface.
-    /// </summary>
-    public sealed class InterceptorFactory : IInterceptorFactory
+    /// <inheritdoc cref="IInterceptorFactory" />
+    public IInterceptor CreateInterceptorFor(MockBehavior behavior, IArrangementCollection arrangements)
     {
-        #region Logic
+        Ensures.NotNull(arrangements);
 
-        /// <inheritdoc cref="IInterceptorFactory" />
-        public IInterceptor CreateInterceptorFor(MockBehavior behavior, IArrangementCollection arrangements)
+        if (behavior == MockBehavior.Loose)
         {
-            Ensures.NotNull(arrangements);
-
-            if (behavior == MockBehavior.Loose)
-            {
-                return new LooseMockInterceptor(arrangements);
-            }
-
-            if (behavior == MockBehavior.Strict)
-            {
-                return new StrictMockInterceptor(arrangements);
-            }
-
-            if (behavior == MockBehavior.Partial)
-            {
-                return new PartialMockInterceptor(arrangements);
-            }
-
-            throw new NotSupportedException();
+            return new LooseMockInterceptor(arrangements);
         }
 
-        #endregion
+        if (behavior == MockBehavior.Strict)
+        {
+            return new StrictMockInterceptor(arrangements);
+        }
+
+        if (behavior == MockBehavior.Partial)
+        {
+            return new PartialMockInterceptor(arrangements);
+        }
+
+        throw new NotSupportedException();
     }
+
+    #endregion
 }

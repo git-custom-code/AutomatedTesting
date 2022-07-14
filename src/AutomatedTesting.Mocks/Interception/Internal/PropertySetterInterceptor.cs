@@ -1,52 +1,51 @@
-namespace CustomCode.AutomatedTesting.Mocks.Interception.Internal
+namespace CustomCode.AutomatedTesting.Mocks.Interception.Internal;
+
+using ExceptionHandling;
+using Fluent;
+using Properties;
+using System;
+using System.Reflection;
+
+/// <summary>
+/// Implementation of an <see cref="IInterceptor"/> that is used to discover the called
+/// property setter defined within an <see cref="Action{T}"/> delegate.
+/// </summary>
+/// <remarks>
+/// This interceptor is used in <see cref="IMockBehavior{TMock}.ThatAssigning(Action{TMock})"/>.
+/// </remarks>
+public sealed class PropertySetterInterceptor : IInterceptor
 {
-    using ExceptionHandling;
-    using Fluent;
-    using Properties;
-    using System;
-    using System.Reflection;
+    #region Data
 
     /// <summary>
-    /// Implementation of an <see cref="IInterceptor"/> that is used to discover the called
-    /// property setter defined within an <see cref="Action{T}"/> delegate.
+    /// Gets the signature of the discovered property setter.
     /// </summary>
-    /// <remarks>
-    /// This interceptor is used in <see cref="IMockBehavior{TMock}.ThatAssigning(Action{TMock})"/>.
-    /// </remarks>
-    public sealed class PropertySetterInterceptor : IInterceptor
+    public MethodInfo? DiscoveredSetter { get; private set; }
+
+    #endregion
+
+    #region Logic
+
+    /// <inheritdoc cref="IInterceptor" />
+    public bool Intercept(IInvocation invocation)
     {
-        #region Data
+        Ensures.NotNull(invocation, nameof(invocation));
 
-        /// <summary>
-        /// Gets the signature of the discovered property setter.
-        /// </summary>
-        public MethodInfo? DiscoveredSetter { get; private set; }
-
-        #endregion
-
-        #region Logic
-
-        /// <inheritdoc cref="IInterceptor" />
-        public bool Intercept(IInvocation invocation)
+        if (invocation.TryGetFeature<IPropertySetterValue>(out var setter))
         {
-            Ensures.NotNull(invocation, nameof(invocation));
-
-            if (invocation.TryGetFeature<IPropertySetterValue>(out var setter))
+            if (DiscoveredSetter == null)
             {
-                if (DiscoveredSetter == null)
-                {
-                    DiscoveredSetter = setter.Signature.GetSetMethod();
-                    return true;
-                }
-                else
-                {
-                    throw new Exception("Discovered more than one property setter call");
-                }
+                DiscoveredSetter = setter.Signature.GetSetMethod();
+                return true;
             }
-
-            return false;
+            else
+            {
+                throw new Exception("Discovered more than one property setter call");
+            }
         }
 
-        #endregion
+        return false;
     }
+
+    #endregion
 }

@@ -1,23 +1,22 @@
-namespace CustomCode.AutomatedTesting.Mocks.ExceptionHandling
+namespace CustomCode.AutomatedTesting.Mocks.ExceptionHandling;
+
+using System;
+using System.Reflection;
+
+/// <summary>
+/// Exception that is thrown whenever a <see cref="ConstructorInfo"/> could not be found via reflection.
+/// </summary>
+public sealed class ConstructorInfoException : ReflectionException
 {
-    using System;
-    using System.Reflection;
+    #region Dependencies
 
     /// <summary>
-    /// Exception that is thrown whenever a <see cref="ConstructorInfo"/> could not be found via reflection.
+    /// Creates a new instance of the <see cref="ConstructorInfoException"/> type.
     /// </summary>
-    public sealed class ConstructorInfoException : ReflectionException
-    {
-        #region Dependencies
+    /// <param name="sourceType"> The <see cref="Type"/> whose constructor could not be found. </param>
+    public ConstructorInfoException(Type sourceType)
+        : base($"Unable to find a ctor for type '{sourceType.Name}' via reflection", sourceType)
+    { }
 
-        /// <summary>
-        /// Creates a new instance of the <see cref="ConstructorInfoException"/> type.
-        /// </summary>
-        /// <param name="sourceType"> The <see cref="Type"/> whose constructor could not be found. </param>
-        public ConstructorInfoException(Type sourceType)
-            : base($"Unable to find a ctor for type '{sourceType.Name}' via reflection", sourceType)
-        { }
-
-        #endregion
-    }
+    #endregion
 }

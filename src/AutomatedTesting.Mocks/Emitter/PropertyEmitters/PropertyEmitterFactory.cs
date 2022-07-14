@@ -1,125 +1,124 @@
-namespace CustomCode.AutomatedTesting.Mocks.Emitter
+namespace CustomCode.AutomatedTesting.Mocks.Emitter;
+
+using ExceptionHandling;
+using Interception;
+using System;
+using System.Collections.Concurrent;
+using System.Reflection;
+using System.Reflection.Emit;
+
+/// <summary>
+/// Default implementation of the <see cref="IPropertyEmitterFactory"/> interface.
+/// </summary>
+public sealed class PropertyEmitterFactory : IPropertyEmitterFactory
 {
-    using ExceptionHandling;
-    using Interception;
-    using System;
-    using System.Collections.Concurrent;
-    using System.Reflection;
-    using System.Reflection.Emit;
+    #region Data
 
     /// <summary>
-    /// Default implementation of the <see cref="IPropertyEmitterFactory"/> interface.
+    /// Gets a thread-safe cache that is used to store factories for creating strongly typed
+    /// <see cref="IPropertyEmitter"/> instances for getter only properties.
     /// </summary>
-    public sealed class PropertyEmitterFactory : IPropertyEmitterFactory
+    private static ConcurrentDictionary<Type, PropertyEmitterDelegate> GetterEmitterCache { get; }
+        = new ConcurrentDictionary<Type, PropertyEmitterDelegate>();
+
+    /// <summary>
+    /// Gets a thread-safe cache that is used to store factories for creating strongly typed
+    /// <see cref="IPropertyEmitter"/> instances for getter/setter properties.
+    /// </summary>
+    private static ConcurrentDictionary<Type, PropertyEmitterDelegate> GetterSetterEmitterCache { get; }
+        = new ConcurrentDictionary<Type, PropertyEmitterDelegate>();
+
+    #endregion
+
+    #region Logic
+
+    /// <inheritdoc cref="IPropertyEmitterFactory" />
+    public IPropertyEmitter CreatePropertyEmitterFor(PropertyInfo signature, TypeBuilder type, FieldBuilder interceptor)
     {
-        #region Data
+        Ensures.NotNull(signature, nameof(signature));
+        Ensures.NotNull(type, nameof(type));
+        Ensures.NotNull(interceptor, nameof(interceptor));
 
-        /// <summary>
-        /// Gets a thread-safe cache that is used to store factories for creating strongly typed
-        /// <see cref="IPropertyEmitter"/> instances for getter only properties.
-        /// </summary>
-        private static ConcurrentDictionary<Type, PropertyEmitterDelegate> GetterEmitterCache { get; }
-            = new ConcurrentDictionary<Type, PropertyEmitterDelegate>();
-
-        /// <summary>
-        /// Gets a thread-safe cache that is used to store factories for creating strongly typed
-        /// <see cref="IPropertyEmitter"/> instances for getter/setter properties.
-        /// </summary>
-        private static ConcurrentDictionary<Type, PropertyEmitterDelegate> GetterSetterEmitterCache { get; }
-            = new ConcurrentDictionary<Type, PropertyEmitterDelegate>();
-
-        #endregion
-
-        #region Logic
-
-        /// <inheritdoc cref="IPropertyEmitterFactory" />
-        public IPropertyEmitter CreatePropertyEmitterFor(PropertyInfo signature, TypeBuilder type, FieldBuilder interceptor)
+        if (signature.CanRead)
         {
-            Ensures.NotNull(signature, nameof(signature));
-            Ensures.NotNull(type, nameof(type));
-            Ensures.NotNull(interceptor, nameof(interceptor));
-
-            if (signature.CanRead)
+            if (signature.CanWrite)
             {
-                if (signature.CanWrite)
-                {
-                    var factory = GetterSetterEmitterCache.GetOrAdd(
+                var factory = GetterSetterEmitterCache.GetOrAdd(
+                    signature.PropertyType,
+                    CreateEmitterFactoryFor(signature.PropertyType, typeof(InterceptGetterSetterEmitter<>)));
+                return factory(type, signature, interceptor);
+            }
+            else
+            {
+                var factory = GetterEmitterCache.GetOrAdd(
                         signature.PropertyType,
-                        CreateEmitterFactoryFor(signature.PropertyType, typeof(InterceptGetterSetterEmitter<>)));
-                    return factory(type, signature, interceptor);
-                }
-                else
-                {
-                    var factory = GetterEmitterCache.GetOrAdd(
-                            signature.PropertyType,
-                            CreateEmitterFactoryFor(signature.PropertyType, typeof(InterceptGetterEmitter<>)));
-                    return factory(type, signature, interceptor);
-                }
+                        CreateEmitterFactoryFor(signature.PropertyType, typeof(InterceptGetterEmitter<>)));
+                return factory(type, signature, interceptor);
             }
-            else if (signature.CanWrite)
-            {
-                return new InterceptSetterEmitter(type, signature, interceptor);
-            }
-
-            throw new NotSupportedException();
         }
-
-        /// <summary>
-        /// Use a <see cref="DynamicMethod"/> to create a factory delegate for a strongly typed
-        /// <see cref="InterceptGetterEmitter{T}" /> or <see cref="InterceptGetterSetterEmitter{T}"/>.
-        /// </summary>
-        /// <param name="returnType">
-        /// The type of the property's return value.
-        /// </param>
-        /// <param name="emitterType"> Type type of the emitter to be created. </param>
-        /// <returns> The created factory delegate. </returns>
-        /// <remarks>
-        /// Emits the following source code:
-        /// <![CDATA[
-        ///     IPropertyEmitter Create(TypeBuilder type, PropertyInfo signature, FieldBuilder interceptor)
-        ///     {
-        ///         return new Intercept...Emitter<ReturnType>(type, signature, interceptor);
-        ///     }
-        /// ]]>
-        /// </remarks>
-        private PropertyEmitterDelegate CreateEmitterFactoryFor(Type returnType, Type emitterType)
+        else if (signature.CanWrite)
         {
-            var genericEmitterType = emitterType.MakeGenericType(returnType);
-            var ctor = genericEmitterType
-                .GetConstructor(new[] { typeof(TypeBuilder), typeof(PropertyInfo), typeof(FieldBuilder) })
-                ?? throw new ConstructorInfoException(genericEmitterType);
-
-            var dynamicFactory = new DynamicMethod(
-                $"Create{genericEmitterType.Name}",
-                typeof(IPropertyEmitter),
-                new[] { typeof(TypeBuilder), typeof(PropertyInfo), typeof(FieldBuilder) },
-                genericEmitterType);
-            var body = dynamicFactory.GetILGenerator();
-
-            body.Emit(OpCodes.Ldarg_0);
-            body.Emit(OpCodes.Ldarg_1);
-            body.Emit(OpCodes.Ldarg_2);
-            body.Emit(OpCodes.Newobj, ctor);
-            body.Emit(OpCodes.Ret);
-
-            var factory = (PropertyEmitterDelegate)dynamicFactory.CreateDelegate(typeof(PropertyEmitterDelegate));
-            return factory;
+            return new InterceptSetterEmitter(type, signature, interceptor);
         }
 
-        #endregion
-
-        #region Nested Types
-
-        /// <summary>
-        /// A delegate that defines a factory for creating a strongly typed <see cref="IPropertyEmitter"/>
-        /// instance.
-        /// </summary>
-        /// <param name="type"> The dynamic proxy type. </param>
-        /// <param name="signature"> The signature of the property to be created. </param>
-        /// <param name="interceptorField"> The <paramref name="type"/>'s <see cref="IInterceptor"/> backing field. </param>
-        /// <returns> The created <see cref="IPropertyEmitter"/> instance. </returns>
-        private delegate IPropertyEmitter PropertyEmitterDelegate(TypeBuilder type, PropertyInfo signature, FieldBuilder interceptorField);
-
-        #endregion
+        throw new NotSupportedException();
     }
+
+    /// <summary>
+    /// Use a <see cref="DynamicMethod"/> to create a factory delegate for a strongly typed
+    /// <see cref="InterceptGetterEmitter{T}" /> or <see cref="InterceptGetterSetterEmitter{T}"/>.
+    /// </summary>
+    /// <param name="returnType">
+    /// The type of the property's return value.
+    /// </param>
+    /// <param name="emitterType"> Type type of the emitter to be created. </param>
+    /// <returns> The created factory delegate. </returns>
+    /// <remarks>
+    /// Emits the following source code:
+    /// <![CDATA[
+    ///     IPropertyEmitter Create(TypeBuilder type, PropertyInfo signature, FieldBuilder interceptor)
+    ///     {
+    ///         return new Intercept...Emitter<ReturnType>(type, signature, interceptor);
+    ///     }
+    /// ]]>
+    /// </remarks>
+    private PropertyEmitterDelegate CreateEmitterFactoryFor(Type returnType, Type emitterType)
+    {
+        var genericEmitterType = emitterType.MakeGenericType(returnType);
+        var ctor = genericEmitterType
+            .GetConstructor(new[] { typeof(TypeBuilder), typeof(PropertyInfo), typeof(FieldBuilder) })
+            ?? throw new ConstructorInfoException(genericEmitterType);
+
+        var dynamicFactory = new DynamicMethod(
+            $"Create{genericEmitterType.Name}",
+            typeof(IPropertyEmitter),
+            new[] { typeof(TypeBuilder), typeof(PropertyInfo), typeof(FieldBuilder) },
+            genericEmitterType);
+        var body = dynamicFactory.GetILGenerator();
+
+        body.Emit(OpCodes.Ldarg_0);
+        body.Emit(OpCodes.Ldarg_1);
+        body.Emit(OpCodes.Ldarg_2);
+        body.Emit(OpCodes.Newobj, ctor);
+        body.Emit(OpCodes.Ret);
+
+        var factory = (PropertyEmitterDelegate)dynamicFactory.CreateDelegate(typeof(PropertyEmitterDelegate));
+        return factory;
+    }
+
+    #endregion
+
+    #region Nested Types
+
+    /// <summary>
+    /// A delegate that defines a factory for creating a strongly typed <see cref="IPropertyEmitter"/>
+    /// instance.
+    /// </summary>
+    /// <param name="type"> The dynamic proxy type. </param>
+    /// <param name="signature"> The signature of the property to be created. </param>
+    /// <param name="interceptorField"> The <paramref name="type"/>'s <see cref="IInterceptor"/> backing field. </param>
+    /// <returns> The created <see cref="IPropertyEmitter"/> instance. </returns>
+    private delegate IPropertyEmitter PropertyEmitterDelegate(TypeBuilder type, PropertyInfo signature, FieldBuilder interceptorField);
+
+    #endregion
 }

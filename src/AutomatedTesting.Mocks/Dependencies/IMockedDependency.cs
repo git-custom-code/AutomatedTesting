@@ -1,33 +1,32 @@
-namespace CustomCode.AutomatedTesting.Mocks.Dependencies
+namespace CustomCode.AutomatedTesting.Mocks.Dependencies;
+
+using Arrangements;
+using Interception;
+using System;
+
+/// <summary>
+/// Interface that represents a dependency that is replaced by a dynamically created mock with
+/// exactly the same signature.
+/// </summary>
+public interface IMockedDependency
 {
-    using Arrangements;
-    using Interception;
-    using System;
+    /// <summary>
+    /// Gets a collection of user made arrangements for intercepted method or property calls.
+    /// </summary>
+    IArrangementCollection Arrangements { get; }
 
     /// <summary>
-    /// Interface that represents a dependency that is replaced by a dynamically created mock with
-    /// exactly the same signature.
+    /// Gets an interceptor that is injected in mock and will execute the user's <see cref="Arrangements"/>.
     /// </summary>
-    public interface IMockedDependency
-    {
-        /// <summary>
-        /// Gets a collection of user made arrangements for intercepted method or property calls.
-        /// </summary>
-        IArrangementCollection Arrangements { get; }
+    IInterceptor Interceptor { get; }
 
-        /// <summary>
-        /// Gets an interceptor that is injected in mock and will execute the user's <see cref="Arrangements"/>.
-        /// </summary>
-        IInterceptor Interceptor { get; }
+    /// <summary>
+    /// Gets a dynamic proxy instance that has the exact same signature as the mocked dependency.
+    /// </summary>
+    object Instance { get; }
 
-        /// <summary>
-        /// Gets a dynamic proxy instance that has the exact same signature as the mocked dependency.
-        /// </summary>
-        object Instance { get; }
-
-        /// <summary>
-        /// Gets the signature of the mocked dependency.
-        /// </summary>
-        Type Signature { get; }
-    }
+    /// <summary>
+    /// Gets the signature of the mocked dependency.
+    /// </summary>
+    Type Signature { get; }
 }
