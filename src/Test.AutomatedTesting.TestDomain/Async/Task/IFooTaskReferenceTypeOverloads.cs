@@ -1,15 +1,14 @@
-namespace CustomCode.AutomatedTesting.TestDomain
+namespace CustomCode.AutomatedTesting.TestDomain;
+
+using System.Threading.Tasks;
+
+/// <summary>
+/// Interface that simulates a dependency that contains an overloaded asynchronous method
+/// with reference type parameters that return a <see cref="Task"/>.
+/// </summary>
+public interface IFooTaskReferenceTypeOverloads : IFoo
 {
-    using System.Threading.Tasks;
+    Task MethodWithOverloadAsync(object? first);
 
-    /// <summary>
-    /// Interface that simulates a dependency that contains an overloaded asynchronous method
-    /// with reference type parameters that return a <see cref="Task"/>.
-    /// </summary>
-    public interface IFooTaskReferenceTypeOverloads : IFoo
-    {
-        Task MethodWithOverloadAsync(object? first);
-
-        Task MethodWithOverloadAsync(object? first, object? second);
-    }
+    Task MethodWithOverloadAsync(object? first, object? second);
 }

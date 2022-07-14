@@ -1,12 +1,11 @@
-namespace CustomCode.AutomatedTesting.TestDomain
+namespace CustomCode.AutomatedTesting.TestDomain;
+
+/// <summary>
+/// Interface that simulates a dependency that contains a non-void method
+/// with a reference type parameter.
+/// </summary>
+public interface IFooFuncReferenceTypeParameterIn<T> : IFoo
+    where T : class
 {
-    /// <summary>
-    /// Interface that simulates a dependency that contains a non-void method
-    /// with a reference type parameter.
-    /// </summary>
-    public interface IFooFuncReferenceTypeParameterIn<T> : IFoo
-        where T : class
-    {
-        T? MethodWithOneParameter(T? first);
-    }
+    T? MethodWithOneParameter(T? first);
 }

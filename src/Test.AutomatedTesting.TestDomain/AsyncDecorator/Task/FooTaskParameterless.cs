@@ -1,30 +1,29 @@
-namespace CustomCode.AutomatedTesting.TestDomain
+namespace CustomCode.AutomatedTesting.TestDomain;
+
+using System.Threading.Tasks;
+
+/// <summary>
+/// Test domain implementation of the <see cref="IFooTaskParameterless"/> interface.
+/// </summary>
+public sealed class FooTaskParameterless : IFooTaskParameterless
 {
-    using System.Threading.Tasks;
+    #region Data
 
     /// <summary>
-    /// Test domain implementation of the <see cref="IFooTaskParameterless"/> interface.
+    /// Gets the number of times the <see cref="MethodWithoutParameterAsync"/> was called.
     /// </summary>
-    public sealed class FooTaskParameterless : IFooTaskParameterless
+    public uint CallCount { get; private set; } = 0;
+
+    #endregion
+
+    #region Logic
+
+    /// <inheritdoc />
+    public Task MethodWithoutParameterAsync()
     {
-        #region Data
-
-        /// <summary>
-        /// Gets the number of times the <see cref="MethodWithoutParameterAsync"/> was called.
-        /// </summary>
-        public uint CallCount { get; private set; } = 0;
-
-        #endregion
-
-        #region Logic
-
-        /// <inheritdoc />
-        public Task MethodWithoutParameterAsync()
-        {
-            CallCount++;
-            return Task.CompletedTask;
-        }
-
-        #endregion
+        CallCount++;
+        return Task.CompletedTask;
     }
+
+    #endregion
 }

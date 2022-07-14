@@ -1,36 +1,35 @@
-namespace CustomCode.AutomatedTesting.TestDomain
+namespace CustomCode.AutomatedTesting.TestDomain;
+
+using System.Threading.Tasks;
+
+/// <summary>
+/// Test domain implementation of the <see cref="IFooTaskReferenceTypeParameter"/> interface.
+/// </summary>
+public sealed class FooTaskReferenceTypeParameter : IFooTaskReferenceTypeParameter
 {
-    using System.Threading.Tasks;
+    #region Data
 
     /// <summary>
-    /// Test domain implementation of the <see cref="IFooTaskReferenceTypeParameter"/> interface.
+    /// Gets the number of times the <see cref="MethodWithOneParameterAsync(object?)"/> was called.
     /// </summary>
-    public sealed class FooTaskReferenceTypeParameter : IFooTaskReferenceTypeParameter
+    public uint CallCount { get; private set; } = 0;
+
+    /// <summary>
+    /// Gets the called method's input parameter.
+    /// </summary>
+    public object? Parameter { get; private set; }
+
+    #endregion
+
+    #region Logic
+
+    /// <inheritdoc />
+    public Task MethodWithOneParameterAsync(object? first)
     {
-        #region Data
-
-        /// <summary>
-        /// Gets the number of times the <see cref="MethodWithOneParameterAsync(object?)"/> was called.
-        /// </summary>
-        public uint CallCount { get; private set; } = 0;
-
-        /// <summary>
-        /// Gets the called method's input parameter.
-        /// </summary>
-        public object? Parameter { get; private set; }
-
-        #endregion
-
-        #region Logic
-
-        /// <inheritdoc />
-        public Task MethodWithOneParameterAsync(object? first)
-        {
-            CallCount++;
-            Parameter = first;
-            return Task.CompletedTask;
-        }
-
-        #endregion
+        CallCount++;
+        Parameter = first;
+        return Task.CompletedTask;
     }
+
+    #endregion
 }

@@ -1,13 +1,12 @@
-namespace CustomCode.AutomatedTesting.TestDomain
-{
-    using System.Collections.Generic;
+namespace CustomCode.AutomatedTesting.TestDomain;
 
-    /// <summary>
-    /// Interface that simulates a dependency that contains an asynchronous method
-    /// without parameters that returns an <see cref="IAsyncEnumerable{T}"/> with value types.
-    /// </summary>
-    public interface IFooAsyncEnumerableValueTypeParameterless : IFoo
-    {
-        IAsyncEnumerable<int> MethodWithoutParameterAsync();
-    }
+using System.Collections.Generic;
+
+/// <summary>
+/// Interface that simulates a dependency that contains an asynchronous method
+/// without parameters that returns an <see cref="IAsyncEnumerable{T}"/> with value types.
+/// </summary>
+public interface IFooAsyncEnumerableValueTypeParameterless : IFoo
+{
+    IAsyncEnumerable<int> MethodWithoutParameterAsync();
 }

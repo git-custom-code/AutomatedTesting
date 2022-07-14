@@ -1,11 +1,10 @@
-namespace CustomCode.AutomatedTesting.TestDomain
+namespace CustomCode.AutomatedTesting.TestDomain;
+
+/// <summary>
+/// Interface that simulates a dependency that contains a reference type property.
+/// </summary>
+public interface IFooReferenceTypeProperty<T> : IFoo
+    where T : class
 {
-    /// <summary>
-    /// Interface that simulates a dependency that contains a reference type property.
-    /// </summary>
-    public interface IFooReferenceTypeProperty<T> : IFoo
-        where T : class
-    {
-        T? GetterSetter { get; set; }
-    }
+    T? GetterSetter { get; set; }
 }
