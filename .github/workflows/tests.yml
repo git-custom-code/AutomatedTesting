@@ -17,7 +17,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Install dependencies
-      run: dotnet restore ./src/CompileTimeInject.sln
+      run: dotnet restore ./src/AutomatedTesting.sln
     - name: Test
       run: dotnet test ./src/AutomatedTesting.sln --configuration GitHub --no-restore --verbosity normal
 
