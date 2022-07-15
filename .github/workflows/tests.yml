@@ -1,0 +1,23 @@
+name: Unit Tests
+
+on:
+ workflow_run:
+    workflows: ["Build"]
+    branches: [ master ]
+    types: [ completed ]
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Install dependencies
+      run: dotnet restore ./src/CompileTimeInject.sln
+    - name: Test
+      run: dotnet test ./src/AutomatedTesting.sln --configuration GitHub --no-restore --verbosity normal
+
