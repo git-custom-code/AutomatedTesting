@@ -43,7 +43,7 @@ public static partial class IInvocationExtensions
     public static void ShouldHaveParameterRef(this IInvocation invocation, string name, Type type, object? value)
     {
         var feature = invocation.GetFeature<IParameterRef>();
-        var parameter = feature.RefParameterCollection.SingleOrDefault(
+        var parameter = feature.RefParameterCollection.Single(
             p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
         Assert.Equal(name, parameter.Name);
         Assert.Equal(type, parameter.Type);

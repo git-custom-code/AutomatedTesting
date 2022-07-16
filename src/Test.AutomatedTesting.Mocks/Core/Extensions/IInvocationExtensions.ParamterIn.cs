@@ -43,7 +43,7 @@ public static partial class IInvocationExtensions
     public static void ShouldHaveParameterIn(this IInvocation invocation, string name, Type type, object? value)
     {
         var feature = invocation.GetFeature<IParameterIn>();
-        var parameter = feature.InputParameterCollection.SingleOrDefault(
+        var parameter = feature.InputParameterCollection.Single(
             p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
         Assert.Equal(name, parameter.Name);
         Assert.Equal(type, parameter.Type);
