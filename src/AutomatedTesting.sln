@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B52D74F3-1DCA-4CE2-B2EF-C8AC2999B545}"
 	ProjectSection(SolutionItems) = preProject
@@ -47,6 +47,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.AutomatedTesting.TestDomain", "Test.AutomatedTesting.TestDomain\Test.AutomatedTesting.TestDomain.csproj", "{863B81F8-63D5-47D5-B5D4-7D6A41EC4145}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutomatedTesting", "AutomatedTesting\AutomatedTesting.csproj", "{62CA1E3D-09E1-4752-B663-B93B23C1D206}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutomatedTesting.Assertions", "AutomatedTesting.Assertions\AutomatedTesting.Assertions.csproj", "{5F09E9BE-4014-44B8-B1B2-0814A3CA7B0D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.AutomatedTesting.Assertions", "Test.AutomatedTesting.Assertions\Test.AutomatedTesting.Assertions.csproj", "{615FA3FA-6210-42FF-8C90-C68C2FE3FF17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +107,18 @@ Global
 		{62CA1E3D-09E1-4752-B663-B93B23C1D206}.GitHub|Any CPU.Build.0 = GitHub|Any CPU
 		{62CA1E3D-09E1-4752-B663-B93B23C1D206}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62CA1E3D-09E1-4752-B663-B93B23C1D206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F09E9BE-4014-44B8-B1B2-0814A3CA7B0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F09E9BE-4014-44B8-B1B2-0814A3CA7B0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F09E9BE-4014-44B8-B1B2-0814A3CA7B0D}.GitHub|Any CPU.ActiveCfg = GitHub|Any CPU
+		{5F09E9BE-4014-44B8-B1B2-0814A3CA7B0D}.GitHub|Any CPU.Build.0 = GitHub|Any CPU
+		{5F09E9BE-4014-44B8-B1B2-0814A3CA7B0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F09E9BE-4014-44B8-B1B2-0814A3CA7B0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{615FA3FA-6210-42FF-8C90-C68C2FE3FF17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{615FA3FA-6210-42FF-8C90-C68C2FE3FF17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{615FA3FA-6210-42FF-8C90-C68C2FE3FF17}.GitHub|Any CPU.ActiveCfg = GitHub|Any CPU
+		{615FA3FA-6210-42FF-8C90-C68C2FE3FF17}.GitHub|Any CPU.Build.0 = GitHub|Any CPU
+		{615FA3FA-6210-42FF-8C90-C68C2FE3FF17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{615FA3FA-6210-42FF-8C90-C68C2FE3FF17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
