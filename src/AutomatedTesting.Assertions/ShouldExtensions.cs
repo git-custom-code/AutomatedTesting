@@ -22,6 +22,18 @@ public static class ShouldExtensions
     }
 
     /// <summary>
+    /// Assertions for nullable numeric data types.
+    /// </summary>
+    /// <typeparam name="T"> The <paramref name="nullableNumber"/>'s data type (i.e. <see cref="int"/> or <see cref="double"/>). </typeparam>
+    /// <param name="nullableNumber"> The nullable number to be checked. </param>
+    /// <returns> A <see cref="NullableNumberAssertions{T}"/> instance for specifying assertions. </returns>
+    public static NullableNumberAssertions<T> Should<T>(this Nullable<T> nullableNumber)
+        where T : struct, INumber<T>
+    {
+        return new NullableNumberAssertions<T>(nullableNumber);
+    }
+
+    /// <summary>
     /// Inverse assertions for numeric data types.
     /// </summary>
     /// <typeparam name="T"> The <paramref name="number"/>'s data type (i.e. <see cref="int"/> or <see cref="double"/>). </typeparam>
@@ -31,6 +43,18 @@ public static class ShouldExtensions
         where T : INumber<T>
     {
         return new NumberInverseAssertions<T>(number);
+    }
+
+    /// <summary>
+    /// Inverse assertions for nullable numeric data types.
+    /// </summary>
+    /// <typeparam name="T"> The <paramref name="nullableNumber"/>'s data type (i.e. <see cref="int"/> or <see cref="double"/>). </typeparam>
+    /// <param name="nullableNumber"> The nullable number to be checked. </param>
+    /// <returns> A <see cref="NumberInverseAssertions{T}"/> instance for specifying assertions. </returns>
+    public static NullableNumberInverseAssertions<T> ShouldNot<T>(this Nullable<T> nullableNumber)
+        where T : struct, INumber<T>
+    {
+        return new NullableNumberInverseAssertions<T>(nullableNumber);
     }
 
     #endregion
