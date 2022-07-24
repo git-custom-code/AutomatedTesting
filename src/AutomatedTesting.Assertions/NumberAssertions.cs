@@ -1,6 +1,7 @@
 namespace CustomCode.AutomatedTesting.Assertions;
 
 using Configuration;
+using Fluent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,8 @@ using System.Runtime.CompilerServices;
 /// Assertions for number values.
 /// </summary>
 /// <typeparam name="T"> The concrete data type for the number value (i.e. <see cref="int"/>). </typeparam>
-public sealed class NumberAssertions<T> where T : INumber<T>
+public sealed class NumberAssertions<T> : IFluentInterface
+    where T : INumber<T>
 {
     #region Dependencies
 
