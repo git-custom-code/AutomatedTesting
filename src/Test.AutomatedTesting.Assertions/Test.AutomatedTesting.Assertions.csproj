@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6</TargetFramework>
+    <EnablePreviewFeatures>True</EnablePreviewFeatures>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>CustomCode.AutomatedTesting.Assertions.Tests</RootNamespace>
+    <Configurations>Debug;Release;GitHub</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AutomatedTesting.Assertions\AutomatedTesting.Assertions.csproj" />
+  </ItemGroup>
+
+</Project>
