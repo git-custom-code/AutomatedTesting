@@ -34,6 +34,16 @@ public static class ShouldExtensions
     }
 
     /// <summary>
+    /// Assertions for <see cref="string"/> data types.
+    /// </summary>
+    /// <param name="string"> The string to be checked. </param>
+    /// <returns> A <see cref="StringAssertions"/> instance for specifying assertions. </returns>
+    public static StringAssertions Should(this string? @string)
+    {
+        return new StringAssertions(@string);
+    }
+
+    /// <summary>
     /// Inverse assertions for numeric data types.
     /// </summary>
     /// <typeparam name="T"> The <paramref name="number"/>'s data type (i.e. <see cref="int"/> or <see cref="double"/>). </typeparam>
@@ -55,6 +65,16 @@ public static class ShouldExtensions
         where T : struct, INumber<T>
     {
         return new NullableNumberInverseAssertions<T>(nullableNumber);
+    }
+
+    /// <summary>
+    /// Inverse assertions for <see cref="string"/> data types.
+    /// </summary>
+    /// <param name="string"> The string to be checked. </param>
+    /// <returns> A <see cref="StringInverseAssertions"/> instance for specifying assertions. </returns>
+    public static StringInverseAssertions ShouldNot(this string? @string)
+    {
+        return new StringInverseAssertions(@string);
     }
 
     #endregion
