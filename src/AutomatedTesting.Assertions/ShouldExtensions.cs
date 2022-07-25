@@ -34,6 +34,16 @@ public static class ShouldExtensions
     }
 
     /// <summary>
+    /// Assertions for <see cref="bool"/> data types.
+    /// </summary>
+    /// <param name="boolean"> The boolean to be checked. </param>
+    /// <returns> A <see cref="BooleanAssertions"/> instance for specifying assertions. </returns>
+    public static BooleanAssertions Should(this bool boolean)
+    {
+        return new BooleanAssertions(boolean);
+    }
+
+    /// <summary>
     /// Assertions for <see cref="string"/> data types.
     /// </summary>
     /// <param name="string"> The string to be checked. </param>
@@ -65,6 +75,16 @@ public static class ShouldExtensions
         where T : struct, INumber<T>
     {
         return new NullableNumberInverseAssertions<T>(nullableNumber);
+    }
+
+    /// <summary>
+    /// Inverse assertions for <see cref="bool"/> data types.
+    /// </summary>
+    /// <param name="boolean"> The boolean to be checked. </param>
+    /// <returns> A <see cref="BooleanInverseAssertions"/> instance for specifying assertions. </returns>
+    public static BooleanInverseAssertions ShouldNot(this bool boolean)
+    {
+        return new BooleanInverseAssertions(boolean);
     }
 
     /// <summary>
