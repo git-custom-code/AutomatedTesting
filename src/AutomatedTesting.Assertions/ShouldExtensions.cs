@@ -44,6 +44,16 @@ public static class ShouldExtensions
     }
 
     /// <summary>
+    /// Assertions for nullable <see cref="bool"/> data types.
+    /// </summary>
+    /// <param name="nullableBoolean"> The nullable boolean to be checked. </param>
+    /// <returns> A <see cref="NullableBooleanAssertions"/> instance for specifying assertions. </returns>
+    public static NullableBooleanAssertions Should(this Nullable<bool> nullableBoolean)
+    {
+        return new NullableBooleanAssertions(nullableBoolean);
+    }
+
+    /// <summary>
     /// Assertions for <see cref="string"/> data types.
     /// </summary>
     /// <param name="string"> The string to be checked. </param>
@@ -85,6 +95,16 @@ public static class ShouldExtensions
     public static BooleanInverseAssertions ShouldNot(this bool boolean)
     {
         return new BooleanInverseAssertions(boolean);
+    }
+
+    /// <summary>
+    /// Inverse assertions for nullable <see cref="bool"/> data types.
+    /// </summary>
+    /// <param name="nullableBoolean"> The nullable boolean to be checked. </param>
+    /// <returns> A <see cref="NullableBooleanInverseAssertions"/> instance for specifying assertions. </returns>
+    public static NullableBooleanInverseAssertions ShouldNot(this Nullable<bool> nullableBoolean)
+    {
+        return new NullableBooleanInverseAssertions(nullableBoolean);
     }
 
     /// <summary>
