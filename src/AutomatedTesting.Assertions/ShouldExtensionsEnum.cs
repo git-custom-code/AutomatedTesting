@@ -7,6 +7,8 @@ using System;
 /// </summary>
 public static class ShouldExtensionsEnum
 {
+    #region Logic
+
     /// <summary>
     /// Assertions for <see cref="Enum"/> data types.
     /// </summary>
@@ -19,6 +21,17 @@ public static class ShouldExtensionsEnum
     }
 
     /// <summary>
+    /// Assertions for nullable <see cref="Enum"/> data types.
+    /// </summary>
+    /// <param name="nullableEnumeration"> The nullable enumeration to be checked. </param>
+    /// <returns> A <see cref="NullableEnumAssertions{T}"/> instance for specifying assertions. </returns>
+    public static NullableEnumAssertions<T> Should<T>(this Nullable<T> nullableEnumeration)
+        where T : struct, Enum
+    {
+        return new NullableEnumAssertions<T>(nullableEnumeration);
+    }
+
+    /// <summary>
     /// Inverse assertions for <see cref="Enum"/> data types.
     /// </summary>
     /// <param name="enumeration"> The enumeration to be checked. </param>
@@ -28,4 +41,17 @@ public static class ShouldExtensionsEnum
     {
         return new EnumInverseAssertions<T>(enumeration);
     }
+
+    /// <summary>
+    /// Inverse assertions for nullable <see cref="Enum"/> data types.
+    /// </summary>
+    /// <param name="nullableEnumeration"> The nullable enumeration to be checked. </param>
+    /// <returns> A <see cref="NullableEnumInverseAssertions{T}"/> instance for specifying assertions. </returns>
+    public static NullableEnumInverseAssertions<T> ShouldNot<T>(this Nullable<T> nullableEnumeration)
+        where T : struct, Enum
+    {
+        return new NullableEnumInverseAssertions<T>(nullableEnumeration);
+    }
+
+    #endregion
 }
